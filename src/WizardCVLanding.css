@@ -1,0 +1,1024 @@
+/* -------------------------------------------------------------
+ * WizardCVLanding.css - Premium SaaS MVP Landing Page Stylesheet
+ * ------------------------------------------------------------- */
+
+.landing-page-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 20%, #1e1e38 0%, #0c0c16 70%);
+  color: #f8fafc;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 0 0 80px 0;
+  scroll-behavior: smooth;
+}
+
+/* 커스텀 스크롤바 */
+.landing-page-overlay::-webkit-scrollbar {
+  width: 8px;
+}
+
+.landing-page-overlay::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* 🚀 상단 네비게이션 */
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(12, 12, 22, 0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+
+.logo-sparkle {
+  font-size: 22px;
+  animation: float 2.5s infinite ease-in-out;
+}
+
+.logo-tag-beta {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: #0c0c16;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.btn-close-landing {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-close-landing:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* 🌌 메인 히어로 섹션 */
+.landing-hero {
+  text-align: center;
+  max-width: 900px;
+  margin: 60px auto 40px auto;
+  padding: 0 20px;
+}
+
+.hero-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #facc15;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-bottom: 20px;
+}
+
+.hero-title-big {
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin-bottom: 18px;
+}
+
+.gradient-text-wizard {
+  background: linear-gradient(135deg, #eab308 0%, #a855f7 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-description-prose {
+  font-size: 16px;
+  color: #94a3b8;
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 0 auto 24px auto;
+}
+
+.live-stat-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+  font-size: 12px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+}
+
+.stat-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #06b6d4;
+  border-radius: 9999px;
+  animation: pulseGreen 1.5s infinite;
+}
+
+/* 📸 프리뷰 체험관 */
+.landing-preview-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.preview-container-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .preview-container-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.selling-points-card {
+  background: rgba(30, 41, 59, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.selling-points-card h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+}
+
+.selling-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+}
+
+.selling-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.selling-list li {
+  display: flex;
+  gap: 16px;
+  align-items: start;
+}
+
+.check-icon-box {
+  width: 20px;
+  height: 20px;
+  background: #a855f7;
+  color: #fff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.selling-list li strong {
+  display: block;
+  font-size: 14px;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+
+.selling-list li p {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 데모 카드 영역 */
+.demo-canvas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.demo-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.parallax-canvas-landing {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* 마법 신문 스타일링 (랜딩페이지 전용) */
+.prophet-card-landing {
+  background-color: #ebdcb9; /* 세피아 빈티지 지류 질감 */
+  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 0),
+                    radial-gradient(rgba(0,0,0,0.06) 1px, transparent 0);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+  border: 10px double #3e3229;
+  border-radius: 4px;
+  padding: 24px;
+  color: #1e1513;
+  width: 380px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.prophet-header {
+  border-bottom: 2px solid #1e1513;
+  padding-bottom: 8px;
+  text-align: center;
+  transform: translateZ(20px);
+}
+
+.prophet-meta-vol {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #554438;
+}
+
+.prophet-logo-title {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 4px 0;
+  letter-spacing: -0.5px;
+  border-top: 1px solid #1e1513;
+  border-bottom: 1px solid #1e1513;
+  padding: 2px 0;
+}
+
+.prophet-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  font-weight: 700;
+  color: #554438;
+}
+
+.prophet-headline {
+  background: #1e1513;
+  color: #ebdcb9;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 5px;
+  margin: 12px 0;
+  transform: translateZ(25px);
+}
+
+.prophet-photo-frame {
+  background: #362925;
+  padding: 10px;
+  border: 3px solid #3e3229;
+  margin-bottom: 12px;
+  transform: translateZ(45px);
+  transform-style: preserve-3d;
+  animation: magicBreath 6s ease-in-out infinite;
+}
+
+.prophet-photo-inner {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.1 / 1;
+  border: 1px solid #1e1513;
+}
+
+.prophet-magic-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.8) contrast(1.1) brightness(0.95);
+  /* 3D 깊이 변환 */
+  transform: translate3d(calc((var(--holo-x, 50) - 50) * -0.4px), calc((var(--holo-y, 50) - 50) * -0.4px), 12px) scale(1.1);
+  transition: transform 0.1s ease-out;
+}
+
+.magic-dust-particles span {
+  position: absolute;
+  color: rgba(218, 165, 32, 0.75);
+  font-size: 12px;
+  animation: floatSparkle 4s linear infinite;
+  opacity: 0;
+}
+
+.magic-dust-particles .md1 { left: 15%; top: 75%; animation-delay: 0s; }
+.magic-dust-particles .md2 { left: 50%; top: 85%; animation-delay: 1.5s; }
+.magic-dust-particles .md3 { left: 80%; top: 70%; animation-delay: 3s; }
+
+.prophet-name-tag {
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #ebdcb9;
+  margin-top: 6px;
+}
+
+.prophet-body-text {
+  transform: translateZ(20px);
+}
+
+.prophet-body-text h4 {
+  font-size: 13px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+}
+
+.prophet-para {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #3e3229;
+  margin: 0;
+  text-align: justify;
+}
+
+/* 💳 가격 책정 섹션 */
+.landing-pricing-section {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.pricing-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.pricing-header p {
+  color: #64748b;
+  font-size: 14px;
+  max-width: 600px;
+  margin: 0 auto 36px auto;
+}
+
+.pricing-cards-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: center;
+  max-width: 760px;
+  margin: 0 auto 40px auto;
+}
+
+@media (max-width: 600px) {
+  .pricing-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-card-box {
+  background: rgba(30, 41, 59, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s;
+}
+
+.pricing-card-box:hover {
+  background: rgba(30, 41, 59, 0.35);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.pricing-card-box.active-glow {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: #a855f7;
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.25);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.pricing-card-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.price-tag-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.price-del {
+  font-size: 13px;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.price-val {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.price-period {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.pricing-desc {
+  font-size: 11px;
+  color: #a855f7;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.plan-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.plan-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+}
+
+.text-green { color: #10b981; }
+.text-gray { color: #94a3b8; }
+
+/* 사전예약 신청 카드 */
+.subscription-form-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.landing-sub-form h4 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+}
+
+.form-sub-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0 0 16px 0;
+}
+
+.form-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 500px) {
+  .form-input-row {
+    flex-direction: column;
+  }
+}
+
+.sub-email-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #fff;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.sub-email-input:focus {
+  outline: none;
+  border-color: #a855f7;
+}
+
+.btn-sub-submit {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  border: none;
+  color: #0c0c16;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  transition: all 0.2s;
+}
+
+.btn-sub-submit:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* 등록 성공 피드백 */
+.subscription-success-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.subscription-success-box h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #eab308;
+  margin: 0;
+}
+
+.subscription-success-box p {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.btn-preorder-reset {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* 📊 대표님 대시보드 로그 */
+.landing-admin-logs-section {
+  max-width: 900px;
+  margin: 40px auto 0 auto;
+  padding: 32px 20px;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+}
+
+.admin-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.admin-header-row h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #22d3ee;
+  margin: 0;
+}
+
+.admin-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 20px 0;
+}
+
+.admin-db-table-wrapper {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.empty-db-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  color: #64748b;
+  gap: 12px;
+}
+
+.empty-db-state p {
+  font-size: 12px;
+  margin: 0;
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.admin-db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.admin-db-table th, .admin-db-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-db-table th {
+  background: rgba(255, 255, 255, 0.02);
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.db-email {
+  font-weight: 600;
+  color: #fff;
+}
+
+.db-plan-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.db-plan-badge.pro {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+}
+
+.db-plan-badge.free {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+}
+
+.db-status-active {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* 🌀 애니메이션 기프 정의 */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes magicBreath {
+  0% { transform: scale(1.0) rotate(0deg) translate(0, 0); }
+  33% { transform: scale(1.02) rotate(0.4deg) translate(0.5px, -0.5px); }
+  66% { transform: scale(1.01) rotate(-0.3deg) translate(-0.5px, 0.5px); }
+  100% { transform: scale(1.0) rotate(0deg) translate(0, 0); }
+}
+
+@keyframes floatSparkle {
+  0% { transform: translateY(30px) scale(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { opacity: 1; transform: translateY(-40px) scale(1.4) rotate(180deg); }
+  90% { opacity: 0.9; }
+  100% { transform: translateY(-120px) scale(0.4) rotate(360deg); opacity: 0; }
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(6, 182, 212, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+}
+
+/* -------------------------------------------------------------
+ * 🎨 신규 추가 스타일: 프리미엄 테마 탭바 및 포브스/청첩장 카드
+ * ------------------------------------------------------------- */
+
+/* 테마 선택 탭바 */
+.premium-theme-tabbar-container {
+  max-width: 800px;
+  margin: 0 auto 30px auto;
+  text-align: center;
+  background: rgba(30, 41, 59, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.premium-theme-tabbar-container h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.premium-theme-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.premium-theme-tabs button {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.premium-theme-tabs button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.premium-theme-tabs button.active-tab {
+  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+}
+
+/* 마법사 비디오 세피아 처리 */
+.prophet-magic-avatar-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.85) contrast(1.15) brightness(0.92);
+  transform: scale(1.05);
+}
+
+/* 👑 테마 2: 포브스(Forbes) 잡지 커버 스타일링 */
+.forbes-card-landing {
+  background: linear-gradient(135deg, #111116 0%, #1e1e24 100%);
+  border: 6px solid #bfa15f; /* 샴페인 골드 테두리 */
+  border-radius: 6px;
+  padding: 24px;
+  color: #f1f5f9;
+  width: 380px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.forbes-header {
+  border-bottom: 2px solid #bfa15f;
+  padding-bottom: 10px;
+  text-align: center;
+  transform: translateZ(20px);
+}
+
+.forbes-logo-title {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 42px;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -2px;
+  color: #bfa15f;
+  text-transform: capitalize;
+}
+
+.forbes-meta-vol {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.forbes-headline {
+  background: #bfa15f;
+  color: #111116;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 6px;
+  margin: 14px 0;
+  transform: translateZ(25px);
+}
+
+.forbes-photo-frame {
+  background: #000;
+  padding: 8px;
+  border: 1px solid #bfa15f;
+  margin-bottom: 14px;
+  transform: translateZ(40px);
+}
+
+.forbes-photo-inner {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.1 / 1;
+}
+
+.forbes-avatar-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.25);
+  transform: scale(1.02);
+}
+
+.forbes-name-tag {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #bfa15f;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+.forbes-body-text {
+  transform: translateZ(20px);
+}
+
+.forbes-body-text h4 {
+  font-size: 14px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: #bfa15f;
+}
+
+.forbes-para {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin: 0;
+  text-align: justify;
+}
+
+/* 🌸 테마 3: 모바일 동영상 청첩장 스타일링 */
+.wedding-card-landing {
+  background: linear-gradient(135deg, #fffaf6 0%, #ffedea 100%);
+  border: 4px solid #fbc4b8; /* 따뜻한 살구 핑크 테두리 */
+  border-radius: 12px;
+  padding: 26px;
+  color: #4a3e3d;
+  width: 380px;
+  box-shadow: 0 20px 50px rgba(244,164,153,0.25), 0 10px 20px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+/* 벚꽃 흔날림 효과 */
+.wedding-blossoms {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.wedding-blossoms div {
+  position: absolute;
+  font-size: 14px;
+  animation: fallBlossom 8s linear infinite;
+  opacity: 0;
+}
+
+.wb-petal1 { left: 10%; top: -10%; animation-delay: 0s; }
+.wb-petal2 { left: 50%; top: -10%; animation-delay: 2.5s; }
+.wb-petal3 { left: 85%; top: -10%; animation-delay: 5s; }
+
+.wedding-header {
+  text-align: center;
+  margin-bottom: 12px;
+  transform: translateZ(20px);
+}
+
+.wedding-subtitle {
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #a78885;
+}
+
+.wedding-logo-title {
+  font-family: 'Noto Serif KR', 'Georgia', serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+  color: #8c5b55;
+  letter-spacing: -0.5px;
+}
+
+.wedding-photo-frame {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(140, 91, 85, 0.12);
+  margin-bottom: 14px;
+  transform: translateZ(45px);
+}
+
+.wedding-photo-inner {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1.15 / 1;
+  border-radius: 4px;
+}
+
+.wedding-avatar-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(1.03) saturate(1.05);
+}
+
+.wedding-name-tag {
+  text-align: center;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8c5b55;
+  margin-top: 8px;
+}
+
+.wedding-body-text {
+  transform: translateZ(20px);
+  text-align: center;
+}
+
+.wedding-body-text h4 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #8c5b55;
+}
+
+.wedding-para {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #705f5d;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.wedding-date-place {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #a78885;
+  border-top: 1px solid #fbe5e2;
+  padding-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* 벚꽃 날림 애니메이션 */
+@keyframes fallBlossom {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translate(80px, 400px) rotate(360deg); opacity: 0; }
+}
+

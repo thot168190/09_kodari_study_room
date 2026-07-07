@@ -1,0 +1,386 @@
+/* 🎬 밈 팩토리 CSS 스타일 파일 */
+
+.memefactory-container {
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+  max-width: 1080px;
+  margin: 0 auto 60px;
+}
+
+/* 🚀 factory Hero Section */
+.factory-hero {
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 32px;
+}
+
+.factory-badge {
+  display: inline-flex;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  color: #db2777;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.factory-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+
+.highlight-purple {
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.factory-sub {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* 📂 2열 레이아웃 */
+.factory-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* 📥 입력 카드 */
+.factory-input-card {
+  background: #faf5ff;
+  border: 1px solid #f3e8ff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.02);
+}
+
+.factory-input-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #581c87;
+  margin-bottom: 8px;
+}
+
+.input-desc {
+  font-size: 12.5px;
+  color: #7b1fa2;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.field-group {
+  margin-bottom: 20px;
+}
+
+.field-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.field-group input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-group input:focus {
+  border-color: #c084fc;
+}
+
+.field-group textarea {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.field-group textarea:focus {
+  border-color: #c084fc;
+}
+
+.btn-generate-meme {
+  width: 100%;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  border: none;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-generate-meme:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.btn-generate-meme:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 🖥️ 결과 패널 */
+.factory-result-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  min-height: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 결과 대기 중 */
+.empty-result-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-result-state h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.empty-result-state p {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* 생성된 결과 */
+.meme-result {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.meme-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.result-badge {
+  display: inline-block;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.meme-result-header h4 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.bgm-tag {
+  font-size: 12.5px;
+  color: #8b5cf6;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.btn-audio-playback {
+  background: #f3e8ff;
+  border: 1px solid #e9d5ff;
+  color: #7c3aed;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-audio-playback:hover {
+  background: #e9d5ff;
+}
+
+.btn-audio-playback.playing {
+  background: #ec4899;
+  border-color: #ec4899;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
+  animation: pulse 1.5s infinite;
+}
+
+/* 15초 스토리보드 타임라인 */
+.script-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-frame {
+  display: flex;
+  gap: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  transition: all 0.3s;
+}
+
+.timeline-frame.active {
+  border-color: #a855f7;
+  background: #fdf4ff;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.08);
+  transform: scale(1.01);
+}
+
+.frame-time-badge {
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  height: fit-content;
+  white-space: nowrap;
+}
+
+.frame-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.frame-video-desc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #475569;
+}
+
+.icon-film {
+  color: #64748b;
+}
+
+.frame-audio-bubble {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 12px 12px 12px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+
+.icon-speaker {
+  color: #a855f7;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.frame-audio-bubble p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1e293b;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* 마케팅 팁 박스 */
+.marketing-tip-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.marketing-tip-box h5 {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #b45309;
+  margin-bottom: 6px;
+}
+
+.marketing-tip-box p {
+  font-size: 12.5px;
+  color: #78350f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 애니메이션 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

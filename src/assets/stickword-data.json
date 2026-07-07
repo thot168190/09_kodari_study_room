@@ -1,0 +1,52 @@
+[
+  {
+    "id": "word-run",
+    "word": "RUN",
+    "meaning": "달리다",
+    "phonetic": "/rʌn/",
+    "sentence": "The dog can run fast.",
+    "translation": "개는 빨리 달릴 수 있다.",
+    "animationUrl": "https://media.giphy.com/media/t0=stickman-running/giphy.gif",
+    "category": "action"
+  },
+  {
+    "id": "word-jump",
+    "word": "JUMP",
+    "meaning": "뛰다",
+    "phonetic": "/dʒʌmp/",
+    "sentence": "He can jump very high.",
+    "translation": "그는 아주 높이 뛸 수 있다.",
+    "animationUrl": "https://media.giphy.com/media/t0=stickman-jumping/giphy.gif",
+    "category": "action"
+  },
+  {
+    "id": "word-eat",
+    "word": "EAT",
+    "meaning": "먹다",
+    "phonetic": "/iːt/",
+    "sentence": "I like to eat apples.",
+    "translation": "나는 사과를 먹는 것을 좋아한다.",
+    "animationUrl": "https://media.giphy.com/media/t0=stickman-eating/giphy.gif",
+    "category": "action"
+  },
+  {
+    "id": "word-sleep",
+    "word": "SLEEP",
+    "meaning": "자다",
+    "phonetic": "/sliːp/",
+    "sentence": "The baby is fast asleep.",
+    "translation": "아기가 깊이 잠들었다.",
+    "animationUrl": "https://media.giphy.com/media/t0=stickman-sleeping/giphy.gif",
+    "category": "action"
+  },
+  {
+    "id": "word-fly",
+    "word": "FLY",
+    "meaning": "날다",
+    "phonetic": "/flaɪ/",
+    "sentence": "Birds can fly in the sky.",
+    "translation": "새들은 하늘을 날 수 있다.",
+    "animationUrl": "https://media.giphy.com/media/t0=stickman-flying/giphy.gif",
+    "category": "action"
+  }
+]

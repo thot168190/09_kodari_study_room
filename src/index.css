@@ -1,0 +1,10 @@
+/* 🚀 Reset base styles */
+html, body, #root {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  border: none !important;
+  display: block !important;
+}

@@ -1,0 +1,1150 @@
+/* -------------------------------------------------------------
+ * AvatarStudio.css - Premium Glassmorphism & Magical CSS Styles
+ * ------------------------------------------------------------- */
+
+.avatar-studio-container {
+  padding: 24px;
+  color: var(--text-primary);
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  max-width: 1280px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* 🚀 히어로 배너 */
+.studio-hero-section {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px 0 rgba(15, 23, 42, 0.03);
+}
+
+.studio-hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.studio-badge-row {
+  display: inline-block;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  margin-bottom: 14px;
+}
+
+.studio-title-main {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.highlight-purple {
+  background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.studio-sub-main {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 800px;
+}
+
+/* 🗺️ 레이아웃 구성 */
+.studio-grid-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .studio-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ⚙️ 컨트롤 카드 */
+.studio-control-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 30px 0 rgba(15, 23, 42, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.control-step-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  margin: 0;
+}
+
+.step-desc-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* 1단계: 성별/모델선택 */
+.gender-toggle-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.gender-btn {
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.25s;
+  text-align: left;
+}
+
+.btn-avatar-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.gender-btn:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.gender-btn.active {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: #2563eb;
+  color: #2563eb;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.1);
+}
+
+.gender-btn.active .btn-avatar-thumb {
+  border-color: #2563eb;
+}
+
+/* 2단계: 세로형 스타일 리스트 */
+.style-card-grid-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.style-card-row {
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--text-primary);
+  text-align: left;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.style-card-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.style-card-row.active {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+}
+
+.style-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.style-bullet {
+  width: 6px;
+  height: 6px;
+  background-color: #94a3b8;
+  border-radius: 9999px;
+  display: inline-block;
+  transition: all 0.2s;
+}
+
+.style-card-row.active .style-bullet {
+  background-color: #10b981;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px #10b981;
+}
+
+.style-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding-left: 14px;
+}
+
+/* 3단계: 커스텀 정보 입력판 */
+.info-custom-panel {
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.input-grid-studio {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 12px;
+}
+
+.theme-input-studio {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.theme-input-studio:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
+}
+
+.theme-textarea-studio {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: none;
+  transition: all 0.2s;
+}
+
+.theme-textarea-studio:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.1);
+}
+
+.stats-slider-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stats-slider-grid input[type="range"] {
+  width: 100%;
+  accent-color: #06b6d4;
+  height: 4px;
+  margin-top: 4px;
+}
+
+/* 4단계: 업로드 */
+.upload-dropzone-studio {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-dropzone-studio:hover {
+  border-color: #a855f7;
+  background: rgba(139, 92, 246, 0.04);
+}
+
+.upload-icon-studio {
+  color: #64748b;
+  transition: color 0.2s;
+}
+
+.upload-dropzone-studio:hover .upload-icon-studio {
+  color: #a855f7;
+}
+
+.upload-dropzone-studio h5 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.upload-dropzone-studio p {
+  font-size: 10px;
+  color: #64748b;
+  margin: 0;
+}
+
+.uploaded-photos-studio {
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.uploaded-header-studio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.btn-clear-studio {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.thumbs-row-studio {
+  display: flex;
+  gap: 8px;
+}
+
+.thumb-studio {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid transparent;
+}
+
+.thumb-studio img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-studio.active-border {
+  border-color: #a855f7;
+}
+
+.thumb-studio.placeholder {
+  border: 1px dashed rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumb-studio.placeholder span {
+  font-size: 9px;
+  color: #64748b;
+}
+
+.thumb-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  color: #a855f7;
+  font-size: 8px;
+  text-align: center;
+  padding: 1px 0;
+  font-weight: 700;
+}
+
+/* 생성하기 가동 버튼 */
+.btn-trigger-studio {
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+  border: none;
+  color: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-trigger-studio:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-trigger-studio:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 🖥️ 모니터 및 결과 영역 */
+.studio-monitor-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 대기 화면 */
+.empty-studio-state {
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.empty-studio-icon {
+  font-size: 48px;
+  color: #64748b;
+  margin-bottom: 16px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-studio-state h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin: 0 0 10px 0;
+}
+
+.empty-studio-state p {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0;
+}
+
+/* GPU 모니터 화면 */
+.gpu-monitor-screen {
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #a855f7;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.monitor-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 8px;
+  font-weight: 700;
+}
+
+.progress-track {
+  background: rgba(255,255,255,0.05);
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, #a855f7, #06b6d4);
+  height: 100%;
+  width: 0;
+  transition: width 0.1s linear;
+}
+
+.monitor-logs {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: #38bdf8;
+  line-height: 1.4;
+}
+
+.log-line {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* 🖼️ 결과 전체 컨테이너 및 툴바 */
+.result-outer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.badge-wizard-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.result-actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-toolbar-action {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-toolbar-action:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-toolbar-action.icon-only {
+  padding: 6px 8px;
+}
+
+/* 3D Parallax Canvas */
+.parallax-canvas {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* -------------------------------------------------------------
+ * 테마 1: 해리포터 마법 신문 (Daily Prophet)
+ * ------------------------------------------------------------- */
+.daily-prophet-newspaper {
+  background-color: #f2e6d0; /* 빈티지 누런 양피지 색상 */
+  background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 0),
+                    radial-gradient(rgba(0,0,0,0.05) 1px, transparent 0);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+  border: 10px double #4a3c31;
+  border-radius: 4px;
+  padding: 24px;
+  color: #2b1f1d;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  font-family: 'Cinzel', 'Georgia', serif;
+}
+
+.newspaper-header {
+  border-bottom: 3px solid #2b1f1d;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.newspaper-meta-top {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #4a3c31;
+  margin-bottom: 6px;
+}
+
+.newspaper-title {
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 0 0 6px 0;
+  font-family: 'Georgia', serif;
+  border-top: 1px solid #2b1f1d;
+  border-bottom: 1px solid #2b1f1d;
+  padding: 4px 0;
+}
+
+.newspaper-meta-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4a3c31;
+  margin-top: 4px;
+}
+
+.newspaper-wanted-headline {
+  background: #2b1f1d;
+  color: #f2e6d0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  padding: 6px;
+  margin: 14px 0;
+  text-transform: uppercase;
+}
+
+/* 움직이는 마법 액자 */
+.magic-photo-frame {
+  background: #3a2e2b;
+  padding: 12px;
+  border: 4px solid #4a3c31;
+  margin-bottom: 16px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+}
+
+.magic-photo-glow-border {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #2b1f1d;
+}
+
+/* 세피아톤 필터 + 부드러운 숨쉬기 애니메이션 (해리포터 느낌 극대화) */
+.moving-magic-avatar.sepia-effect {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.85) contrast(1.1) brightness(0.9) grayscale(0.2);
+  animation: magicBreath 6s ease-in-out infinite;
+}
+
+/* 반짝이는 마법 가루 파티클 */
+.sparkle-particles-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sparkle-particles-layer span {
+  position: absolute;
+  color: rgba(218, 165, 32, 0.7); /* 금빛 반짝이 */
+  font-size: 12px;
+  animation: floatSparkle 4s linear infinite;
+  opacity: 0;
+}
+
+.sparkle-particles-layer .p1 { left: 10%; top: 80%; animation-delay: 0s; }
+.sparkle-particles-layer .p2 { left: 40%; top: 90%; animation-delay: 1.2s; font-size: 16px; }
+.sparkle-particles-layer .p3 { left: 70%; top: 75%; animation-delay: 2.5s; }
+.sparkle-particles-layer .p4 { left: 85%; top: 85%; animation-delay: 0.5s; font-size: 10px; }
+.sparkle-particles-layer .p5 { left: 25%; top: 70%; animation-delay: 1.8s; }
+
+.frame-bottom-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #f2e6d0;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.newspaper-content-body h3 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.news-lead-para {
+  font-size: 11.5px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+  color: #3a2e2b;
+  text-align: justify;
+}
+
+.news-skill-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.news-skill-tag {
+  background: rgba(74, 60, 49, 0.15);
+  border: 1px solid rgba(74, 60, 49, 0.3);
+  color: #2b1f1d;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------
+ * 테마 2: 아동/교육용 마법 카드 (Kids Magic Card)
+ * ------------------------------------------------------------- */
+.kids-magic-trading-card {
+  background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+  border: 6px solid #eab308; /* 황금색 테두리 */
+  border-radius: 18px;
+  padding: 16px;
+  color: #fff;
+  box-shadow: 0 15px 35px rgba(234, 179, 8, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.kids-magic-trading-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.08) 50%, transparent 55%);
+  animation: cardShimmer 6s infinite linear;
+  pointer-events: none;
+}
+
+.card-top-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.07);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+}
+
+.card-element-badge {
+  font-size: 9px;
+  background: #eab308;
+  color: #1e1b4b;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.card-character-name {
+  font-size: 14px;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.card-level-stars {
+  font-size: 10px;
+  color: #eab308;
+}
+
+.card-image-box {
+  border: 3px solid #eab308;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1.1 / 1;
+}
+
+/* 아동용 마법 카드 홀로그램 글로우 + 부드러운 상하 부유 애니메이션 */
+.moving-magic-avatar.glow-effect {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: floatCardAvatar 4s ease-in-out infinite;
+}
+
+.magic-particles-colorful span {
+  position: absolute;
+  color: #22d3ee;
+  font-size: 14px;
+  animation: floatSparkle 3s linear infinite;
+  opacity: 0;
+}
+
+.magic-particles-colorful .cp1 { left: 20%; top: 75%; animation-delay: 0s; color: #ec4899; }
+.magic-particles-colorful .cp2 { left: 50%; top: 80%; animation-delay: 1s; color: #38bdf8; }
+.magic-particles-colorful .cp3 { left: 80%; top: 70%; animation-delay: 2s; color: #a855f7; }
+
+.card-stats-body {
+  margin-top: 12px;
+}
+
+.card-skills-list {
+  font-size: 10px;
+  background: rgba(0,0,0,0.3);
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 8px;
+}
+
+.card-flavor-text {
+  font-size: 10px;
+  color: #cbd5e1;
+  line-height: 1.4;
+  font-style: italic;
+  margin: 0 0 12px 0;
+}
+
+.card-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.attr-item {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.attr-label {
+  font-size: 9px;
+  color: #94a3b8;
+  display: block;
+}
+
+.attr-val {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* 테마 3: 일반 스탠다드 프로필 */
+.standard-photo-frame-output {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.frame-glow-border-standard {
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.1);
+}
+
+.main-standard-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.standard-details-footer {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.standard-details-footer h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  color: #fff;
+}
+
+.standard-details-footer p {
+  margin: 0;
+  font-size: 11px;
+  color: #06b6d4;
+}
+
+/* 엑싯 모델 설명 */
+.exit-model-box-studio {
+  background: rgba(139, 92, 246, 0.07);
+  border-left: 3px solid #a855f7;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.exit-model-box-studio h5 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d8b4fe;
+  margin: 0 0 6px 0;
+}
+
+.exit-model-box-studio p {
+  font-size: 11px;
+  color: #c084fc;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ✉️ 이메일 전송 팝업 모달 */
+.email-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.email-modal-card {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  animation: slideBubble 0.25s ease-out;
+}
+
+.email-modal-card h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #fff;
+}
+
+.email-input-field {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: #fff;
+  padding: 12px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.email-input-field:focus {
+  outline: none;
+  border-color: #a855f7;
+}
+
+.email-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-email-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #94a3b8;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-email-submit {
+  background: linear-gradient(135deg, #a855f7, #8b5cf6);
+  border: none;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.btn-email-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 🌀 애니메이션 기프 정의 (해리포터 빈티지 초상화 전용 움직임) */
+@keyframes magicBreath {
+  0% { transform: scale(1.0) rotate(0deg) translate(0, 0); }
+  33% { transform: scale(1.02) rotate(0.4deg) translate(0.5px, -0.5px); }
+  66% { transform: scale(1.01) rotate(-0.3deg) translate(-0.5px, 0.5px); }
+  100% { transform: scale(1.0) rotate(0deg) translate(0, 0); }
+}
+
+@keyframes floatCardAvatar {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(0.5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes floatSparkle {
+  0% { transform: translateY(30px) scale(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { opacity: 1; transform: translateY(-40px) scale(1.4) rotate(180deg); }
+  90% { opacity: 0.9; }
+  100% { transform: translateY(-120px) scale(0.4) rotate(360deg); opacity: 0; }
+}
+
+@keyframes cardShimmer {
+  0% { transform: translate(-30%, -30%); }
+  100% { transform: translate(30%, 30%); }
+}
+
+/* -------------------------------------------------------------
+ * 3D Holographic Sheen & Layer Depth Styles
+ * ------------------------------------------------------------- */
+.card-holo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  opacity: 0.85;
+  background: radial-gradient(
+    circle at calc(var(--holo-x, 50) * 1%) calc(var(--holo-y, 50) * 1%),
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(168, 85, 247, 0.2) 25%,
+    rgba(6, 182, 212, 0.2) 50%,
+    transparent 80%
+  );
+  transition: opacity 0.5s ease;
+}
+
+/* 3D Depth perspective elements */
+.daily-prophet-newspaper {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.newspaper-header, .newspaper-wanted-headline, .newspaper-content-body {
+  transform: translateZ(20px);
+}
+
+/* 마법 액자가 붕 뜨며, 내부에서 느린 해리포터 루프 기프처럼 움직임 가동 */
+.magic-photo-frame {
+  transform: translateZ(45px);
+  transform-style: preserve-3d;
+  animation: magicBreath 6s ease-in-out infinite; /* 부드러운 해리포터 식 움직임 안정화 */
+}
+
+/* 마우스 커서의 반대 방향으로 인물만 움직여, 3D 가상 공간 깊이 구현 */
+.moving-magic-avatar {
+  transform: translate3d(calc((var(--holo-x, 50) - 50) * -0.4px), calc((var(--holo-y, 50) - 50) * -0.4px), 15px) scale(1.1);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.kids-magic-trading-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.card-top-name-row {
+  transform: translateZ(30px);
+}
+
+.card-image-box {
+  transform: translateZ(55px);
+  transform-style: preserve-3d;
+  animation: magicBreath 6s ease-in-out infinite;
+}
+
+.card-stats-body {
+  transform: translateZ(25px);
+}
+
+.standard-photo-frame-output {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.frame-glow-border-standard {
+  transform: translateZ(40px);
+  transform-style: preserve-3d;
+}
+
+.main-standard-img {
+  transform: translate3d(calc((var(--holo-x, 50) - 50) * -0.4px), calc((var(--holo-y, 50) - 50) * -0.4px), 15px) scale(1.1);
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+.standard-details-footer {
+  transform: translateZ(20px);
+}
