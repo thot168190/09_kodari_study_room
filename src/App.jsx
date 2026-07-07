@@ -25,6 +25,13 @@ function App() {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [loadingAI, setLoadingAI] = useState({ summary: false, quiz: false });
 
+  // 💬 노트 전용 실시간 Q&A 챗봇 상태
+  const [noteChatHistory, setNoteChatHistory] = useState([
+    { sender: 'kodari', text: '대표님, 이 노트 내용에서 궁금하신 점이 있으시면 언제든지 질문해 주십시오! 성심성의껏 보좌하겠습니다.' }
+  ]);
+  const [noteChatInput, setNoteChatInput] = useState('');
+  const [loadingNoteChat, setLoadingNoteChat] = useState(false);
+
   // 📝 커스텀 노트 추가 상태
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState('');
@@ -191,7 +198,62 @@ ${studyChat.slice(-5).map(m => `${m.sender === 'user' ? '대표님' : '코다리
     setQuizList([]);
     setUserAnswers({});
     setQuizSubmitted(false);
+    setNoteChatHistory([
+      { sender: 'kodari', text: '대표님, 이 노트 내용에서 궁금하신 점이 있으시면 언제든지 질문해 주십시오! 성심성의껏 보좌하겠습니다.' }
+    ]);
+    setNoteChatInput('');
   }, [selectedNote]);
+
+  // 💬 노트 전용 실시간 Q&A 챗봇 전송 함수
+  const handleSendNoteChatMessage = async () => {
+    if (!noteChatInput.trim() || !geminiApiKey || !selectedNote) return;
+    
+    const userMsg = { sender: 'user', text: noteChatInput };
+    setNoteChatHistory(prev => [...prev, userMsg]);
+    setNoteChatInput('');
+    setLoadingNoteChat(true);
+
+    try {
+      const prompt = `당신은 대표님의 비즈니스와 공부를 보좌하는 최고 성실한 총괄부장 '코다리'입니다.
+현재 대표님은 다음 학습 노트를 읽고 계십니다:
+
+---
+[학습 노트 본문]
+${selectedNote.content}
+---
+
+대표님이 이 노트 내용에 대해 다음과 같이 질문하셨습니다:
+"${noteChatInput}"
+
+반드시 제공된 노트 내용(본문 팩트)을 적극 기반으로 하여 명쾌하게 설명해 드리되, 대표님께 깍듯한 존댓말(예: "~하옵니다, 대표님!", "~이옵니다")을 사용하여 충성스럽고 품격 있는 코다리부장 어조로 대답해 주세요.
+
+이전 Q&A 대화 기록:
+${noteChatHistory.slice(-4).map(m => `${m.sender === 'user' ? '대표님' : '코다리'}: ${m.text}`).join('\n')}
+
+답변을 작성해 주세요:`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        }
+      );
+
+      const data = await response.json();
+      const answer = data.candidates[0].content.parts[0].text.trim();
+      
+      setNoteChatHistory(prev => [...prev, { sender: 'kodari', text: answer }]);
+    } catch (err) {
+      console.error(err);
+      setNoteChatHistory(prev => [...prev, { sender: 'kodari', text: '대표님, 죄송하옵니다. 대답을 조율하는 도중 통신 장애가 발생했사옵니다. 다시 말씀해 주시겠습니까?' }]);
+    } finally {
+      setLoadingNoteChat(false);
+    }
+  };
 
   // 1. AI 핵심 요약 생성
   const generateSummary = async () => {
@@ -848,6 +910,95 @@ ${selectedNote.content}`
                             </div>
                           </>
                         )}
+
+                        {/* 🤖 실시간 노트 챗봇 컴포넌트 추가 */}
+                        <div className="note-chatbot-section" style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px dashed rgba(0,0,0,0.08)' }}>
+                           <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#8b5cf6', fontSize: '13px', marginBottom: '12px', fontWeight: '700' }}>
+                             <span>🤖</span> 코다리부장 실시간 문답 (Q&A)
+                           </h4>
+                           
+                           <div className="note-chat-history" style={{ 
+                             maxHeight: '180px', 
+                             overflowY: 'auto', 
+                             padding: '10px', 
+                             background: 'rgba(0,0,0,0.015)', 
+                             borderRadius: '8px', 
+                             display: 'flex', 
+                             flexDirection: 'column', 
+                             gap: '8px',
+                             marginBottom: '10px',
+                             border: '1px solid rgba(0,0,0,0.05)',
+                             boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)'
+                           }}>
+                             {noteChatHistory.map((msg, idx) => (
+                               <div key={idx} style={{ 
+                                 alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                                 maxWidth: '85%',
+                                 padding: '8px 12px',
+                                 borderRadius: '8px',
+                                 fontSize: '12px',
+                                 lineHeight: '1.5',
+                                 background: msg.sender === 'user' ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : '#ffffff',
+                                 color: msg.sender === 'user' ? '#ffffff' : 'var(--text-primary)',
+                                 boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                                 border: msg.sender === 'user' ? 'none' : '1px solid rgba(0,0,0,0.06)',
+                                 whiteSpace: 'pre-wrap'
+                               }}>
+                                 {msg.text}
+                               </div>
+                             ))}
+                             {loadingNoteChat && (
+                               <div style={{ 
+                                 alignSelf: 'flex-start',
+                                 padding: '6px 12px',
+                                 background: '#ffffff',
+                                 borderRadius: '8px',
+                                 fontSize: '11px',
+                                 color: '#94a3b8',
+                                 border: '1px solid rgba(0,0,0,0.06)'
+                               }}>
+                                 답변 구상 중...
+                               </div>
+                             )}
+                           </div>
+                           
+                           <div style={{ display: 'flex', gap: '8px' }}>
+                             <input 
+                               type="text" 
+                               placeholder="이 노트에 대해 궁금한 점을 적어보세요..."
+                               value={noteChatInput}
+                               onChange={(e) => setNoteChatInput(e.target.value)}
+                               onKeyDown={(e) => { if (e.key === 'Enter') handleSendNoteChatMessage(); }}
+                               disabled={loadingNoteChat}
+                               style={{
+                                 flex: 1,
+                                 background: '#ffffff',
+                                 border: '1px solid rgba(0,0,0,0.1)',
+                                 borderRadius: '6px',
+                                 padding: '8px 12px',
+                                 fontSize: '12px',
+                                 color: 'var(--text-primary)'
+                               }}
+                             />
+                             <button 
+                               onClick={handleSendNoteChatMessage}
+                               disabled={loadingNoteChat || !noteChatInput.trim()}
+                               style={{
+                                 background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                                 border: 'none',
+                                 color: '#fff',
+                                 padding: '8px 16px',
+                                 borderRadius: '6px',
+                                 cursor: 'pointer',
+                                 fontSize: '12px',
+                                 fontWeight: '600',
+                                 boxShadow: '0 2px 8px rgba(139, 92, 246, 0.15)'
+                               }}
+                             >
+                               질문
+                             </button>
+                           </div>
+                         </div>
                       </div>
                     )}
                   </div>
