@@ -205,6 +205,10 @@ ${studyChat.slice(-5).map(m => `${m.sender === 'user' ? '대표님' : '코다리
     const savedCustom = localStorage.getItem('kodari_custom_notes');
     const customNotes = savedCustom ? JSON.parse(savedCustom) : [];
     const combined = [...customNotes, ...notesData];
+    
+    // 📅 최신 수정일(lastEdited) 기준 내림차순(최신순) 정렬 적용
+    combined.sort((a, b) => new Date(b.lastEdited) - new Date(a.lastEdited));
+    
     setNotes(combined);
     if (combined.length > 0) {
       setSelectedNote(combined[0]);
