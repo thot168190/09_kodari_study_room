@@ -1,0 +1,648 @@
+/* ==========================================================================
+   🚀 NicheScanner Premium SaaS Sleek Dark Mode Styles
+   (Motionsites.ai / SketchGift.ai 격자 눈금 및 오로라 글라스모피즘 스타일 적용)
+   ========================================================================== */
+
+:root {
+  --ns-bg: #07080a;
+  --ns-card: rgba(13, 17, 24, 0.75);
+  --ns-card-hover: rgba(21, 26, 45, 0.85);
+  --ns-line: rgba(255, 255, 255, 0.06);
+  --ns-text: #f8fafc;
+  --ns-muted: #94a3b8;
+  --ns-purple: #c084fc;
+  --ns-blue: #3b82f6;
+  --ns-cyan: #06b6d4;
+  --ns-purple-glow: rgba(192, 132, 252, 0.15);
+  --ns-emerald: #10b981;
+  --ns-rose: #f43f5e;
+  --font-sans: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+.ns-wrapper {
+  background-color: var(--ns-bg);
+  color: var(--ns-text);
+  min-height: 100vh;
+  padding: 40px 24px 80px 24px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+  /* 📐 Motionsites.ai 격자 눈금 배경 패턴 */
+  background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
+}
+
+/* 🌌 뒷배경 오로라 네온 효과 */
+.ns-glow-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ns-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.18;
+}
+
+.ns-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--ns-purple);
+  top: -10%;
+  right: 10%;
+  animation: nsFloat 20s infinite alternate;
+}
+
+.ns-orb-2 {
+  width: 600px;
+  height: 600px;
+  background: var(--ns-blue);
+  bottom: -15%;
+  left: 10%;
+  animation: nsFloat 25s infinite alternate-reverse;
+}
+
+@keyframes nsFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(50px) scale(1.1); }
+}
+
+.ns-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* 🚀 그라디언트 글자 효과 */
+.gradient-text-wizard {
+  background: linear-gradient(135deg, var(--ns-purple), var(--ns-blue), var(--ns-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 🏷️ Header Area (GNB) */
+.ns-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ns-line);
+}
+
+.ns-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ns-logo-icon {
+  color: var(--ns-purple);
+  animation: spin 10s linear infinite;
+}
+
+.ns-logo-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.ns-header-badge {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--ns-line);
+  color: var(--ns-cyan);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ns-header-badge.pro {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  animation: pulse 2s infinite;
+}
+
+.btn-ns-exit {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--ns-line);
+  color: var(--ns-text-secondary);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ns-exit:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ns-text);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* 🚀 Hero Section */
+.ns-hero {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.ns-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ns-cyan);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-bottom: 16px;
+  border: 1px solid var(--ns-line);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ns-hero-title {
+  font-size: clamp(28px, 5.5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, var(--ns-text) 40%, var(--ns-muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ns-hero-sub {
+  font-size: clamp(14px, 1.8vw, 17px);
+  color: var(--ns-muted);
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* 🖥️ Live Preorder Ticker */
+.ns-live-stat-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  color: #c084fc;
+  margin-top: 24px;
+}
+
+.ns-stat-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--ns-purple);
+  border-radius: 50%;
+  animation: nsPulseRed 1.5s infinite;
+}
+
+@keyframes nsPulseRed {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(192, 132, 252, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(192, 132, 252, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(192, 132, 252, 0); }
+}
+
+/* 🔮 Pricing Card (Glassmorphism) */
+.ns-pricing-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  color: var(--ns-text);
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.ns-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+  .ns-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ns-price-card {
+  background: var(--ns-card);
+  border: 1px solid var(--ns-line);
+  border-radius: 20px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ns-price-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.ns-price-card.featured {
+  border-color: var(--ns-purple);
+  box-shadow: 0 10px 30px var(--ns-purple-glow);
+  background: linear-gradient(180deg, var(--ns-card) 0%, rgba(13, 17, 24, 0.9) 100%);
+}
+
+.ns-card-ribbon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--ns-purple);
+  color: #000000;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+.ns-card-tier {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ns-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 1px;
+}
+
+.ns-price-card.featured .ns-card-tier {
+  color: var(--ns-purple);
+}
+
+.ns-card-price {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.ns-card-price span {
+  font-size: 14px;
+  color: var(--ns-muted);
+  font-weight: 500;
+}
+
+.ns-card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.ns-card-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.ns-feature-icon {
+  color: var(--ns-emerald);
+  flex-shrink: 0;
+}
+
+.ns-feature-icon.disabled {
+  color: var(--ns-rose);
+}
+
+.btn-pricing {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-pricing.free-tier {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--ns-line);
+  color: var(--ns-text);
+}
+
+.btn-pricing.free-tier:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-pricing.pro-tier {
+  background: linear-gradient(135deg, var(--ns-purple) 0%, var(--ns-blue) 100%);
+  color: #000000;
+  box-shadow: 0 4px 15px rgba(192, 132, 252, 0.25);
+}
+
+.btn-pricing.pro-tier:hover {
+  background: linear-gradient(135deg, #c897fd 0%, #4f8ff7 100%);
+  transform: translateY(-1px);
+}
+
+.btn-pricing.enterprise-tier {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ns-text);
+  border: 1px solid var(--ns-line);
+}
+
+.btn-pricing.enterprise-tier:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 🔒 Lock Overlay */
+.ns-lock-screen {
+  background: var(--ns-card);
+  border: 1px dashed var(--ns-line);
+  border-radius: 24px;
+  padding: 60px 40px;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ns-lock-icon-box {
+  width: 64px;
+  height: 64px;
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  color: var(--ns-rose);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px auto;
+}
+
+.ns-lock-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.ns-lock-desc {
+  font-size: 14px;
+  color: var(--ns-muted);
+  line-height: 1.5;
+  margin-bottom: 24px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 🛡️ Secure Stripe Checkout Modal */
+.ns-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 9, 0.8);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ns-modal {
+  background: var(--ns-card);
+  border: 1px solid var(--ns-line);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  animation: nsScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.ns-modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--ns-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ns-modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--ns-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 16px;
+}
+
+.btn-close-modal:hover {
+  color: var(--ns-text);
+}
+
+.ns-modal-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ns-summary-line {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--ns-line);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ns-summary-label {
+  font-size: 13.5px;
+  color: var(--ns-muted);
+}
+
+.ns-summary-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ns-cyan);
+}
+
+.ns-card-input-wrapper {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--ns-line);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ns-card-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ns-input-styled {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ns-text);
+  font-size: 14px;
+  width: 100%;
+  font-family: var(--font-mono);
+}
+
+.ns-input-styled::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.ns-card-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--ns-line);
+  padding-top: 14px;
+}
+
+.btn-pay-submit {
+  background: linear-gradient(90deg, var(--ns-emerald), #059669);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+  transition: all 0.2s;
+}
+
+.btn-pay-submit:hover:not(:disabled) {
+  background: linear-gradient(90deg, #34d399, var(--ns-emerald));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+.btn-pay-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ns-secure-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--ns-muted);
+}
+
+/* 🎉 Success Modal Layout */
+.ns-success-body {
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ns-success-icon-box {
+  width: 68px;
+  height: 68px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--ns-emerald);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  animation: nsPulseSuccess 2s infinite;
+}
+
+@keyframes nsPulseSuccess {
+  0% { box-shadow: 0 0 0 0px rgba(16, 185, 129, 0.3); }
+  70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0px rgba(16, 185, 129, 0); }
+}
+
+.ns-success-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.ns-success-desc {
+  font-size: 14px;
+  color: var(--ns-muted);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.btn-success-close {
+  background: var(--ns-purple);
+  color: #000000;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-success-close:hover {
+  background: #cba2fa;
+  transform: translateY(-1px);
+}

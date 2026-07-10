@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Settings, Play, Check, Loader2, HelpCircle, Activity, TrendingUp, Target, Workflow, Calendar, ChevronDown, ChevronUp, AlertCircle, ArrowRight, ShieldCheck, Zap, BookOpen, Copy } from 'lucide-react';
+import { Sparkles, Settings, Play, Check, Loader2, HelpCircle, Activity, TrendingUp, Target, Workflow, Calendar, ChevronDown, ChevronUp, AlertCircle, ArrowRight, ShieldCheck, Zap, BookOpen, Copy, Wand2 } from 'lucide-react';
 import './NicheDiagnoser.css';
 
-function NicheDiagnoser() {
+function NicheDiagnoser({ isSaaSMode = false, membership = 'PRO', onScanComplete }) {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // 1. 입력 상태 관리 - 대표님의 실제 유튜브 채널 '철만이 일기' 기준으로 전면 튜닝!
+  // 0. 마법사 입력 상태 관리
+  const [rawIdeaInput, setRawIdeaInput] = useState('');
+  const [sparkLoading, setSparkLoading] = useState(false);
+  const [isAutofilled, setIsAutofilled] = useState(false);
+
+  // 1. 입력 상태 관리
   const [brandName, setBrandName] = useState('철만이 일기');
   const [nicheKeyword, setNicheKeyword] = useState('7080 시골 실화 수채화 애니메이션');
   const [url, setUrl] = useState('https://www.youtube.com/@cheolmani_diary');
@@ -16,7 +21,7 @@ function NicheDiagnoser() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [loadingText, setLoadingText] = useState('');
   const [result, setResult] = useState(null);
-  const [activeResultTab, setActiveResultTab] = useState('vector'); // vector, diagnosis, plan, autopilot, lecture
+  const [activeResultTab, setActiveResultTab] = useState('vector');
   const [expandedWeeks, setExpandedWeeks] = useState({ 1: true });
   const [copiedText, setCopiedText] = useState('');
 
@@ -44,6 +49,117 @@ function NicheDiagnoser() {
     }
     return () => clearTimeout(timer);
   }, [loading, loadingStep]);
+
+  // 0.5. 웅얼웅얼 한 줄 아이디어를 Gemini API 또는 Mock으로 분석해 폼을 자동 완성하는 마법사 엔진
+  const handleIdeaSpark = async (e) => {
+    e.preventDefault();
+    if (!rawIdeaInput.trim()) {
+      alert('대표님, 웅얼웅얼거릴 한 줄 아이디어를 입력해 주세요! 😊');
+      return;
+    }
+    setSparkLoading(true);
+
+    const prompt = `당신은 1인 지식창업 및 AI 서비스 비즈니스 구축 전문가입니다.
+사용자가 브레인스토밍 단계에서 툭 던진 한 줄 낙서 아이디어를 분석하여, 1인 AI 기업으로 즉시 빌딩할 수 있도록 네 가지 정보를 구체화해 추천해 주십시오.
+
+[사용자의 한 줄 아이디어]:
+"${rawIdeaInput}"
+
+[요구사항]:
+반드시 아래의 JSON 구조로만 정확히 응답해 주십시오. 다른 주석, 부연 설명, 마크다운 백틱 (\`\`\`json ...) 기호를 절대 쓰지 말고 오직 순수한 JSON만 반환해야 합니다.
+
+{
+  "brandName": "세련되고 뾰족한 한국어 혹은 영어 브랜드명",
+  "nicheKeyword": "바늘구멍 같은 좁은 초격차 타겟 시장을 나타내는 키워드 (한 문장)",
+  "url": "아이디어에 걸맞은 그럴싸한 가상의 서비스 URL (예: https://www.xxxx.app)",
+  "competitors": "벤치마킹하거나 대체할 기존의 경쟁 서비스 2~3개 (쉼표로 구분)"
+}`;
+
+    // 1. API 키가 존재할 시 실시간 호출
+    if (geminiApiKey) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }]
+            })
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          let rawText = data.candidates[0].content.parts[0].text.trim();
+          if (rawText.startsWith('```')) {
+            rawText = rawText.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+          }
+          const parsed = JSON.parse(rawText);
+          if (parsed.brandName && parsed.nicheKeyword && parsed.url && parsed.competitors) {
+            setBrandName(parsed.brandName);
+            setNicheKeyword(parsed.nicheKeyword);
+            setUrl(parsed.url);
+            setCompetitors(parsed.competitors);
+            setIsAutofilled(true);
+            setTimeout(() => setIsAutofilled(false), 1500);
+            setSparkLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('마법사 API 호출 실패, Fallback 데이터로 자동 전환합니다.', err);
+      }
+    }
+
+    // 2. API 키가 없거나 실패 시 작동하는 고품질 Fallback Mock
+    setTimeout(() => {
+      const lowerInput = rawIdeaInput.toLowerCase();
+      let mock = {
+        brandName: "아이디어 메이커 (IdeaMaker)",
+        nicheKeyword: "1인 창업가를 위한 AI BM 구체화 및 자동 랜딩페이지 설계기",
+        url: "https://www.ideamaker.io",
+        competitors: "ShipFast, 부트스트랩 템플릿들"
+      };
+
+      if (lowerInput.includes('긁') || lowerInput.includes('크롤') || lowerInput.includes('수집') || lowerInput.includes('정보')) {
+        mock = {
+          brandName: "공시 스파이더 (DartSpider)",
+          nicheKeyword: "개인투자자용 기업 특이공시 및 외인/기관 매집 정보 자동 큐레이션",
+          url: "https://www.dartspider.co.kr",
+          competitors: "DART 전자공시, 딥서치, 웰로"
+        };
+      } else if (lowerInput.includes('음성') || lowerInput.includes('말') || lowerInput.includes('목소리') || lowerInput.includes('오디오')) {
+        mock = {
+          brandName: "웅얼웅얼 일지봇 (VoiceMOC)",
+          nicheKeyword: "횡설수설 음성 메모를 옵시디언 마크다운 구조화 문서로 정제해주는 툴",
+          url: "https://www.voicemoc.ai",
+          competitors: "AudioPen, TalkToOutline, 네이버 클로바노트"
+        };
+      } else if (lowerInput.includes('주식') || lowerInput.includes('투자') || lowerInput.includes('사냥')) {
+        mock = {
+          brandName: "사냥 타점 워처 (TargetWatcher)",
+          nicheKeyword: "옵시디언 주식 MOC 연동 모의투자 타점 자동 탐지기",
+          url: "https://www.targetwatcher.app",
+          competitors: "토스 스크리너, 인베스팅닷컴"
+        };
+      } else if (lowerInput.includes('니치') || lowerInput.includes('분석') || lowerInput.includes('진단')) {
+        mock = {
+          brandName: "니치 스캐너 (NicheScanner)",
+          nicheKeyword: "1인 메이커용 아이디어 2D 벡터 공간 위치 및 틈새 강도 실시간 측정기",
+          url: "https://www.nichescanner.com",
+          competitors: "Indie Hackers, Product Hunt, 디스콰이엇(Disquiet)"
+        };
+      }
+
+      setBrandName(mock.brandName);
+      setNicheKeyword(mock.nicheKeyword);
+      setUrl(mock.url);
+      setCompetitors(mock.competitors);
+      setIsAutofilled(true);
+      setTimeout(() => setIsAutofilled(false), 1500);
+      setSparkLoading(false);
+    }, 1500);
+  };
 
   // 텍스트 클립보드 복사
   const handleCopy = (text, key) => {
@@ -172,6 +288,7 @@ function NicheDiagnoser() {
       generateMockResult(competitorList);
     } finally {
       setLoading(false);
+      if (onScanComplete) onScanComplete();
     }
   };
 
@@ -271,6 +388,7 @@ function NicheDiagnoser() {
     };
 
     setResult(defaultResult);
+    if (onScanComplete) onScanComplete();
   };
 
   // 8주 플랜 아코디언 토글 핸들러
@@ -306,6 +424,48 @@ function NicheDiagnoser() {
       {/* ⚙️ 메인 폼 입력 영역 */}
       {!loading && !result && (
         <div className="diagnoser-card-wrapper">
+          {/* 🧙‍♂️ 아이디어 스파크 마법사 */}
+          <div className="spark-card">
+            <div className="spark-header">
+              <span className="spark-badge">🧙‍♂️ 코다리 부장의 아이디어 번개 구체화</span>
+              <span className="spark-title">Idea Spark</span>
+            </div>
+            <div className="spark-form-group">
+              <input
+                type="text"
+                className="spark-input"
+                placeholder="어떤 아이디어가 떠오르셨나요? 한 줄만 대충 웅얼거려보세요... (예: 귀찮은 지원금 긁어오기)"
+                value={rawIdeaInput}
+                onChange={(e) => setRawIdeaInput(e.target.value)}
+                disabled={sparkLoading}
+              />
+              <button 
+                type="button" 
+                className="spark-btn" 
+                onClick={handleIdeaSpark}
+                disabled={sparkLoading}
+              >
+                {sparkLoading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>구체화 중...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 size={16} />
+                    <span>구체화 스파크 ⚡</span>
+                  </>
+                )}
+              </button>
+            </div>
+            {sparkLoading && (
+              <div className="spark-loader-wrapper" style={{ marginTop: '14px' }}>
+                <Sparkles size={16} className="sparkle-icon" />
+                <span>Gemini API 연금술을 가동하여 4대 비즈니스 지표를 정밀 조립하는 중입니다...</span>
+              </div>
+            )}
+          </div>
+
           <form className="diagnoser-form" onSubmit={handleStartAnalysis}>
             <div className="form-group">
               <label className="form-label">
@@ -314,7 +474,7 @@ function NicheDiagnoser() {
               </label>
               <input
                 type="text"
-                className="diagnoser-input"
+                className={`diagnoser-input ${isAutofilled ? 'autofill-highlight' : ''}`}
                 placeholder="브랜드 혹은 서비스명을 명확하게 적어주세요."
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
@@ -329,7 +489,7 @@ function NicheDiagnoser() {
               </label>
               <input
                 type="text"
-                className="diagnoser-input"
+                className={`diagnoser-input ${isAutofilled ? 'autofill-highlight' : ''}`}
                 placeholder="사람들이 AI에 물어볼 카테고리나 세부 니치를 적어주세요."
                 value={nicheKeyword}
                 onChange={(e) => setNicheKeyword(e.target.value)}
@@ -344,7 +504,7 @@ function NicheDiagnoser() {
               </label>
               <input
                 type="text"
-                className="diagnoser-input"
+                className={`diagnoser-input ${isAutofilled ? 'autofill-highlight' : ''}`}
                 placeholder="https://example.com 또는 유튜브 주소를 적어주세요."
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -359,7 +519,7 @@ function NicheDiagnoser() {
               </label>
               <input
                 type="text"
-                className="diagnoser-input"
+                className={`diagnoser-input ${isAutofilled ? 'autofill-highlight' : ''}`}
                 placeholder="예: 경쟁사A, 경쟁사B, 경쟁사C (쉼표로 구분하여 적어주세요.)"
                 value={competitors}
                 onChange={(e) => setCompetitors(e.target.value)}

@@ -1,16 +1,59 @@
-# React + Vite
+# 🏠 코다리부장의 대표님 전용 AI 공부방 사용 설명서 📚
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+대표님, 충성! 에이전트 총괄부장 코다리입니다. 
+대표님이 아침저녁으로 초고속 가설 검증과 1인 SaaS 창업 공부를 하실 수 있도록 설계된 **'코다리 공부방'**의 초간단 사용 안내서이옵니다. 
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 1단계: 공부방 켜기 (실행 방법)
 
-## React Compiler
+대표님, 먼저 컴퓨터 터미널에서 아래와 같이 실행하시면 공부방이 작동합니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **개발 서버 실행**: 
+   공부방 프로젝트 폴더 경로에서 아래 명령어를 실행하십시오.
+   ```bash
+   npm run dev
+   ```
+2. **웹 브라우저 접속**:
+   명령어 실행 후 브라우저를 열고 다음 주소로 접속하십시오.
+   ```
+   http://localhost:5173/
+   ```
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧭 2단계: 핵심 기능 사용법 (Tab별 안내)
+
+공부방 상단에 있는 알록달록한 탭들을 누르시면 대표님이 원하시는 다양한 무기가 펼쳐집니다!
+
+### 1. 📚 해부 교재란 (Textbook)
+* **어떻게 쓰나요?**: 
+  - 왼쪽 목록에서 원하는 에피소드(예: `EP.01 피터 레벨스`, `EP.05 토니 딘` 등)를 고릅니다.
+  - 선택한 에피소드의 **공식 분석 교재**, **핵심 요약 브리핑**, **1인 기업 뼈대 설계안**을 한눈에 학습하실 수 있습니다.
+  - 공식 사이트 링킹 및 유튜브 동영상 바로가기 기능도 기본 탑재되어 있습니다.
+
+### 2. 🎨 피터레벨스 ReRoom AI (인테리어 원가 파괴 실습) 
+* **어떻게 쓰나요?**:
+  - 대표님이 공부하신 피터 레벨스의 `Interior AI`를 로컬에서 직접 시연해 보는 공간입니다.
+  - **[빠른 실습 샘플 픽]**에서 거실/침실/주방 중 하나를 누릅니다 (또는 대표님 방 사진 업로드).
+  - 인테리어 스타일(북유럽, 한옥 퓨전 등)을 선택한 뒤 **[AI 리디자인 렌더링]** 버튼을 누릅니다.
+  - 완료되면 가운데 **Before/After 바를 마우스로 잡고 좌우로 드래그**하며 인테리어 전후를 손쉽게 비교해 보십시오!
+
+### 3. 📚 둠칫 잉크워드 사전 (inkword.site)
+* **어떻게 쓰나요?**:
+  - 대표님의 자랑스러운 AI 단어 사전 서비스인 `inkword.site`를 연결 및 실습해 보는 탭입니다.
+  - 상단의 **`🌐 inkword.site 공식몰 바로가기 ↗`**를 누르시면 대표님의 공식 홈페이지로 바로 연결됩니다.
+  - 아래에서 아바타 캐릭터를 고르고, 카드를 터치하여 단어를 뒤집으며 입체적인 영어 단어 학습(TTS 낭독 포함)을 즐기실 수 있습니다.
+
+### 4. 🎥 같이 수업 듣기
+* **어떻게 쓰나요?**:
+  - 대표님이 보시는 유튜브 링크를 입력하고 [로드]하면, 오른쪽에 실시간 학습 도우미 **저 코다리 부장**이 24시간 스탠바이합니다.
+  - 영상을 감상하시면서 궁금한 비즈니스 개념이나 요약이 필요할 때 질문 창에 입력하시면, 제가 깍듯하고 명쾌하게 정리해 드리며 대화 기록을 학습 노트로 즉시 저장해 드립니다.
+
+### 5. 🤖 AI 챗봇 빌더 / 🎯 4대 준비물 진단기
+* **어떻게 쓰나요?**:
+  - 대표님의 니치 비즈니스 아이디어를 입력하고 진단 및 챗봇 뼈대 구성을 즉시 받아보는 초고속 가설 검증 툴킷이옵니다.
+
+---
+
+대표님, 혹시 실행하다가 막히시거나 화면에 오류가 나면 언제든 저 코다리 부장을 소리 높여 호출해 주십시오! 즉각 대기하겠습니다! 🫡

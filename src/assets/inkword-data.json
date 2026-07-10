@@ -6,8 +6,9 @@
     "phonetic": "/rʌn/",
     "sentence": "The dog can run fast.",
     "translation": "개는 빨리 달릴 수 있다.",
-    "animationUrl": "https://media.giphy.com/media/t0=stickman-running/giphy.gif",
-    "category": "action"
+    "category": "action",
+    "voxBg": "#E05A47",
+    "voxMotion": "slide-left"
   },
   {
     "id": "word-jump",
@@ -16,8 +17,9 @@
     "phonetic": "/dʒʌmp/",
     "sentence": "He can jump very high.",
     "translation": "그는 아주 높이 뛸 수 있다.",
-    "animationUrl": "https://media.giphy.com/media/t0=stickman-jumping/giphy.gif",
-    "category": "action"
+    "category": "action",
+    "voxBg": "#E7A75C",
+    "voxMotion": "bounce-up"
   },
   {
     "id": "word-eat",
@@ -26,8 +28,9 @@
     "phonetic": "/iːt/",
     "sentence": "I like to eat apples.",
     "translation": "나는 사과를 먹는 것을 좋아한다.",
-    "animationUrl": "https://media.giphy.com/media/t0=stickman-eating/giphy.gif",
-    "category": "action"
+    "category": "action",
+    "voxBg": "#4A9090",
+    "voxMotion": "chew-rotate"
   },
   {
     "id": "word-sleep",
@@ -36,8 +39,9 @@
     "phonetic": "/sliːp/",
     "sentence": "The baby is fast asleep.",
     "translation": "아기가 깊이 잠들었다.",
-    "animationUrl": "https://media.giphy.com/media/t0=stickman-sleeping/giphy.gif",
-    "category": "action"
+    "category": "action",
+    "voxBg": "#1A2A3A",
+    "voxMotion": "slow-float"
   },
   {
     "id": "word-fly",
@@ -46,7 +50,8 @@
     "phonetic": "/flaɪ/",
     "sentence": "Birds can fly in the sky.",
     "translation": "새들은 하늘을 날 수 있다.",
-    "animationUrl": "https://media.giphy.com/media/t0=stickman-flying/giphy.gif",
-    "category": "action"
+    "category": "action",
+    "voxBg": "#5B8A99",
+    "voxMotion": "pan-diagonal"
   }
 ]

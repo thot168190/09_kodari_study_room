@@ -7,15 +7,35 @@ import CaseStudy from './CaseStudy';
 import MemeFactory from './MemeFactory';
 import ChatbotBuilder from './ChatbotBuilder';
 import AvatarStudio from './AvatarStudio';
-import StickWordPlayer from './StickWordPlayer';
+import InkWordPlayer from './InkWordPlayer';
 import NicheDiagnoser from './NicheDiagnoser';
+import NicheScanner from './NicheScanner';
+import AlwayzzLanding from './AlwayzzLanding';
+import MarketeamLanding from './MarketeamLanding';
+import Textbook from './Textbook';
+import ReRoomAI from './ReRoomAI';
 
 function App() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const [showHubPortal, setShowHubPortal] = useState(false);
+  const [showNicheSaaS, setShowNicheSaaS] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('content'); // 'content' | 'quiz' | 'wrong' | 'fugu'
+  const [activeTab, setActiveTab] = useState('marketeam'); // 'content' | 'quiz' | 'wrong' | 'fugu'
+  const [activeTabGroup, setActiveTabGroup] = useState('launch'); // 'study' | 'practice' | 'builder' | 'launch'
+
+  // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
+  useEffect(() => {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study'].includes(activeTab)) {
+      setActiveTabGroup('study');
+    } else if (['reroom', 'inkword', 'memefactory', 'avatarstudio'].includes(activeTab)) {
+      setActiveTabGroup('practice');
+    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
+      setActiveTabGroup('builder');
+    } else if (['alwayzz', 'marketeam', 'casestudy'].includes(activeTab)) {
+      setActiveTabGroup('launch');
+    }
+  }, [activeTab]);
   
   // AI 데이터 상태
   const [summary, setSummary] = useState('');
@@ -38,8 +58,8 @@ function App() {
   const [newNoteContent, setNewNoteContent] = useState('');
 
   // 🎥 같이 수업 듣기 상태
-  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=NTsQF8PUdvM');
-  const [embedId, setEmbedId] = useState('NTsQF8PUdvM');
+  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=dKgzepcAvE0&t=28s');
+  const [embedId, setEmbedId] = useState('dKgzepcAvE0');
   const [studyChat, setStudyChat] = useState([
     {
       sender: 'kodari',
@@ -590,6 +610,10 @@ ${selectedNote.content}`
     }
   };
 
+  if (showNicheSaaS) {
+    return <NicheScanner onExit={() => setShowNicheSaaS(false)} />;
+  }
+
   if (showHubPortal) {
     return <ChannelHub onClose={() => setShowHubPortal(false)} />;
   }
@@ -604,10 +628,34 @@ ${selectedNote.content}`
             <div className="logo-text">KODARI ROOM</div>
           </div>
           <button 
+            className="btn-open-saas"
+            onClick={() => setShowNicheSaaS(true)}
+            style={{
+              marginTop: '12px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
+              border: 'none',
+              color: '#fff',
+              padding: '10px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '700',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>🚀 NicheScanner SaaS 런칭</span>
+          </button>
+          <button 
             className="btn-open-hub"
             onClick={() => setShowHubPortal(true)}
             style={{
-              marginTop: '12px',
+              marginTop: '8px',
               width: '100%',
               background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
               border: 'none',
@@ -626,6 +674,30 @@ ${selectedNote.content}`
             }}
           >
             <span>🌐 채널 포털 사이트 띄우기</span>
+          </button>
+          <button 
+            className="btn-open-textbook"
+            onClick={() => { setActiveTab('textbook'); setIsAddingNote(false); }}
+            style={{
+              marginTop: '8px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              border: 'none',
+              color: '#fff',
+              padding: '10px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '700',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.2)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>📚 모닝AI 해부 교재란</span>
           </button>
           <div className="sync-status">
             <span>총 {notes.length}개 노트 로드됨</span>
@@ -789,83 +861,151 @@ ${selectedNote.content}`
                 </div>
                 <p>노션 소스: {selectedNote.id.startsWith('custom-') ? '로컬 작성 노트' : <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" style={{ color: '#8b5cf6', textDecoration: 'none' }}>원본 보기 ↗</a>}</p>
               </div>
-              <div className="nav-tabs">
-                <button 
-                  className={`tab-btn ${activeTab === 'content' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('content')}
-                >
-                  <BookOpen size={16} /> 노트 본문 & AI 브리핑
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'quiz' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('quiz')}
-                >
-                  <Award size={16} /> AI 모의고사
-                </button>
-                {wrongNotes[selectedNote.id] && (
+              <div className="tab-container-nested">
+                {/* 📂 1단계 대분류 카테고리 탭 */}
+                <div className="tab-group-navigation">
                   <button 
-                    className={`tab-btn ${activeTab === 'wrong' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('wrong')}
+                    className={`group-tab-btn ${activeTabGroup === 'study' ? 'active' : ''}`}
+                    onClick={() => { setActiveTabGroup('study'); setActiveTab('content'); }}
                   >
-                    <AlertTriangle size={16} style={{ color: '#ef4444' }} /> 오답노트
+                    📚 배움 & 강의실
                   </button>
-                )}
-                <button 
-                  className={`tab-btn ${activeTab === 'fugu' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('fugu')}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Layers size={16} style={{ color: '#10b981' }} /> 🐡 우리집 푸구 (Fugu)
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'study' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('study'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Play size={16} style={{ color: '#ec4899' }} /> 🎥 같이 수업 듣기
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'casestudy' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('casestudy'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'memefactory' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('memefactory'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Sparkles size={16} style={{ color: '#ec4899' }} /> 🎬 밈 팩토리 데모
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'chatbotbuilder' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('chatbotbuilder'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Settings size={16} style={{ color: '#06b6d4' }} /> 🤖 AI 챗봇 빌더
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'nichediagnoser' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Target size={16} style={{ color: '#10b981' }} /> 🎯 4대 준비물 진단기
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'avatarstudio' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('avatarstudio'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <Sparkles size={16} style={{ color: '#a855f7' }} /> 🪄 마법 아바타 & 이력서
-                </button>
-                <button 
-                  className={`tab-btn ${activeTab === 'stickword' ? 'active' : ''}`}
-                  onClick={() => { setActiveTab('stickword'); setIsAddingNote(false); }}
-                  style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                  <BookOpen size={16} style={{ color: '#ff6b95' }} /> 📚 둠칫 스틱워드 사전
-                </button>
+                  <button 
+                    className={`group-tab-btn ${activeTabGroup === 'practice' ? 'active' : ''}`}
+                    onClick={() => { setActiveTabGroup('practice'); setActiveTab('reroom'); }}
+                  >
+                    🎨 AI 실습 놀이터
+                  </button>
+                  <button 
+                    className={`group-tab-btn ${activeTabGroup === 'builder' ? 'active' : ''}`}
+                    onClick={() => { setActiveTabGroup('builder'); setActiveTab('fugu'); }}
+                  >
+                    🛠️ 1인 기업 빌더
+                  </button>
+                  <button 
+                    className={`group-tab-btn ${activeTabGroup === 'launch' ? 'active' : ''}`}
+                    onClick={() => { setActiveTabGroup('launch'); setActiveTab('marketeam'); }}
+                  >
+                    🚀 내 비즈니스 런칭
+                  </button>
+                </div>
+
+                {/* 📂 2단계 소분류 서브 탭 */}
+                <div className="nav-tabs sub-nav-tabs">
+                  {activeTabGroup === 'study' && (
+                    <>
+                      <button 
+                        className={`tab-btn ${activeTab === 'content' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('content')}
+                      >
+                        <BookOpen size={16} /> 노트 본문 & AI 브리핑
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'quiz' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('quiz')}
+                      >
+                        <Award size={16} /> AI 모의고사
+                      </button>
+                      {wrongNotes[selectedNote.id] && (
+                        <button 
+                          className={`tab-btn ${activeTab === 'wrong' ? 'active' : ''}`}
+                          onClick={() => setActiveTab('wrong')}
+                        >
+                          <AlertTriangle size={16} style={{ color: '#ef4444' }} /> 오답노트
+                        </button>
+                      )}
+                      <button 
+                        className={`tab-btn ${activeTab === 'textbook' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('textbook'); setIsAddingNote(false); }}
+                      >
+                        <BookOpen size={16} /> 해부 교재란
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'study' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('study'); setIsAddingNote(false); }}
+                      >
+                        <Play size={16} style={{ color: '#ec4899' }} /> 🎥 같이 수업 듣기
+                      </button>
+                    </>
+                  )}
+
+                  {activeTabGroup === 'practice' && (
+                    <>
+                      <button 
+                        className={`tab-btn ${activeTab === 'reroom' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('reroom'); setIsAddingNote(false); }}
+                        style={{ background: 'rgba(245, 196, 81, 0.15)' }}
+                      >
+                        <Sparkles size={16} style={{ color: '#f5c451' }} /> 🎨 피터레벨스 ReRoom AI
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'inkword' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('inkword'); setIsAddingNote(false); }}
+                      >
+                        <BookOpen size={16} style={{ color: '#ff6b95' }} /> 📚 둠칫 잉크워드 사전 (inkword.site)
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'memefactory' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('memefactory'); setIsAddingNote(false); }}
+                      >
+                        <Sparkles size={16} style={{ color: '#ec4899' }} /> 🎬 밈 팩토리 데모
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'avatarstudio' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('avatarstudio'); setIsAddingNote(false); }}
+                      >
+                        <Sparkles size={16} style={{ color: '#a855f7' }} /> 🪄 마법 아바타 & 이력서
+                      </button>
+                    </>
+                  )}
+
+                  {activeTabGroup === 'builder' && (
+                    <>
+                      <button 
+                        className={`tab-btn ${activeTab === 'fugu' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('fugu')}
+                      >
+                        <Layers size={16} style={{ color: '#10b981' }} /> 🐡 우리집 푸구 (Fugu)
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'chatbotbuilder' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('chatbotbuilder'); setIsAddingNote(false); }}
+                      >
+                        <Settings size={16} style={{ color: '#06b6d4' }} /> 🤖 AI 챗봇 빌더
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'nichediagnoser' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
+                      >
+                        <Target size={16} style={{ color: '#10b981' }} /> 🎯 4대 준비물 진단기
+                      </button>
+                    </>
+                  )}
+
+                  {activeTabGroup === 'launch' && (
+                    <>
+                      <button 
+                        className={`tab-btn ${activeTab === 'marketeam' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('marketeam'); setIsAddingNote(false); }}
+                        style={{ background: 'rgba(160, 104, 255, 0.15)' }}
+                      >
+                        <Sparkles size={16} style={{ color: '#A068FF' }} /> 🚀 Marketeam 런칭
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'alwayzz' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('alwayzz'); setIsAddingNote(false); }}
+                      >
+                        <Sparkles size={16} style={{ color: '#a78bfa' }} /> 💜 Alwayzz 갱춘기 런칭
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'casestudy' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('casestudy'); setIsAddingNote(false); }}
+                      >
+                        <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </header>
 
@@ -1378,8 +1518,24 @@ ${selectedNote.content}`
                 <AvatarStudio />
               )}
 
-              {activeTab === 'stickword' && (
-                <StickWordPlayer />
+              {activeTab === 'inkword' && (
+                <InkWordPlayer />
+              )}
+
+              {activeTab === 'alwayzz' && (
+                <AlwayzzLanding />
+              )}
+
+              {activeTab === 'marketeam' && (
+                <MarketeamLanding />
+              )}
+
+              {activeTab === 'textbook' && (
+                <Textbook />
+              )}
+
+              {activeTab === 'reroom' && (
+                <ReRoomAI />
               )}
             </div>
           </>

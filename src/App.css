@@ -151,8 +151,8 @@ body {
 }
 
 .note-item-title {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text-primary);
   line-height: 1.4;
   display: -webkit-box;
@@ -165,8 +165,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .badge-study {
@@ -218,16 +219,73 @@ body {
   padding: 4px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tab-container-nested {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.tab-group-navigation {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.group-tab-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #9b95a6);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border-radius: 6px;
+}
+
+.group-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.group-tab-btn.active {
+  color: var(--gold, #f5c451);
+  background: rgba(245, 196, 81, 0.05);
+}
+
+.group-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--gold, #f5c451);
+  box-shadow: 0 0 6px var(--gold, #f5c451);
+}
+
+.sub-nav-tabs {
+  background: rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+  padding: 6px !important;
 }
 
 .tab-btn {
   background: none;
   border: none;
   color: var(--text-secondary);
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -300,18 +358,18 @@ body {
 }
 
 .note-title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   margin-bottom: 24px;
   color: var(--text-primary);
   line-height: 1.4;
-  border-left: 4px solid var(--primary-glow);
-  padding-left: 16px;
+  border-left: 5px solid var(--primary-glow);
+  padding-left: 18px;
 }
 
 .note-content {
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 18px;
+  line-height: 1.9;
   color: var(--text-primary);
   white-space: pre-wrap;
 }

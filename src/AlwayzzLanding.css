@@ -1,0 +1,692 @@
+/* ==========================================================================
+   💜 Alwayzz Premium Menopause/Sleep Care Landing Style
+   (Motionsites.ai / Bloom 시안 스타일 이식 - 100% 커스텀 CSS)
+   ========================================================================== */
+
+:root {
+  --alwayzz-bg: #FCFAF8;
+  --alwayzz-text: #221D2A;
+  --alwayzz-muted: #7E728E;
+  --alwayzz-purple: #A78BFA;
+  --alwayzz-pink: #FBCFE8;
+  --alwayzz-mint: #A7F3D0;
+  --alwayzz-border: rgba(167, 139, 250, 0.12);
+  --alwayzz-glass: rgba(255, 255, 255, 0.55);
+}
+
+.alwayzz-wrapper {
+  background-color: var(--alwayzz-bg);
+  color: var(--alwayzz-text);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: -0.04em;
+  padding-bottom: 120px;
+}
+
+/* 📐 Motionsites 격자 눈금 배경 패턴 */
+.alwayzz-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(167, 139, 250, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: center top;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 🌌 뒷배경 오로라 네온 효과 */
+.alwayzz-glow-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.alwayzz-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  opacity: 0.22;
+}
+
+.alwayzz-orb-1 {
+  width: 550px;
+  height: 550px;
+  background: var(--alwayzz-purple);
+  top: -10%;
+  right: 15%;
+  animation: alwayzzFloat 25s infinite alternate ease-in-out;
+}
+
+.alwayzz-orb-2 {
+  width: 600px;
+  height: 600px;
+  background: var(--alwayzz-pink);
+  bottom: -10%;
+  left: 10%;
+  animation: alwayzzFloat 30s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes alwayzzFloat {
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(60px) scale(1.1) rotate(180deg); }
+  100% { transform: translateY(-30px) scale(0.95) rotate(360deg); }
+}
+
+/* 🏷️ Navbar 스타일 */
+.alwayzz-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  padding: 19px 36px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--alwayzz-border);
+  background: rgba(252, 250, 248, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.alwayzz-nav-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alwayzz-logo {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 30px;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: -0.08em;
+  color: var(--alwayzz-text);
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.alwayzz-logo sup {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  vertical-align: super;
+}
+
+.btn-alwayzz-menu {
+  background: var(--alwayzz-text);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-alwayzz-menu:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 🗂️ 풀스크린 네비게이션 드로워 */
+.alwayzz-drawer {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 36px;
+  animation: alwayzzFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes alwayzzFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alwayzz-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.btn-close-drawer {
+  background: transparent;
+  border: 1px solid var(--alwayzz-border);
+  color: var(--alwayzz-text);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close-drawer:hover {
+  background: var(--alwayzz-text);
+  color: #ffffff;
+}
+
+.alwayzz-drawer-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.alwayzz-drawer-link {
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--alwayzz-text);
+  text-decoration: none;
+  letter-spacing: -0.04em;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.alwayzz-drawer-link:hover {
+  transform: scale(1.05);
+  color: var(--alwayzz-purple);
+  padding-left: 10px;
+}
+
+.alwayzz-drawer-footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--alwayzz-muted);
+}
+
+/* 🚀 메인 히어로 구역 */
+.alwayzz-hero {
+  min-height: 850px;
+  padding: 160px 24px 80px 24px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 히어로의 희뿌연 배경 이미지 */
+.alwayzz-hero-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.12;
+}
+
+.alwayzz-hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(120%);
+}
+
+/* 📐 Bloom 20선 곡선 라인 연출 (양측형) */
+.alwayzz-lines-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.alwayzz-curve-line {
+  position: absolute;
+  height: 380px;
+  top: 15%;
+  border: 2.5px solid #FCFAF8;
+  opacity: 0;
+}
+
+/* 왼쪽 곡선들 */
+.alwayzz-curve-line.left {
+  left: 0;
+  border-left: none;
+  border-top-right-radius: 90px;
+  border-bottom-right-radius: 90px;
+  animation: line-pulse 6s ease-in-out infinite;
+}
+
+/* 오른쪽 곡선들 */
+.alwayzz-curve-line.right {
+  right: 0;
+  border-right: none;
+  border-top-left-radius: 90px;
+  border-bottom-left-radius: 90px;
+  animation: line-pulse 6s ease-in-out infinite;
+}
+
+@keyframes line-pulse {
+  0% { opacity: 0; transform: scaleX(0.9) translateX(0); }
+  20% { opacity: 0.6; }
+  60% { opacity: 0.3; }
+  100% { opacity: 0; transform: scaleX(1.08) translateX(10px); }
+}
+
+/* 🏷️ 상단 수면 카테고리/기능 틱커 */
+.alwayzz-ticker-wrapper {
+  width: 100%;
+  max-width: 500px;
+  height: 36px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 32px;
+  /* 양끝 페이드 마스크 */
+  mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.alwayzz-ticker-inner {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: marquee-left 25s linear infinite;
+}
+
+.alwayzz-ticker-item {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--alwayzz-muted);
+  background: #FCFAF8;
+  border: 1px solid var(--alwayzz-border);
+  padding: 6px 16px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* 👑 대형 히어로 타이틀 */
+.alwayzz-hero-title {
+  max-width: 600px;
+  font-size: 78px;
+  font-weight: 600;
+  line-height: 1.03;
+  letter-spacing: -0.07em;
+  color: var(--alwayzz-text);
+  margin-bottom: 24px;
+}
+
+.alwayzz-hero-title .serif-italic {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.08em;
+}
+
+.alwayzz-hero-title sup {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  vertical-align: super;
+}
+
+.alwayzz-hero-sub {
+  max-width: 480px;
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--alwayzz-muted);
+  margin-bottom: 40px;
+}
+
+/* 🎮 CTA 버튼 그룹 */
+.alwayzz-cta-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.btn-alwayzz-primary {
+  height: 56px;
+  padding: 0 32px;
+  background: var(--alwayzz-text);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-alwayzz-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* 아바타 책킹용 고급 버튼 */
+.btn-alwayzz-book {
+  background: #ffffff;
+  border: 4px solid #F4F4F5;
+  border-radius: 9999px;
+  padding: 8px 24px 8px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-alwayzz-book:hover {
+  transform: translateY(-2px);
+  border-color: var(--alwayzz-purple);
+  box-shadow: 0 10px 25px rgba(167, 139, 250, 0.1);
+}
+
+.alwayzz-book-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--alwayzz-purple);
+}
+
+.alwayzz-book-text-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.alwayzz-book-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--alwayzz-text);
+  line-height: 1.2;
+}
+
+.alwayzz-book-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: #989898;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.alwayzz-dot-green {
+  width: 8px;
+  height: 8px;
+  background-color: #1dcc5d;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(29, 204, 93, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(29, 204, 93, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(29, 204, 93, 0); }
+}
+
+/* 🎯 3D 입체 갱춘기 수면 유도 카드 (Parallax Card) */
+.alwayzz-3d-card-wrapper {
+  margin-top: 56px;
+  position: relative;
+  z-index: 10;
+}
+
+.alwayzz-3d-card {
+  width: 380px;
+  height: 250px;
+  background: var(--alwayzz-glass);
+  border: 1px solid var(--alwayzz-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px rgba(167, 139, 250, 0.08);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.1s ease-out;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.alwayzz-3d-card-flipped {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(251, 207, 232, 0.1) 100%);
+  border-color: rgba(251, 207, 232, 0.3);
+}
+
+.alwayzz-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transform: translateZ(30px);
+}
+
+.alwayzz-card-badge {
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  color: var(--alwayzz-text);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.alwayzz-card-body {
+  margin: 16px 0;
+  transform: translateZ(40px);
+}
+
+.alwayzz-card-body h3 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.alwayzz-card-body p {
+  font-size: 13.5px;
+  color: var(--alwayzz-muted);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.alwayzz-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: translateZ(35px);
+}
+
+.alwayzz-btn-sound {
+  background: var(--alwayzz-text);
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.alwayzz-btn-sound:hover {
+  background: var(--alwayzz-purple);
+}
+
+/* 🌫️ 하단 그라데이션 블러 레이어 */
+.alwayzz-blur-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 178px;
+  background: linear-gradient(to bottom, transparent, rgba(252, 250, 248, 0.4) 40%, #FCFAF8);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 🤝 파트너 로고 및 트러스티드 바이 */
+.alwayzz-trusted {
+  padding: 36px 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid var(--alwayzz-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  position: relative;
+}
+
+.alwayzz-trusted-label {
+  max-width: 180px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--alwayzz-muted);
+  line-height: 1.4;
+  text-align: left;
+}
+
+.alwayzz-trusted-marquee-wrapper {
+  flex: 1;
+  margin-left: 40px;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.alwayzz-trusted-marquee-inner {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  width: max-content;
+  animation: marquee-left 30s linear infinite;
+}
+
+.alwayzz-logo-item {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--alwayzz-text);
+  white-space: nowrap;
+}
+
+/* 각 브랜드 서체 매핑 */
+.logo-airbnb { font-family: 'Cedarville Cursive', cursive, sans-serif; font-weight: 700; }
+.logo-shopify { font-family: system-ui, sans-serif; font-weight: 800; font-style: italic; }
+.logo-notion { font-family: Georgia, serif; font-weight: 500; }
+.logo-linear { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.06em; }
+.logo-webflow { font-family: 'Inter', sans-serif; font-weight: 700; }
+.logo-figma { font-family: system-ui, sans-serif; font-weight: 600; }
+.logo-slack { font-family: Georgia, serif; font-weight: 700; }
+.logo-stripe { font-family: system-ui, sans-serif; font-weight: 800; }
+.logo-vercel { font-family: 'Inter', sans-serif; font-weight: 600; }
+.logo-framer { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; }
+
+
+/* ==========================================================================
+   📱 반응형 중단점 (Responsive Breakpoints)
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .alwayzz-hero {
+    padding: 140px 32px 60px 32px;
+  }
+  .alwayzz-hero-title {
+    font-size: clamp(60px, 8vw, 72px);
+  }
+  .alwayzz-nav {
+    padding: 19px 32px;
+  }
+  .alwayzz-drawer-link {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 810px) {
+  .alwayzz-hero {
+    min-height: 760px;
+    padding: 120px 24px 96px 24px;
+  }
+  /* 모바일은 가로 90도 회전 배경 */
+  .alwayzz-hero-bg-wrapper {
+    transform: rotate(90deg) scale(1.4);
+  }
+  /* 모바일 측면 라인 숨기기 */
+  .alwayzz-curve-line {
+    display: none;
+  }
+  .alwayzz-hero-title {
+    font-size: clamp(40px, 11vw, 52px);
+  }
+  .alwayzz-cta-group {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .btn-alwayzz-primary, .btn-alwayzz-book {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+  .alwayzz-trusted {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    text-align: center;
+  }
+  .alwayzz-trusted-label {
+    text-align: center;
+    max-width: 100%;
+  }
+  .alwayzz-trusted-marquee-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+  .alwayzz-drawer-link {
+    font-size: 32px;
+  }
+  .alwayzz-nav {
+    padding: 19px 20px;
+  }
+  .alwayzz-3d-card {
+    width: 100%;
+    max-width: 320px;
+  }
+}

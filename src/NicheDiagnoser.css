@@ -1057,3 +1057,155 @@
   color: #64748b;
   margin-top: 8px;
 }
+
+/* ==========================================================================
+   🧙‍♂️ 웅얼웅얼 아이디어 번개 구체화 마법사 (Idea Spark) Styles
+   ========================================================================== */
+
+.spark-card {
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.05);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.spark-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6, #10b981);
+}
+
+.spark-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.spark-badge {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c084fc;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.spark-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.spark-form-group {
+  display: flex;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .spark-form-group {
+    flex-direction: column;
+  }
+}
+
+.spark-input {
+  flex-grow: 1;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #ffffff;
+  font-size: 14.5px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.spark-input:focus {
+  border-color: #a78bfa;
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.spark-btn {
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 0 24px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+  min-height: 48px;
+}
+
+.spark-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+}
+
+.spark-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.spark-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 🧙‍♂️ Spark Loading Wave */
+.spark-loader-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 12px;
+  border: 1px dashed rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+  font-size: 13.5px;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.sparkle-icon {
+  animation: spin 3s linear infinite;
+}
+
+/* ⚡ Input Autofill highlight pulse */
+.autofill-highlight {
+  animation: successFlash 1.5s ease-out;
+}
+
+@keyframes successFlash {
+  0% {
+    border-color: #10b981;
+    box-shadow: 0 0 0 0px rgba(16, 185, 129, 0.4);
+  }
+  30% {
+    border-color: #10b981;
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 0px transparent;
+  }
+}
+
