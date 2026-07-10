@@ -21,19 +21,17 @@ function App() {
   const [showNicheSaaS, setShowNicheSaaS] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('marketeam'); // 'content' | 'quiz' | 'wrong' | 'fugu'
-  const [activeTabGroup, setActiveTabGroup] = useState('launch'); // 'study' | 'practice' | 'builder' | 'launch'
+  const [activeTab, setActiveTab] = useState('content'); // 'content' | 'quiz' | 'wrong' | 'fugu'
+  const [activeTabGroup, setActiveTabGroup] = useState('study'); // 'study' | 'practice' | 'builder'
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['reroom', 'inkword', 'memefactory', 'avatarstudio'].includes(activeTab)) {
       setActiveTabGroup('practice');
     } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
       setActiveTabGroup('builder');
-    } else if (['alwayzz', 'marketeam', 'casestudy'].includes(activeTab)) {
-      setActiveTabGroup('launch');
     }
   }, [activeTab]);
   
@@ -886,12 +884,6 @@ ${selectedNote.content}`
                   >
                     🛠️ 1인 기업 빌더
                   </button>
-                  <button 
-                    className={`group-tab-btn ${activeTabGroup === 'launch' ? 'active' : ''}`}
-                    onClick={() => { setActiveTabGroup('launch'); setActiveTab('marketeam'); }}
-                  >
-                    🚀 내 비즈니스 런칭
-                  </button>
                 </div>
 
                 {/* 📂 2단계 소분류 서브 탭 */}
@@ -929,6 +921,12 @@ ${selectedNote.content}`
                         onClick={() => { setActiveTab('study'); setIsAddingNote(false); }}
                       >
                         <Play size={16} style={{ color: '#ec4899' }} /> 🎥 같이 수업 듣기
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'casestudy' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('casestudy'); setIsAddingNote(false); }}
+                      >
+                        <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
                       </button>
                     </>
                   )}
@@ -982,30 +980,6 @@ ${selectedNote.content}`
                         onClick={() => { setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
                       >
                         <Target size={16} style={{ color: '#10b981' }} /> 🎯 4대 준비물 진단기
-                      </button>
-                    </>
-                  )}
-
-                  {activeTabGroup === 'launch' && (
-                    <>
-                      <button 
-                        className={`tab-btn ${activeTab === 'marketeam' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('marketeam'); setIsAddingNote(false); }}
-                        style={{ background: 'rgba(160, 104, 255, 0.15)' }}
-                      >
-                        <Sparkles size={16} style={{ color: '#A068FF' }} /> 🚀 Marketeam 런칭
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'alwayzz' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('alwayzz'); setIsAddingNote(false); }}
-                      >
-                        <Sparkles size={16} style={{ color: '#a78bfa' }} /> 💜 Alwayzz 갱춘기 런칭
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'casestudy' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('casestudy'); setIsAddingNote(false); }}
-                      >
-                        <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
                       </button>
                     </>
                   )}
