@@ -1,0 +1,27 @@
+plugins = []
+headers = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/dist"
+publishOrigin = "ui"
+commandOrigin = "ui"
+command = "npm run build"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
