@@ -2,24 +2,100 @@ import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Check, Trash2, Zap, Loader2 } from 'lucide-react';
 import './NicheDiagnoser.css';
 
-// 1인 기업 메이커용 Gemini API 프롬프트 규칙 (15점 만점 5축 버전)
-const PROMPT = (idea) => `당신은 1인 기업 대표의 수익화 참모다. 아래 사업 아이디어를 "니치 발굴기" 기준으로 냉정하되, '1인 AI 메이커의 신속성 및 독점 가능성'을 최우선하여 팩트 기반 평가하라. 어설픈 방어적 뇌피셜로 점수를 깎아내리지 마라.
+// 📈 실시간 구글 트렌드 임베딩 위젯 서브 컴포넌트
+const GoogleTrendsWidget = ({ keyword }) => {
+  const containerId = `trends-${encodeURIComponent(keyword).replace(/%/g, '')}`;
+
+  useEffect(() => {
+    if (!keyword) return;
+
+    // 기존 위젯 청소
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '';
+
+    // 구글 트렌드 스크립트 동적 주입
+    const script = document.createElement('script');
+    script.src = 'https://ssl.gstatic.com/trends_nrtr/3700_RC01/embed_loader.js';
+    script.async = true;
+    script.onload = () => {
+      if (window.trends && window.trends.embed) {
+        try {
+          window.trends.embed.renderExploreWidgetTo(
+            document.getElementById(containerId),
+            "TIMESERIES",
+            {
+              "comparisonItem": [{ "keyword": keyword, "geo": "KR", "time": "today 12-m" }],
+              "category": 0,
+              "property": ""
+            },
+            {
+              "exploreQuery": `q=${encodeURIComponent(keyword)}&geo=KR`,
+              "guestPath": "https://trends.google.co.kr:443/trends/embed/"
+            }
+          );
+        } catch (e) {
+          console.warn("구글 트렌드 로드 에러", e);
+        }
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+    };
+  }, [keyword, containerId]);
+
+  return (
+    <div className="trends-container">
+      <div id={containerId} className="trends-widget">
+        <div className="trends-loading">
+          <div className="spin"></div>
+          구글 트렌드 실시간 트래픽 로딩 중 (검색어: {keyword})...
+        </div>
+      </div>
+      <a 
+        href={`https://trends.google.co.kr/trends/explore?q=${encodeURIComponent(keyword)}&geo=KR`} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="trends-link-btn"
+      >
+        📈 구글 트렌드에서 직통으로 심층 트래픽 비교분석 개시 ➔
+      </a>
+    </div>
+  );
+};
+
+// 1인 기업 메이커용 Gemini API 프롬프트 규칙 (15점 만점 5축 + 트렌드 키워드 추출 추가)
+const PROMPT = (idea) => `당신은 1인 기업 대표의 수익화 참모다. 아래 사업 아이디어를 "니치 발굴기" 기준으로 팩트 검증하여 5대 축 점수(각 0~3점)를 채점하라. 기계적인 방어적 감점을 지양하고, 제시한 팩트 체크 조건이 부합하면 당당하게 3점 만점을 승인하라.
 
 아이디어: "${idea}"
 
-[채점 가이드 (필독)]:
-1. pain (페인 강도 - 0~3점): 1인 소상공인이나 특정 도메인 업자가 수작업으로 밤새 대조작업을 하거나 과태료 폭탄 위험이 있는 업무는 무조건 '3점'을 부여하라.
-2. data (데이터 접근 - 0~3점): 표준 서식, 공공 DB가 열려 있거나 RAG 문서화가 가능하면 무조건 '3점'에 준하게 높게 주어라.
-3. fly (플라이휠 - 0~3점): 유저가 입력한 일지, 로그, 결과가 내부 DB에 자동으로 쌓여 해자가 되는 구조라면 무조건 '3점'을 주어라.
-4. incu (강자 부재 - 0~3점): 거대 유니콘이 이 좁은 마이크로 유틸리티 툴 시장에 들어올 리가 없고 영세 업자들만 각개전투 중이라면 무조건 '3점'을 주어라.
-5. niche (초니치 검색 점수 - 0~3점): 타겟이 '요양원장', '중고차 딜러', '산지 직송 농민'처럼 바늘구멍처럼 뾰족하고 명확하여 검색 선점 및 마케팅 독점이 확실하면 무조건 '3점'을 주어라.
+[5대 축 팩트 검증 및 채점 승인 룰 (CRITICAL)]:
+1. pain (페인 강도 - 0~3점):
+   - 3점 승인 조건: 타겟 업자가 수작업 정산/서류 대조 노가다로 밤을 새우거나, 오타 시 법적 책임/과태료 폭탄이 직접 연동되어 지갑을 열 확실한 페인이 존재할 때.
+   - 그 외에는 0~2점 사이로 부합도에 따라 판정.
 
-veto(규제 킬스위치): 데이터가 규제/독점으로 원천봉쇄(인체의료기록 직접 가공·금융원장 제어 등)인 경우만 true. 단순 정산 보조, 성능지 매핑, 숏츠 제작 등은 절대 veto에 걸리지 않으므로 false로 하라.
+2. data (데이터 접근 - 0~3점):
+   - 3점 승인 조건: 건보 서식, 차량 성능지, 날씨 API 등 공개된 양식이 존재하고, 프롬프트나 RAG 문서 물리기, 또는 대량의 합성 데이터 생성을 통해 1인이 쉽게 도메인에 진입할 수 있을 때.
+   - 그 외에는 0~2점.
 
-각 축에 한 줄 근거(reason). biz는 1인 기업 관점 사업가능성 2~3문장(현실적 승산과 리스크). actions는 대표님이 지금 취할 다음 액션 2~3개(구체적).
+3. fly (플라이휠 - 0~3점):
+   - 3점 승인 조건: 유저가 툴을 사용하면서 축적되는 '오정산 로그', '삭감 예외 이력', '생육 사진' 등의 데이터가 서버에 자동으로 축적되어 쓰면 쓸수록 타사가 넘보지 못하는 독점 해자 DB가 완성될 때.
+   - 그 외에는 0~2점.
 
-반드시 아래 JSON만 출력. 다른 말/코드펜스 금지:
-{"pain":0,"data":0,"fly":0,"incu":0,"niche":0,"veto":false,"reason":{"pain":"","data":"","fly":"","incu":"","niche":""},"biz":"","actions":["",""]}`;
+4. incu (강자 부재 - 0~3점):
+   - 3점 승인 조건: 시장 볼륨이 좁아 거대 플랫폼이나 유니콘 대기업이 직접 들어올 동기가 없고, 현재 1위 독점 개발자가 부재하여 초니치 무주공산일 때.
+   - 그 외에는 0~2점.
+
+5. niche (초니치 검색 점수 - 0~3점):
+   - 3점 승인 조건: 타겟이 '소형 요양원장', '중고차 매매 딜러', '산지 직송 농어가 셀러'처럼 바늘구멍급으로 명확하여, 마케팅 비용 없이 검색만으로 상위 100% 독점 선점이 보장될 때.
+   - 그 외에는 0~2점.
+
+veto(규제 킬스위치): 데이터가 라이센스/독점/법적 규제로 인해 1인 창업이 원천봉쇄된 분야(인체 의료진단 처방, 금융 거래원장 직접 가공 등)면 true. 정산 보조, 단순 매핑, 숏츠 빌더 등은 false.
+
+각 축에 한 줄 근거(reason)와 1인 승산 분석(biz), 구체적 액션 3가지(actions)를 아래 JSON 양식으로 출력하라. 
+또한 keyword 항목에는 실시간 구글 트렌드 검색어 비교를 할 때 쓰기 가장 좋은 한국 소상공인 실무형 핵심 트랙픽 단어(1~2단어, 예: '장기요양', '성능점검부', '산지직송')를 선정해 넣어라. 부연 설명 금지:
+{"pain":0,"data":0,"fly":0,"incu":0,"niche":0,"veto":false,"reason":{"pain":"","data":"","fly":"","incu":"","niche":""},"biz":"","actions":["","",""],"keyword":""}`;
 
 function NicheDiagnoser() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -50,6 +126,7 @@ function NicheDiagnoser() {
             incu: 3,
             niche: 3,
             veto: false,
+            keyword: "장기요양",
             reason: {
               pain: "요양보호사들의 비정형 수동일지와 건보공단 급여청구서의 불일치로 매달 막대한 급여 삭감 피해 발생.",
               data: "건보공단 표준 고시율 및 가이드라인 100% 공개 상태.",
@@ -73,6 +150,7 @@ function NicheDiagnoser() {
             incu: 3,
             niche: 3,
             veto: false,
+            keyword: "성능점검",
             reason: {
               pain: "성능상태점검부와 매물 광고글 간 오타로 허위 매물 과태료 폭탄 및 면허정지 리스크 직면.",
               data: "표준 규격 성능지의 스캔 이미지 내 사고 이력 텍스트는 Vision/OCR로 추출 난이도 매우 낮음.",
@@ -96,6 +174,7 @@ function NicheDiagnoser() {
             incu: 3,
             niche: 3,
             veto: false,
+            keyword: "산지직송",
             reason: {
               pain: "소비자 신뢰용 매일 아침 생육 숏츠 제작이 절실하나, 수확으로 1초의 동영상 편집 시간도 없음.",
               data: "농가가 밭에서 3초 찍은 동영상을 전송하면 상품 정보 및 날씨 시황을 합성해 자동 스크립트 작성.",
@@ -119,6 +198,7 @@ function NicheDiagnoser() {
             incu: 2,
             niche: 2,
             veto: false,
+            keyword: "동물병원",
             reason: {
               pain: "수의사는 환자(동물) 진료 후 SOAP 진료노트를 매번 수작업 작성해야 하며 인체의료에 밀려 AI 혜택을 거의 보지 못함.",
               data: "합성 수의 데이터, 진료 포맷 템플릿 가이드를 RAG로 확보하기가 매우 용이함.",
@@ -142,6 +222,7 @@ function NicheDiagnoser() {
             incu: 2,
             niche: 2,
             veto: false,
+            keyword: "거래정산",
             reason: {
               pain: "각종 거래 대조 서류와 정산서 취합이 수동 엑셀 노가다로 진행되어 시간 소모와 오정산 리스크가 큼.",
               data: "거래 시 필요한 양식과 공공 세율 데이터 경로가 잘 열려 있음.",
@@ -165,6 +246,7 @@ function NicheDiagnoser() {
             incu: 2,
             niche: 2,
             veto: false,
+            keyword: "물량산출",
             reason: {
               pain: "설계 도면 하나당 물량산출(적산)에 평균 40시간 이상 소요되어 수백만 원의 고정 인건비 낭비.",
               data: "공공 표준 도면 양식과 공사비 노무 데이터 활용 가능.",
@@ -264,38 +346,13 @@ function NicheDiagnoser() {
           obj.data = clamp(obj.data);
           obj.fly = clamp(obj.fly || obj.wheel); 
           obj.incu = clamp(obj.incu || obj.competitor);
-          obj.niche = clamp(obj.niche || obj.nicheScore || 0); // 5번째 축
+          obj.niche = clamp(obj.niche || obj.nicheScore || 0);
           obj.nm = trimmedIdea;
           obj.ts = Date.now();
           obj.veto = !!obj.veto;
           obj.reason = obj.reason || {};
           obj.actions = Array.isArray(obj.actions) ? obj.actions : [];
-
-          // 💎 대표님 맞춤형 15점 다이아몬드 골드패스 강제 필터
-          const lowerIdea = trimmedIdea.toLowerCase();
-          const target15Keywords = ['요양', '삭감', '중고차', '성능', '숏츠', '농수산', '생육', '15점', '만점', '노다지', '공부방 에러', '바이브코딩'];
-          const has15Sig = target15Keywords.some(k => lowerIdea.includes(k));
-          if (has15Sig) {
-            obj.pain = 3;
-            obj.data = 3;
-            obj.fly = 3;
-            obj.incu = 3;
-            obj.niche = 3;
-            obj.veto = false;
-            obj.reason = {
-              pain: "소형 요양보호기관/중고차 딜러/농수산 셀러 등 소상공인이 매달 겪는 극심한 정산 및 대조 행정 노가다.",
-              data: "합성 데이터, 제휴, 공공 포털 및 RAG 문서화 가이드 등 5경로 중 다수 활짝 개방.",
-              fly: "유저 작동 시 누적되는 오정산/삭감 방지 예외 로그 및 차량 성능지 이력이 DB에 자동 적재되어 독점적 해자 구축.",
-              incu: "대형 플랫폼은 마이크로 유틸리티 툴 시장에 들어오지 않으며, 소상공인 각개전투로 1위 독점 강자 없음.",
-              niche: "바늘구멍처럼 좁고 뾰족하며 경쟁자가 없어 검색 상위 선점이 100% 보장되는 초니치 영역."
-            };
-            obj.biz = "대표님의 명작 15점 가설로서, RAG를 이용해 1인 메이커 체제로 1주일 이내 초고속 빌딩해 즉시 현금 흐름을 만들어낼 수 있는 최상의 비즈니스입니다.";
-            obj.actions = [
-              "해당 니치 오디언스 3명 포섭해 실무 정산/대조 대본 인터뷰 진행",
-              "공공 세율 데이터 및 표준 성능지/요양규칙 문서를 확보해 RAG 참조 데이터베이스 셋업",
-              "이미지/녹취 업로드 시 대조 결과를 10초 만에 반환해 주는 초간단 검수 POC 제작"
-            ];
-          }
+          obj.keyword = obj.keyword || trimmedIdea.slice(0, 8); // 폴백 키워드 지정
 
           const newItems = [...items, obj];
           saveItems(newItems);
@@ -311,20 +368,27 @@ function NicheDiagnoser() {
       }
     }
 
-    // API Key 부재 또는 에러 시 작동하는 가성비 수동 Mock (5축 매핑)
+    // API Key 부재 또는 에러 시 작동하는 가성비 수동 Mock
     setTimeout(() => {
       const lowerIdea = trimmedIdea.toLowerCase();
-      const target15Keywords = ['요양', '삭감', '중고차', '성능', '숏츠', '농수산', '생육', '15점', '만점', '노다지', '공부방 에러', '바이브코딩'];
-      const has15Sig = target15Keywords.some(k => lowerIdea.includes(k));
+      const isYoyang = lowerIdea.includes('요양') || lowerIdea.includes('삭감');
+      const isCar = lowerIdea.includes('중고차') || lowerIdea.includes('성능');
+      const isShorts = lowerIdea.includes('숏츠') || lowerIdea.includes('농수산') || lowerIdea.includes('생육');
+
+      let kw = trimmedIdea.slice(0, 6);
+      if (isYoyang) kw = "장기요양";
+      else if (isCar) kw = "성능점검";
+      else if (isShorts) kw = "산지직송";
 
       const mockResult = {
         pain: 3,
-        data: has15Sig ? 3 : 2,
+        data: (isYoyang || isCar || isShorts) ? 3 : 2,
         fly: 3,
-        incu: has15Sig ? 3 : 2,
-        niche: 3, // 15점 만점
+        incu: (isYoyang || isCar || isShorts) ? 3 : 2,
+        niche: 3, 
         veto: false,
-        reason: has15Sig ? {
+        keyword: kw,
+        reason: (isYoyang || isCar || isShorts) ? {
           pain: "소형 요양보호기관/중고차 딜러/농수산 셀러 등 소상공인이 매달 겪는 극심한 정산 및 대조 행정 노가다.",
           data: "합성 데이터, 제휴, 공공 포털 및 RAG 문서화 가이드 등 5경로 중 다수 활짝 개방.",
           fly: "유저 작동 시 누적되는 오정산/삭감 방지 예외 로그 및 차량 성능지 이력이 DB에 자동 적재되어 독점적 해자 구축.",
@@ -337,8 +401,8 @@ function NicheDiagnoser() {
           incu: '1인 최적화의 뾰족한 참모 앱 분야는 현재 독점적 강자가 없는 상태.',
           niche: '바늘구멍처럼 좁고 뾰족하며 경쟁자가 없어 검색 상위 선점이 100% 보장되는 초니치 영역.'
         },
-        biz: has15Sig ? "대표님의 명작 15점 가설로서, RAG를 이용해 1인 메이커 체제로 1주일 이내 초고속 빌딩해 즉시 현금 흐름을 만들어낼 수 있는 최상의 비즈니스입니다." : '1인 창업가의 틈새 시장 판단과 데이터 수집 비효율을 해소하는 가성비 마이크로 SaaS 모델로 성공 확률이 높습니다.',
-        actions: has15Sig ? [
+        biz: (isYoyang || isCar || isShorts) ? "대표님의 명작 15점 가설로서, RAG를 이용해 1인 메이커 체제로 1주일 이내 초고속 빌딩해 즉시 현금 흐름을 만들어낼 수 있는 최상의 비즈니스입니다." : '1인 창업가의 틈새 시장 판단과 데이터 수집 비효율을 해소하는 가성비 마이크로 SaaS 모델로 성공 확률이 높습니다.',
+        actions: (isYoyang || isCar || isShorts) ? [
           "해당 니치 오디언스 3명 포섭해 실무 정산/대조 대본 인터뷰 진행",
           "공공 세율 데이터 및 표준 성능지/요양규칙 문서를 확보해 RAG 참조 데이터베이스 셋업",
           "이미지/녹취 업로드 시 대조 결과를 10초 만에 반환해 주는 초간단 검수 POC 제작"
@@ -388,7 +452,7 @@ function NicheDiagnoser() {
   const verdict = (o) => {
     if (o.veto) return ['veto', '⛔ 탈락'];
     const t = total(o);
-    if (t >= 13) return ['go', 'GO']; // 15점 만점 기준
+    if (t >= 13) return ['go', 'GO']; 
     if (t >= 9) return ['hold', '보류'];
     return ['drop', '손떼'];
   };
@@ -410,7 +474,7 @@ function NicheDiagnoser() {
   return (
     <div className="wrap">
       <h1>🎯 니치 발굴기 v1</h1>
-      <div className="sub">아이디어를 넣으면 AI가 5축 점수 · 근거 · 사업가능성 · 다음 액션을 자동 판정 · 대표님 개인 참모</div>
+      <div className="sub">아이디어를 넣으면 AI가 5축 점수 및 실시간 구글 트렌드 그래프를 조회하여 사업가능성을 종합 판정합니다.</div>
 
       {/* 🚀 판정 입력 카드 */}
       <div className="card">
@@ -434,7 +498,7 @@ function NicheDiagnoser() {
           </button>
         </div>
         <div className="hintline">
-          5축: ① 페인 강도 · ② 데이터 접근(5경로) · ③ 플라이휠 · ④ 강자 부재 · ⑤ 초니치 검색 &nbsp;|&nbsp; 규제 원천봉쇄면 자동 탈락
+          5축: ① 페인 강도 · ② 데이터 접근(5경로) · ③ 플라이휠 · ④ 강자 부재 · ⑤ 초니치 검색 &nbsp;|&nbsp; 실시간 구글 트렌드 매싱 가동
         </div>
         {statusText && (
           <div 
@@ -471,7 +535,7 @@ function NicheDiagnoser() {
                       <div className="nm">{o.nm}</div>
                       <div className="bd">{bd}</div>
                       
-                      {/* 미니 5축 진척 바 디자인 (Vaporwave 테마) */}
+                      {/* 미니 5축 진척 바 디자인 */}
                       {!o.veto && (
                         <div className="barwrap">
                           {['pain', 'data', 'fly', 'incu', 'niche'].map((k) => (
@@ -521,6 +585,14 @@ function NicheDiagnoser() {
 
                       <h4>사업가능성</h4>
                       <div className="biz">{o.biz || ''}</div>
+
+                      {/* 📈 실시간 구글 트렌드 차트 위젯 탑재 */}
+                      {!o.veto && (
+                        <>
+                          <h4>📈 실시간 구글 트렌드 분석 (대한민국 12개월 추이)</h4>
+                          <GoogleTrendsWidget keyword={o.keyword || o.nm} />
+                        </>
+                      )}
 
                       <h4>다음 액션</h4>
                       <ul className="acts">
