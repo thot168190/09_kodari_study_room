@@ -474,3 +474,22 @@ details.guide summary {
   color: #ffffff;
   border-style: solid;
 }
+
+/* ☠️ 규제 지뢰밭 경고 상자 */
+.minefield-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(96, 123, 251, 0.08); /* 네온 블루 핏 경고 배경 */
+  border: 1px solid var(--veto);
+  border-radius: 9px;
+  padding: 11px 14px;
+  margin-top: 5px;
+  color: var(--txt);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.minefield-box span {
+  flex: 1;
+}
