@@ -137,28 +137,28 @@ body {
   margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* 카드 경계선을 뚜렷하게 가시화 */
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.01);
+  background: rgba(255, 255, 255, 0.05); /* 어두운 배경 대비 카드가 돋보이도록 명도 올림 */
 }
 
 .note-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.12); /* 호버 시 밝기를 대폭 올려 가독성 강화 */
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .note-item.active {
-  background: rgba(var(--primary-glow-rgb), 0.12);
-  border-color: rgba(var(--primary-glow-rgb), 0.4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: rgba(var(--primary-glow-rgb), 0.25); /* 활성 카드 선명화 */
+  border-color: rgba(var(--primary-glow-rgb), 0.7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .note-item-title {
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff; /* 순백색으로 100% 뚜렷하게 교정 */
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -171,8 +171,8 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: #cbd5e1; /* 어두운 회색 대신 밝은 실버 실버한 텍스트색으로 명도 대비 상향 */
+  font-weight: 600;
 }
 
 .badge-study {
