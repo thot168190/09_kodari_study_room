@@ -88,6 +88,44 @@ function NicheScanner({ onExit }) {
           </div>
         </section>
 
+        {/* ⚙️ 핵심 애플리케이션 진단 패널 */}
+        <section id="core-scanner-app" style={{ scrollMarginTop: '40px', marginBottom: '60px' }}>
+          {membership === 'FREE' && freeScanCount >= 1 ? (
+            /* 무료 체험 1회 초과 시 강제 락 화면 */
+            <div className="ns-lock-screen">
+              <div className="ns-lock-icon-box">
+                <Lock size={28} />
+              </div>
+              <h3 className="ns-lock-title">무료 체험 1회 스캔 완료!</h3>
+              <p className="ns-lock-desc">
+                더 넓은 벡터 거리 탐색과 웅얼웅얼 마법사(Idea Spark) 기능을 무제한으로 사용하시려면 Pro 플랜 구독이 필요합니다.
+              </p>
+              <button 
+                className="btn-pricing pro-tier" 
+                style={{ maxWidth: '280px', margin: '0 auto' }}
+                onClick={handleStartPayment}
+              >
+                Pro 플랜 락 해제 ($9.9/월)
+              </button>
+            </div>
+          ) : (
+            /* 진단 패널 활성화 */
+            <div className="ns-app-card" style={{ background: 'transparent' }}>
+              <div className="dark-theme-adapter" style={{ background: 'var(--ns-card)', borderRadius: '24px', border: '1px solid var(--ns-line)', padding: '10px', backdropFilter: 'blur(20px)' }}>
+                <NicheDiagnoser 
+                  isSaaSMode={true}
+                  membership={membership}
+                  onScanComplete={() => {
+                    if (membership === 'FREE') {
+                      setFreeScanCount(prev => prev + 1);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* 💳 요금제 프라이싱 그리드 */}
         {membership === 'FREE' && (
           <section style={{ marginBottom: '60px' }}>
@@ -146,44 +184,6 @@ function NicheScanner({ onExit }) {
             </div>
           </section>
         )}
-
-        {/* ⚙️ 핵심 애플리케이션 진단 패널 */}
-        <section id="core-scanner-app" style={{ scrollMarginTop: '40px' }}>
-          {membership === 'FREE' && freeScanCount >= 1 ? (
-            /* 무료 체험 1회 초과 시 강제 락 화면 */
-            <div className="ns-lock-screen">
-              <div className="ns-lock-icon-box">
-                <Lock size={28} />
-              </div>
-              <h3 className="ns-lock-title">무료 체험 1회 스캔 완료!</h3>
-              <p className="ns-lock-desc">
-                더 넓은 벡터 거리 탐색과 웅얼웅얼 마법사(Idea Spark) 기능을 무제한으로 사용하시려면 Pro 플랜 구독이 필요합니다.
-              </p>
-              <button 
-                className="btn-pricing pro-tier" 
-                style={{ maxWidth: '280px', margin: '0 auto' }}
-                onClick={handleStartPayment}
-              >
-                Pro 플랜 락 해제 ($9.9/월)
-              </button>
-            </div>
-          ) : (
-            /* 진단 패널 활성화 */
-            <div className="ns-app-card" style={{ background: 'transparent' }}>
-              <div className="dark-theme-adapter" style={{ background: 'var(--ns-card)', borderRadius: '24px', border: '1px solid var(--ns-line)', padding: '10px', backdropFilter: 'blur(20px)' }}>
-                <NicheDiagnoser 
-                  isSaaSMode={true}
-                  membership={membership}
-                  onScanComplete={() => {
-                    if (membership === 'FREE') {
-                      setFreeScanCount(prev => prev + 1);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </section>
       </div>
 
       {/* 💳 Stripe 결제 모달 팝업 */}

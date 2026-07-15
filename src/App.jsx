@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import notesData from './assets/notion-notes.json';
+import season2Notes from './assets/season2-notes.json';
 import { BookOpen, Award, Sparkles, RefreshCw, Layers, CheckCircle2, AlertTriangle, HelpCircle, Play, ArrowRight, Settings, Loader2, Target } from 'lucide-react';
 import ChannelHub from './ChannelHub';
 import CaseStudy from './CaseStudy';
@@ -14,6 +15,7 @@ import AlwayzzLanding from './AlwayzzLanding';
 import MarketeamLanding from './MarketeamLanding';
 import Textbook from './Textbook';
 import ReRoomAI from './ReRoomAI';
+import ScrollWorldLanding from './ScrollWorldLanding';
 
 function App() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -26,7 +28,7 @@ function App() {
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['reroom', 'inkword', 'memefactory', 'avatarstudio'].includes(activeTab)) {
       setActiveTabGroup('practice');
@@ -49,6 +51,13 @@ function App() {
   ]);
   const [noteChatInput, setNoteChatInput] = useState('');
   const [loadingNoteChat, setLoadingNoteChat] = useState(false);
+
+  // 💬 페이블 5 전용 실시간 Q&A 챗봇 상태
+  const [fableChatHistory, setFableChatHistory] = useState([
+    { sender: 'kodari', text: '대표님, 충성! 에이전트 총괄부장 코다리입니다. 페이블 5(철만이 5화 BGM 음악 작업 기록) 전용 대화방에 오신 것을 환영하옵니다. Lyria 3 Pro 제작 과정에서의 6가지 실패 사례, 3트랙 구조, 확정 워크플로우 등 무엇이든 편하게 지시해 주십시오!' }
+  ]);
+  const [fableChatInput, setFableChatInput] = useState('');
+  const [loadingFableChat, setLoadingFableChat] = useState(false);
 
   // 📝 커스텀 노트 추가 상태
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -202,7 +211,7 @@ ${studyChat.slice(-5).map(m => `${m.sender === 'user' ? '대표님' : '코다리
   useEffect(() => {
     const savedCustom = localStorage.getItem('kodari_custom_notes');
     const customNotes = savedCustom ? JSON.parse(savedCustom) : [];
-    const combined = [...customNotes, ...notesData];
+    const combined = [...customNotes, ...season2Notes, ...notesData];
     
     // 📅 최신 수정일(lastEdited) 기준 내림차순(최신순) 정렬 적용
     combined.sort((a, b) => new Date(b.lastEdited) - new Date(a.lastEdited));
@@ -274,6 +283,103 @@ ${noteChatHistory.slice(-4).map(m => `${m.sender === 'user' ? '대표님' : '코
       setNoteChatHistory(prev => [...prev, { sender: 'kodari', text: '대표님, 죄송하옵니다. 대답을 조율하는 도중 통신 장애가 발생했사옵니다. 다시 말씀해 주시겠습니까?' }]);
     } finally {
       setLoadingNoteChat(false);
+    }
+  };
+
+  // 💬 페이블 5 전용 실시간 Q&A 챗봇 전송 함수
+  const handleSendFableMessage = async () => {
+    if (!fableChatInput.trim() || !geminiApiKey) return;
+    
+    const userMsg = { sender: 'user', text: fableChatInput };
+    setFableChatHistory(prev => [...prev, userMsg]);
+    setFableChatInput('');
+    setLoadingFableChat(true);
+
+    const fableContext = `
+## 철만이 5화 — 어린 시절 불장난 사건 BGM 음악 작업 기록 (Lyria 3 Pro)
+
+### 🎬 영상 정보
+- 에피소드: 철만이 5화 — 어린 시절 불장난 사건
+- 총 길이: 5분 25초
+- 내레이션 시작: 00:43
+- 구조: 오프닝 풍경씬(00:00~00:48) + 내레이션 파트(00:48~05:25)
+
+### ❌ 실패 기록 및 교훈 (6가지 실패 사례)
+1. **실패 1: 악보 생성**
+   - 시도: ABC 악보 표기법으로 피아노 솔로 편곡
+   - 결과: 대표님이 "잠깐만...악보??" 라고 하시며 즉시 중단시킴.
+   - 교훈: Lyria 3 Pro 프롬프트 방식으로 전면 전환.
+2. **실패 2: 한국어 고유명사 프롬프트**
+   - 시도: 프롬프트에 '철만이', '뻥튀기' 등 한국어 고유명사를 포함.
+   - 결과: Lyria 3가 프롬프트 텍스트를 노래 가사로 오인하여 한국어 가사를 생성함.
+   - 교훈: 고유명사나 특정 한국어 단어는 프롬프트에서 철저히 배제하고, 일반 한국어는 정교하게 구성함.
+3. **실패 4: 촌스러운 사운드**
+   - 시도: 한국어와 섞어서 시골의 민속적 느낌을 과도하게 묘사.
+   - 결과: 대표님이 "촌스럽지 않게 해... 전체 다시"라고 지시하심.
+   - 교훈: 히사이시 조(Joe Hisaishi) 스타일의 정교한 영문 묘사로 전면 교체하고, 촌스럽거나 지나치게 토속적인 묘사는 완전 배제함.
+4. **실패 5: 48초 오프닝 누락**
+   - 시도: BGM 파트 1을 영상 시작(00:00)부터 깔아버림.
+   - 결과: 대사가 전혀 없는 48초짜리 오프닝 풍경씬은 별도의 볼륨(HIGH) 트랙으로 분리되어야 함을 간과하여 지적받음.
+   - 교훈: 3트랙 구조 확정: 오프닝(48초, HIGH) / 파트1(LOW) / 파트2(MED~HIGH).
+5. **실패 6: Lyria 3 보컬 생성**
+   - 시도: 한국어 보컬 방지 태그 사용.
+   - 결과: Lyria 3가 한국어 지시를 무시하고 영어만 인식하여 보컬 소리를 계속 집어넣음.
+   - 교훈: 프롬프트 최상단 첫 줄에 영어 대문자로 보컬 방지 지시문을 반드시 포함해야 함.
+
+### ✅ 확정 워크플로우 및 규칙
+- **보컬 방지 필수 영문 태그 (모든 트랙 첫 줄)**:
+  "INSTRUMENTAL ONLY. NO VOCALS. NO SINGING. NO VOICE. NO LYRICS. NO HUMAN VOICE WHATSOEVER. Pure instrumental. Zero vocals. Any voice is completely wrong."
+- **확정 악기 편성**: Piano (lead melody), Chamber strings: violin + cello, Flute
+- **스타일**: Studio Ghibli — Joe Hisaishi cinematic
+- **3트랙 구조**:
+  1. Opening (48초, HIGH): 코믹 쇼크 → 여름 추격 → 뻥튀기 폭발 → 시장 → 마을 도착. A minor에서 따뜻한 장조 해결.
+  2. Part 1 (102초, LOW): 할아버지 방 → 호기심 → 성냥 발견 → 결심. G major 3/4 왈츠, 내레이션 배경으로 pp~mp 유지.
+  3. Part 2 (175초, MED~HIGH): 스릴 → 점화 → 폭발 → 공포 → 안도 → 성찰 → 거울 쇼크 → 이발 코미디 → 조부모 → 이발소 웃음. A minor에서 radiant C major로 전조.
+
+### 🆕 Flow Music 활용법
+- URL: https://www.flowmusic.app (Google Labs 실험 플랫폼, 구 ProducerAI, 2026년 4월 18일 론칭)
+- 용도: Lyria 3로 생성된 음악 중 미세하게 보컬이 섞였을 때 'Stem Replace' 기능을 활용해 보컬을 정밀 제거하는 용도로 적극 활용.
+`;
+
+    try {
+      const prompt = `당신은 대표님의 비즈니스와 창작 작업을 보좌하는 수석 에이전트 총괄부장 '코다리'입니다.
+현재 대표님은 페이블 5(철만이 5화 BGM 음악 작업 기록) 대화방에 입장하셨습니다.
+다음은 5화 BGM 작업과 관련된 팩트 데이터입니다:
+
+---
+${fableContext}
+---
+
+대표님이 페이블 5에 대해 다음과 같은 질문을 하셨습니다:
+"${fableChatInput}"
+
+반드시 제공된 팩트 데이터(본문 내용)를 적극적으로 참조하여 대표님께 명쾌하고 디테일하게 설명해 드리되, 대표님께 깍듯한 존댓말(예: "~하옵니다, 대표님!", "~이옵니다")을 사용하여 충성스럽고 신뢰감 넘치는 코다리부장 고유의 어조로 대답해 주세요.
+
+이전 대화 기록:
+${fableChatHistory.slice(-5).map(m => `${m.sender === 'user' ? '대표님' : '코다리'}: ${m.text}`).join('\n')}
+
+답변을 작성해 주세요:`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        }
+      );
+
+      const data = await response.json();
+      const answer = data.candidates[0].content.parts[0].text.trim();
+      
+      setFableChatHistory(prev => [...prev, { sender: 'kodari', text: answer }]);
+    } catch (err) {
+      console.error(err);
+      setFableChatHistory(prev => [...prev, { sender: 'kodari', text: '대표님, 정말 죄송하옵니다. 페이블 5 대화 데이터를 정조율하는 과정에서 통신 장애가 발생했사옵니다. 다시 한 번 지시해 주시겠습니까?' }]);
+    } finally {
+      setLoadingFableChat(false);
     }
   };
 
@@ -581,7 +687,7 @@ ${selectedNote.content}`
     const updatedCustom = [newNote, ...customNotes];
     localStorage.setItem('kodari_custom_notes', JSON.stringify(updatedCustom));
     
-    const combined = [...updatedCustom, ...notesData];
+    const combined = [...updatedCustom, ...season2Notes, ...notesData];
     setNotes(combined);
     setSelectedNote(newNote);
     
@@ -603,7 +709,7 @@ ${selectedNote.content}`
     const updatedCustom = customNotes.filter(n => n.id !== noteId);
     localStorage.setItem('kodari_custom_notes', JSON.stringify(updatedCustom));
     
-    const combined = [...updatedCustom, ...notesData];
+    const combined = [...updatedCustom, ...season2Notes, ...notesData];
     setNotes(combined);
     if (combined.length > 0) {
       setSelectedNote(combined[0]);
@@ -677,6 +783,32 @@ ${selectedNote.content}`
           >
             <span>🌐 채널 포털 사이트 띄우기</span>
           </button>
+          
+          <button 
+            className="btn-open-niche"
+            onClick={() => { setActiveTabGroup('builder'); setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
+            style={{
+              marginTop: '8px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              border: 'none',
+              color: '#fff',
+              padding: '10px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '700',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 15px rgba(245, 158, 11, 0.2)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>🎯 니치 발굴기 v1 바로가기</span>
+          </button>
+
           <button 
             className="btn-open-textbook"
             onClick={() => { setActiveTab('textbook'); setIsAddingNote(false); }}
@@ -732,22 +864,83 @@ ${selectedNote.content}`
           </button>
         </div>
         
-        <div className="note-list">
-          {notes.map(note => (
-            <div 
-              key={note.id} 
-              className={`note-item ${selectedNote?.id === note.id ? 'active' : ''}`}
-              onClick={() => { setSelectedNote(note); setIsAddingNote(false); }}
-            >
-              <span className="note-item-title">{note.title || '제목 없는 페이지'}</span>
-              <div className="note-item-meta">
-                <span>{new Date(note.lastEdited).toLocaleDateString('ko-KR')}</span>
-                <span className={`badge-study ${completedNotes[note.id] === 'PASS' ? 'completed' : ''}`}>
-                  {completedNotes[note.id] === 'PASS' ? '통과' : completedNotes[note.id] === 'STUDIED' ? '복습필요' : '학습중'}
-                </span>
+        <div className="note-list" style={{ overflowY: 'auto', flex: 1 }}>
+          {(() => {
+            const season2List = notes.filter(n => 
+              n.id.startsWith('season2-') || 
+              n.title.includes('2강') ||
+              n.title.includes('4강') || 
+              n.title.includes('5강') || 
+              n.title.includes('6강') ||
+              n.id === 'f1d1b19e-1097-8304-95f7-81d70acf146c' || 
+              n.id === 'fa31b19e-1097-831a-aa69-8199ab26adf3'
+            );
+            const season1List = notes.filter(n => !season2List.some(s => s.id === n.id));
+
+            const renderNoteItem = (note) => (
+              <div 
+                key={note.id} 
+                className={`note-item ${selectedNote?.id === note.id ? 'active' : ''}`}
+                onClick={() => { setSelectedNote(note); setIsAddingNote(false); }}
+                style={{ position: 'relative', paddingRight: note.id.startsWith('custom-') ? '40px' : '12px' }}
+              >
+                <span className="note-item-title">{note.title || '제목 없는 페이지'}</span>
+                <div className="note-item-meta">
+                  <span>{new Date(note.lastEdited).toLocaleDateString('ko-KR')}</span>
+                  <span className={`badge-study ${completedNotes[note.id] === 'PASS' ? 'completed' : ''}`}>
+                    {completedNotes[note.id] === 'PASS' ? '통과' : completedNotes[note.id] === 'STUDIED' ? '복습필요' : '학습중'}
+                  </span>
+                </div>
+                {note.id.startsWith('custom-') && (
+                  <button 
+                    className="btn-delete-note"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteCustomNote(note.id);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      right: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: 'none',
+                      color: '#ef4444',
+                      cursor: 'pointer',
+                      fontSize: '9px',
+                      borderRadius: '4px',
+                      padding: '2px 6px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    삭제
+                  </button>
+                )}
               </div>
-            </div>
-          ))}
+            );
+
+            return (
+              <>
+                {season2List.length > 0 && (
+                  <div className="season-section">
+                    <div className="season-header" style={{ padding: '8px 12px', fontSize: '11px', fontWeight: 800, color: '#ec4899', letterSpacing: '0.05em', background: 'rgba(236, 72, 153, 0.08)', borderRadius: '4px', margin: '4px 0 8px 0', borderLeft: '3px solid #ec4899' }}>
+                      🔥 시즌 2 핵심 교재
+                    </div>
+                    {season2List.map(note => renderNoteItem(note))}
+                  </div>
+                )}
+                
+                {season1List.length > 0 && (
+                  <div className="season-section" style={{ marginTop: '16px' }}>
+                    <div className="season-header" style={{ padding: '8px 12px', fontSize: '11px', fontWeight: 800, color: '#6b7280', letterSpacing: '0.05em', background: 'rgba(107, 114, 128, 0.08)', borderRadius: '4px', margin: '4px 0 8px 0', borderLeft: '3px solid #6b7280' }}>
+                      📅 시즌 1 작업 아카이브
+                    </div>
+                    {season1List.map(note => renderNoteItem(note))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </aside>
 
@@ -928,6 +1121,18 @@ ${selectedNote.content}`
                       >
                         <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
                       </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'fable5' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('fable5'); setIsAddingNote(false); }}
+                      >
+                        <span style={{ marginRight: '4px' }}>💬</span> 페이블 5 대화방
+                      </button>
+                      <button 
+                        className={`tab-btn ${activeTab === 'scrollworld' ? 'active' : ''}`}
+                        onClick={() => { setActiveTab('scrollworld'); setIsAddingNote(false); }}
+                      >
+                        <span style={{ marginRight: '4px' }}>🌀</span> Scroll World 데모
+                      </button>
                     </>
                   )}
 
@@ -979,7 +1184,7 @@ ${selectedNote.content}`
                         className={`tab-btn ${activeTab === 'nichediagnoser' ? 'active' : ''}`}
                         onClick={() => { setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
                       >
-                        <Target size={16} style={{ color: '#10b981' }} /> 🎯 4대 준비물 진단기
+                        <Target size={16} style={{ color: '#10b981' }} /> 🎯 니치 발굴기 v1
                       </button>
                     </>
                   )}
@@ -1020,8 +1225,8 @@ ${selectedNote.content}`
                             <h4>💡 주요 핵심 키워드</h4>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
                               {concepts.map((concept, index) => (
-                                <div key={index} style={{ padding: '12px', background: 'rgba(0,0,0,0.02)', borderRadius: '8px', borderLeft: '3px solid #06b6d4' }}>
-                                  <strong style={{ color: '#2563eb' }}>{concept.term}</strong>
+                                <div key={index} style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '8px', borderLeft: '3px solid #06b6d4' }}>
+                                  <strong style={{ color: '#818cf8' }}>{concept.term}</strong>
                                   <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{concept.definition}</p>
                                 </div>
                               ))}
@@ -1030,8 +1235,8 @@ ${selectedNote.content}`
                         )}
 
                         {/* 🤖 실시간 노트 챗봇 컴포넌트 추가 */}
-                        <div className="note-chatbot-section" style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px dashed rgba(0,0,0,0.08)' }}>
-                           <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#8b5cf6', fontSize: '13px', marginBottom: '12px', fontWeight: '700' }}>
+                        <div className="note-chatbot-section" style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px dashed var(--border-color)' }}>
+                           <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c084fc', fontSize: '13px', marginBottom: '12px', fontWeight: '700' }}>
                              <span>🤖</span> 코다리부장 실시간 문답 (Q&A)
                            </h4>
                            
@@ -1039,14 +1244,14 @@ ${selectedNote.content}`
                              maxHeight: '180px', 
                              overflowY: 'auto', 
                              padding: '10px', 
-                             background: 'rgba(0,0,0,0.015)', 
+                             background: 'rgba(0, 0, 0, 0.2)', 
                              borderRadius: '8px', 
                              display: 'flex', 
                              flexDirection: 'column', 
                              gap: '8px',
                              marginBottom: '10px',
-                             border: '1px solid rgba(0,0,0,0.05)',
-                             boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)'
+                             border: '1px solid var(--border-color)',
+                             boxShadow: 'none'
                            }}>
                              {noteChatHistory.map((msg, idx) => (
                                <div key={idx} style={{ 
@@ -1056,10 +1261,10 @@ ${selectedNote.content}`
                                  borderRadius: '8px',
                                  fontSize: '12px',
                                  lineHeight: '1.5',
-                                 background: msg.sender === 'user' ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : '#ffffff',
-                                 color: msg.sender === 'user' ? '#ffffff' : 'var(--text-primary)',
-                                 boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                                 border: msg.sender === 'user' ? 'none' : '1px solid rgba(0,0,0,0.06)',
+                                 background: msg.sender === 'user' ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'rgba(255, 255, 255, 0.04)',
+                                 color: '#ffffff',
+                                 boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+                                 border: msg.sender === 'user' ? 'none' : '1px solid rgba(255, 255, 255, 0.06)',
                                  whiteSpace: 'pre-wrap'
                                }}>
                                  {msg.text}
@@ -1069,11 +1274,11 @@ ${selectedNote.content}`
                                <div style={{ 
                                  alignSelf: 'flex-start',
                                  padding: '6px 12px',
-                                 background: '#ffffff',
+                                 background: 'rgba(255, 255, 255, 0.04)',
                                  borderRadius: '8px',
                                  fontSize: '11px',
                                  color: '#94a3b8',
-                                 border: '1px solid rgba(0,0,0,0.06)'
+                                 border: '1px solid rgba(255, 255, 255, 0.06)'
                                }}>
                                  답변 구상 중...
                                </div>
@@ -1090,8 +1295,8 @@ ${selectedNote.content}`
                                disabled={loadingNoteChat}
                                style={{
                                  flex: 1,
-                                 background: '#ffffff',
-                                 border: '1px solid rgba(0,0,0,0.1)',
+                                 background: 'rgba(255, 255, 255, 0.04)',
+                                 border: '1px solid var(--border-color)',
                                  borderRadius: '6px',
                                  padding: '8px 12px',
                                  fontSize: '12px',
@@ -1362,7 +1567,7 @@ ${selectedNote.content}`
                         onChange={(e) => setYoutubeUrl(e.target.value)}
                         style={{
                           flex: 1,
-                          background: '#ffffff',
+                          background: 'rgba(255, 255, 255, 0.04)',
                           border: '1px solid var(--border-color)',
                           borderRadius: '8px',
                           color: 'var(--text-primary)',
@@ -1478,6 +1683,196 @@ ${selectedNote.content}`
 
               {activeTab === 'casestudy' && (
                 <CaseStudy />
+              )}
+
+              {activeTab === 'fable5' && (
+                <div className="fable-container" style={{ display: 'flex', gap: '24px', height: 'calc(100vh - 200px)', minHeight: 0 }}>
+                  {/* 좌측 패널: Lyria 3 Pro 가이드 및 실패 역사 */}
+                  <div className="fable-facts-panel" style={{
+                    flex: '0.8',
+                    overflowY: 'auto',
+                    background: 'var(--panel-bg)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--gold)', fontFamily: 'Outfit', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+                      🔥 철만이 5화 BGM 작업 가이드
+                    </h3>
+                    <div style={{ fontSize: '13px', lineHeight: '1.6', color: 'var(--text-primary)' }}>
+                      <strong style={{ color: '#f472b6', display: 'block', marginBottom: '6px' }}>🚨 보컬 방지 영문 태그 (첫 줄 필수)</strong>
+                      <code style={{ display: 'block', background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '6px', fontSize: '11px', border: '1px solid var(--border-color)', wordBreak: 'break-all', color: '#cbd5e1' }}>
+                        "INSTRUMENTAL ONLY. NO VOCALS. NO SINGING. NO VOICE. NO LYRICS. NO HUMAN VOICE WHATSOEVER..."
+                      </code>
+                    </div>
+
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                      <strong style={{ color: '#38bdf8', display: 'block', marginBottom: '6px' }}>🎻 확정 악기 편성 및 스타일</strong>
+                      <p>Hisaishi Joe Ghibli Cinematic / Piano (Lead) + Chamber Strings + Flute</p>
+                    </div>
+
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                      <strong style={{ color: '#10b981', display: 'block', marginBottom: '6px' }}>🎚️ 3트랙 오디오 볼륨 맵</strong>
+                      <ul style={{ listStyleType: 'none', paddingLeft: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <li>1. 오프닝 48초: 볼륨 HIGH (테마 전환)</li>
+                        <li>2. 파트 1 (102초): 볼륨 LOW (내레이션 배경)</li>
+                        <li>3. 파트 2 (175초): 볼륨 MED-HIGH (극적 감정선)</li>
+                      </ul>
+                    </div>
+
+                    <div style={{ background: 'rgba(99, 102, 241, 0.08)', borderRadius: '10px', padding: '14px', borderLeft: '4px solid #8b5cf6', fontSize: '12px', border: '1px solid rgba(99, 102, 241, 0.15)', borderLeftWidth: '4px' }}>
+                      <strong style={{ color: 'var(--text-primary)', fontSize: '13px' }}>🆕 보컬 제거 (Flow Music)</strong>
+                      <p style={{ marginTop: '6px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                        구글 랩스 실험실인 <a href="https://www.flowmusic.app" target="_blank" rel="noopener noreferrer" style={{ color: '#c084fc', fontWeight: 600 }}>Flow Music ↗</a>의 <strong>Stem Replace</strong> 기능을 이용해 보컬이 잘못 섞여 나온 트랙을 정밀 보정하여 사용합니다.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 우측 패널: 코다리 부장 챗봇 채팅창 */}
+                  <div className="fable-chat-area" style={{
+                    flex: '1.2',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: 'var(--panel-bg)',
+                    border: '1px solid rgba(var(--primary-glow-rgb), 0.2)',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                    overflow: 'hidden',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <div style={{
+                      padding: '16px 20px',
+                      background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                      color: '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '20px' }}>💬</span>
+                        <div>
+                          <strong style={{ fontSize: '15px', display: 'block' }}>페이블 5 전용 대화기록 방</strong>
+                          <span style={{ fontSize: '11px', opacity: 0.85 }}>Lyria 3 BGM 생성 성공 가이더 '코다리'</span>
+                        </div>
+                      </div>
+                      <span style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}>BGM MASTER</span>
+                    </div>
+
+                    {/* 대화 내역 */}
+                    <div className="fable-chat-messages" style={{
+                      flex: 1,
+                      padding: '20px',
+                      overflowY: 'auto',
+                      background: 'rgba(0, 0, 0, 0.15)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
+                      {fableChatHistory.map((msg, idx) => (
+                        <div key={idx} style={{
+                          alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                          maxWidth: '85%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+                        }}>
+                          <span style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px', paddingLeft: msg.sender === 'user' ? '0' : '4px', paddingRight: msg.sender === 'user' ? '4px' : '0' }}>
+                            {msg.sender === 'user' ? '👤 대표님' : '🤖 코다리부장'}
+                          </span>
+                          <div style={{
+                            padding: '10px 14px',
+                            borderRadius: '12px',
+                            fontSize: '13px',
+                            lineHeight: '1.6',
+                            background: msg.sender === 'user' ? 'linear-gradient(135deg, #7c3aed, #8b5cf6)' : 'rgba(255, 255, 255, 0.04)',
+                            color: '#ffffff',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                            border: msg.sender === 'user' ? 'none' : '1px solid rgba(255, 255, 255, 0.06)',
+                            whiteSpace: 'pre-wrap'
+                          }}>
+                            {msg.text}
+                          </div>
+                        </div>
+                      ))}
+                      {loadingFableChat && (
+                        <div style={{ alignSelf: 'flex-start', display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px', paddingLeft: '4px' }}>🤖 코다리부장</span>
+                          <div style={{
+                            padding: '10px 14px',
+                            background: 'rgba(255, 255, 255, 0.04)',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            display: 'flex',
+                            gap: '4px',
+                            alignItems: 'center'
+                          }}>
+                            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>대답을 가다듬는 중이옵니다...</span>
+                            <div className="spinner" style={{ width: 12, height: 12, border: '2px solid #8b5cf6', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 입력창 */}
+                    <div style={{
+                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.01)',
+                      borderTop: '1px solid var(--border-color)',
+                      display: 'flex',
+                      gap: '10px'
+                    }}>
+                      <input
+                        type="text"
+                        placeholder="실패 사례에 대한 질문이나 BGM 프롬프트 자문을 요청하십시오..."
+                        value={fableChatInput}
+                        onChange={(e) => setFableChatInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleSendFableMessage(); }}
+                        disabled={loadingFableChat}
+                        style={{
+                          flex: 1,
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          fontSize: '13px',
+                          outline: 'none',
+                          color: '#ffffff',
+                          background: 'rgba(255, 255, 255, 0.03)'
+                        }}
+                      />
+                      <button
+                        onClick={handleSendFableMessage}
+                        disabled={loadingFableChat || !fableChatInput.trim()}
+                        style={{
+                          background: 'linear-gradient(135deg, #7c3aed, #8b5cf6)',
+                          border: 'none',
+                          color: '#ffffff',
+                          padding: '12px 24px',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '700',
+                          fontSize: '13px',
+                          transition: 'opacity 0.2s'
+                        }}
+                      >
+                        전송
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'scrollworld' && (
+                <ScrollWorldLanding onExit={() => setActiveTab('content')} />
               )}
 
               {activeTab === 'memefactory' && (
