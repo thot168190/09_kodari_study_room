@@ -3,11 +3,12 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 :root {
-  --tl-primary: #0B3D2E; /* 🌲 Adobe Color 트렌드 #1: 딥 포레스트 그린 */
-  --tl-primary-hover: #0F6A4B; /* 🌲 Adobe Color 트렌드 #1: 럭셔리 에메랄드 */
-  --tl-accent: #1BAA78; /* 🌿 비브런트 민트/제이드 */
+  --tl-primary: #0B3D2E; /* 🌲 1번 테마: 딥 포레스트 그린 (Gucci/Diptyque Luxury Deep Green) */
+  --tl-primary-hover: #0F6A4B;
+  --tl-pastel-pink: #FBCFE8; /* 🌸 1번 테마: 소프트 파스텔 더스트 핑크 */
+  --tl-pink-accent: #F472B6; /* 🌸 파스텔 로즈 포인트 */
   --tl-purple: #0F6A4B;
-  --tl-gold: #C9B27C; /* 🏆 샴페인 골드 포인트 */
+  --tl-gold: #F472B6;
   --tl-bg: #ffffff; /* 퓨어 크리스프 화이트 */
   --tl-card-bg: #ffffff;
   --tl-card-border: #e2e8f0;
