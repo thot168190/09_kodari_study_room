@@ -1,320 +1,395 @@
-/* TravelLog.css - 화사하고 맑은 힐링 브라이트 미니멀 디자인 (Light Theme) */
+/* TravelLog.css - TravelTrace AI World-Class Commercial Light Theme */
 
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 :root {
-  --tl-primary: #0B3D2E; /* 🌲 1번 테마: 딥 포레스트 그린 (Gucci/Diptyque Luxury Deep Green) */
-  --tl-primary-hover: #0F6A4B;
-  --tl-pastel-pink: #FBCFE8; /* 🌸 1번 테마: 소프트 파스텔 더스트 핑크 */
-  --tl-pink-accent: #F472B6; /* 🌸 파스텔 로즈 포인트 */
-  --tl-purple: #0F6A4B;
+  --tl-primary: #0B3D2E;         /* 🌲 딥 포레스트 그린 */
+  --tl-primary-hover: #0F6A4B;   /* 🌲 럭셔리 에메랄드 */
+  --tl-pastel-pink: #FBCFE8;     /* 🌸 파스텔 더스트 핑크 */
+  --tl-pink-accent: #F472B6;     /* 🌸 로즈 액센트 */
   --tl-gold: #F472B6;
-  --tl-bg: #ffffff; /* 퓨어 크리스프 화이트 */
-  --tl-card-bg: #ffffff;
-  --tl-card-border: #e2e8f0;
-  --tl-text-main: #0b3d2e;
+  --tl-bg: #FFFFFF;              /* 퓨어 크리스프 화이트 */
+  --tl-card-bg: #FFFFFF;
+  --tl-card-border: #E2E8F0;
+  --tl-text-main: #0B3D2E;
   --tl-text-sub: #475569;
 }
 
-/* 🌲 퓨어 화이트 & 딥 포레스트 그린 럭셔리 배경 */
 .travellog-container {
   min-height: 100vh;
   background: 
-    radial-gradient(circle at 10% 20%, rgba(6, 78, 59, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, rgba(4, 120, 87, 0.04) 0%, transparent 45%),
-    #ffffff;
+    radial-gradient(circle at 5% 10%, rgba(11, 61, 46, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 95% 5%, rgba(244, 114, 182, 0.05) 0%, transparent 45%),
+    #FFFFFF;
   color: var(--tl-text-main);
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-  padding: 2rem 1.2rem 6rem 1.2rem;
-  transition: all 0.3s ease;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 1.8rem 1.5rem 6rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 🖥️ 단독 풀스크린 독립 모드 */
 .travellog-container.fullscreen-mode {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 99999;
   overflow-y: auto;
-  padding: 2.5rem 3rem 8rem 3rem;
-  background: #ffffff;
+  padding: 2rem 3rem 8rem 3rem;
+  background: #FFFFFF;
 }
 
-/* ✨ 상단 헤더 - 깔끔하고 밝은 카드 */
+/* 📍 상단 헤더 & 브랜드 바 */
 .tl-header {
-  max-width: 1050px;
-  margin: 0 auto 2rem auto;
+  max-width: 1100px;
+  margin: 0 auto 1.5rem auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.2rem;
-  padding: 1.6rem 2.2rem;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
+  padding: 1.2rem 1.8rem;
+  background: #FFFFFF;
+  border: 1.5px solid var(--tl-primary);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(11, 61, 46, 0.06);
 }
 
 .tl-title-section h1 {
-  font-size: 2.1rem;
+  font-size: 1.6rem;
   font-weight: 900;
-  margin: 0 0 0.4rem 0;
-  letter-spacing: -0.03em;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
+  color: var(--tl-primary);
+  margin: 0 0 0.3rem 0;
+  letter-spacing: -0.02em;
 }
 
 .tl-subtitle {
   color: var(--tl-text-sub);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .tl-action-btns {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
   align-items: center;
 }
 
-/* 🎙️ 화사한 음성 녹음 레드 핫 버튼 */
-.tl-voice-btn {
-  background: linear-gradient(135deg, #ef4444, #f97316);
-  color: white;
-  font-size: 1.05rem;
-  font-weight: 800;
-  padding: 0.85rem 1.6rem;
-  border-radius: 20px;
+.tl-btn {
+  padding: 0.65rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.88rem;
   border: none;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  gap: 0.4rem;
 }
 
-.tl-voice-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.45);
+.tl-btn-primary {
+  background: var(--tl-primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(11, 61, 46, 0.25);
 }
 
-/* 🔍 검색 바 */
+.tl-btn-primary:hover {
+  background: var(--tl-primary-hover);
+  transform: translateY(-1px);
+}
+
+.tl-btn-accent {
+  background: var(--tl-pastel-pink);
+  color: var(--tl-primary);
+  border: 1px solid var(--tl-pink-accent);
+  font-weight: 800;
+}
+
+.tl-btn-accent:hover {
+  background: #fbcfe8;
+  transform: translateY(-1px);
+}
+
+.tl-btn-secondary {
+  background: #f8fafc;
+  color: var(--tl-primary);
+  border: 1px solid #cbd5e1;
+}
+
+.tl-btn-secondary:hover {
+  background: #f1f5f9;
+}
+
+/* 🖼️ 히어로 커버 카드 */
+.tl-hero-cover {
+  max-width: 1100px;
+  margin: 0 auto 2rem auto;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  border: 1.5px solid var(--tl-primary);
+  box-shadow: 0 15px 40px rgba(11, 61, 46, 0.08);
+  background: #0B3D2E;
+  color: white;
+}
+
+.tl-hero-bg {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  opacity: 0.45;
+  filter: brightness(0.9);
+}
+
+.tl-hero-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0; top: 0;
+  padding: 2rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(11,61,46,0.2) 0%, rgba(11,61,46,0.92) 100%);
+}
+
+.tl-hero-tag {
+  align-self: flex-start;
+  background: rgba(251, 207, 232, 0.25);
+  border: 1px solid #F472B6;
+  color: #FBCFE8;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.tl-hero-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tl-hero-title-group h2 {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin: 0 0 0.4rem 0;
+  color: #FFFFFF;
+}
+
+.tl-hero-title-group p {
+  margin: 0;
+  color: #FBCFE8;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.tl-hero-stats {
+  display: flex;
+  gap: 1.2rem;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  padding: 0.8rem 1.4rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tl-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tl-stat-label {
+  font-size: 0.72rem;
+  color: #FBCFE8;
+  font-weight: 700;
+}
+
+.tl-stat-value {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #FFFFFF;
+}
+
+/* 🧭 워크스페이스 메인 탭 */
+.tl-nav-tabs-bar {
+  max-width: 1100px;
+  margin: 0 auto 1.8rem auto;
+  display: flex;
+  gap: 0.6rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.8rem;
+  overflow-x: auto;
+}
+
+.tl-main-tab-btn {
+  padding: 0.8rem 1.4rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: var(--tl-text-sub);
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.tl-main-tab-btn:hover {
+  background: #f1f5f9;
+  color: var(--tl-primary);
+}
+
+.tl-main-tab-btn.active {
+  background: var(--tl-primary);
+  color: #FBCFE8;
+  border-color: var(--tl-primary);
+  box-shadow: 0 6px 18px rgba(11, 61, 46, 0.25);
+}
+
+/* 🔍 1초 검색 및 음성바 */
+.tl-search-bar-row {
+  max-width: 1100px;
+  margin: 0 auto 2rem auto;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .tl-search-box {
   position: relative;
-  width: 100%;
-  margin-bottom: 2rem;
+  flex: 1;
+  min-width: 280px;
 }
 
 .tl-search-input {
   width: 100%;
-  padding: 1.1rem 1.5rem 1.1rem 3.5rem;
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 24px;
-  color: #0f172a;
-  font-size: 1.05rem;
+  padding: 0.95rem 1.2rem 0.95rem 3rem;
+  background: #FFFFFF;
+  border: 1.5px solid var(--tl-primary);
+  border-radius: 16px;
+  color: var(--tl-primary);
+  font-size: 0.95rem;
   font-weight: 600;
   outline: none;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .tl-search-input:focus {
-  border-color: #0284c7;
-  box-shadow: 0 0 20px rgba(2, 132, 199, 0.2);
+  box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.15);
 }
 
 .tl-search-icon {
   position: absolute;
-  left: 1.2rem;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
 }
 
-/* 일반 버튼 */
-.tl-btn {
-  padding: 0.75rem 1.4rem;
-  border-radius: 16px;
-  font-weight: 700;
+.tl-voice-btn {
+  background: var(--tl-primary);
+  color: #FFFFFF;
   font-size: 0.92rem;
+  font-weight: 800;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
   border: none;
   cursor: pointer;
-  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 6px 20px rgba(11, 61, 46, 0.25);
+  transition: all 0.2s ease;
 }
 
-.tl-btn-primary {
-  background: #059669;
-  color: white;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+.tl-voice-btn:hover {
+  background: var(--tl-primary-hover);
+  transform: translateY(-1px);
 }
 
-.tl-btn-primary:hover {
-  background: #047857;
+.tl-voice-btn.recording {
+  background: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }
 
-.tl-btn-accent {
-  background: #0284c7;
-  color: white;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
-}
-
-.tl-btn-secondary {
-  background: #f1f5f9;
-  color: #334155;
-  border: 1px solid #cbd5e1;
-}
-
-.tl-btn-danger {
-  background: #fef2f2;
-  color: #ef4444;
-  border: 1px solid #fecaca;
-}
-
-/* 🖼️ 메인 레이아웃 */
-.tl-main-layout {
-  max-width: 1050px;
+/* 🖼️ 타임라인 그리드 & 카드 */
+.tl-main-grid-layout {
+  max-width: 1100px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 320px;
   gap: 1.8rem;
 }
 
-@media (max-width: 900px) {
-  .tl-main-layout {
+@media (max-width: 950px) {
+  .tl-main-grid-layout {
     grid-template-columns: 1fr;
   }
 }
 
-/* 여행 히어로 카드 (화사한 백색) */
-.tl-trip-info-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 1.8rem 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-}
-
-.tl-trip-title-input {
-  background: transparent;
-  border: none;
-  border-bottom: 2px dashed #cbd5e1;
-  color: #0f172a;
-  font-size: 1.7rem;
-  font-weight: 900;
-  width: 100%;
-  padding: 0.4rem 0;
-  outline: none;
-}
-
-.tl-dates-location {
+.tl-days-header {
   display: flex;
-  gap: 1.2rem;
-  margin-top: 1.2rem;
-  flex-wrap: wrap;
-}
-
-.tl-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.tl-input-group label {
-  font-size: 0.78rem;
-  color: #0284c7;
-  font-weight: 800;
-}
-
-.tl-input {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 0.6rem 1rem;
-  color: #0f172a;
-  font-size: 0.95rem;
-  outline: none;
-}
-
-/* Day 탭 */
-.tl-days-nav {
-  display: flex;
-  gap: 0.8rem;
+  gap: 0.6rem;
   overflow-x: auto;
   padding-bottom: 0.6rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
 }
 
-.tl-day-tab {
-  padding: 0.75rem 1.5rem;
-  border-radius: 18px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
+.tl-day-pill {
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #cbd5e1;
+  color: var(--tl-text-sub);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.tl-day-tab.active {
-  background: #0284c7;
-  border-color: #0284c7;
-  color: white;
-  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+.tl-day-pill.active {
+  background: var(--tl-primary);
+  border-color: var(--tl-primary);
+  color: #FBCFE8;
+  box-shadow: 0 4px 12px rgba(11, 61, 46, 0.2);
 }
 
-.tl-add-day-btn {
-  padding: 0.75rem 1.2rem;
-  border-radius: 18px;
-  background: #ffffff;
-  border: 1.5px dashed #cbd5e1;
-  color: #64748b;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* 🔲 Sleek Grid Card View (recent.design 스타일) */
-.tl-grid-container {
+.tl-place-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.4rem;
-  margin-bottom: 2rem;
 }
 
-.tl-grid-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
+.tl-place-card-item {
+  background: #FFFFFF;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
 }
 
-.tl-grid-card:hover {
-  transform: translateY(-4px);
-  border-color: #0284c7;
-  box-shadow: 0 15px 30px rgba(2, 132, 199, 0.15);
+.tl-place-card-item:hover {
+  border-color: var(--tl-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(11, 61, 46, 0.12);
 }
 
-.tl-grid-img-holder {
-  width: 100%;
-  height: 160px;
+.tl-place-photo-box {
+  height: 170px;
   background: #f1f5f9;
   position: relative;
   overflow: hidden;
@@ -323,162 +398,164 @@
   justify-content: center;
 }
 
-.tl-grid-img {
+.tl-place-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.tl-grid-body {
-  padding: 1.4rem;
+.tl-place-body {
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
   flex: 1;
 }
 
-.tl-grid-badge-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tl-view-toggle-btns {
-  display: flex;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  padding: 3px;
-  border-radius: 14px;
-  gap: 3px;
-}
-
-.tl-toggle-btn {
-  padding: 0.4rem 0.9rem;
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  color: #64748b;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.tl-toggle-btn.active {
-  background: #ffffff;
-  color: #0284c7;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.tl-place-name {
-  font-size: 1.2rem;
+.tl-badge {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: 800;
-  color: #0f172a;
 }
 
-.tl-place-time {
-  font-size: 0.82rem;
-  color: #64748b;
-  background: #f1f5f9;
-  padding: 0.25rem 0.6rem;
-  border-radius: 8px;
-  font-weight: 600;
+.badge-sight { background: rgba(11, 61, 46, 0.1); color: #0B3D2E; border: 1px solid rgba(11, 61, 46, 0.2); }
+.badge-food { background: rgba(244, 114, 182, 0.15); color: #BE185D; border: 1px solid rgba(244, 114, 182, 0.3); }
+.badge-cafe { background: rgba(245, 158, 11, 0.12); color: #B45309; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-hotel { background: rgba(124, 58, 237, 0.12); color: #6D28D9; border: 1px solid rgba(124, 58, 237, 0.3); }
+.badge-shopping { background: rgba(16, 185, 129, 0.12); color: #047857; border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-etc { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+.tl-place-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--tl-primary);
 }
 
-.tl-place-memo {
-  font-size: 0.98rem;
-  color: #334155;
+.tl-place-text {
+  font-size: 0.9rem;
+  color: var(--tl-text-sub);
   line-height: 1.5;
 }
 
-.tl-place-footer {
+.tl-place-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #f1f5f9;
   padding-top: 0.8rem;
-  margin-top: 0.6rem;
+  margin-top: 0.4rem;
 }
 
-.tl-cost-tag {
-  color: #d97706;
+.tl-place-cost {
+  font-size: 0.98rem;
   font-weight: 800;
-  font-size: 1.05rem;
+  color: #D97706;
 }
 
-.badge-food { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
-.badge-cafe { background: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
-.badge-sight { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
-.badge-hotel { background: #f3e8ff; color: #7c3aed; border: 1px solid #e9d5ff; }
-.badge-shopping { background: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
-.badge-etc { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-
-/* 오른쪽 사이드바 */
-.tl-sidebar {
+/* 📸 인스타 카드뉴스 뷰 */
+.tl-cardnews-canvas-box {
+  background: #0B3D2E;
+  color: #FFFFFF;
+  width: 360px;
+  height: 360px;
+  border-radius: 24px;
+  padding: 2rem;
+  margin: 0 auto 1.5rem auto;
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
+  justify-content: space-between;
+  box-shadow: 0 20px 50px rgba(11, 61, 46, 0.3);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #F472B6;
 }
 
-.tl-card-widget {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 1.8rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+.tl-cardnews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.tl-widget-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin: 0 0 1.2rem 0;
-  color: #0f172a;
-}
-
-.tl-total-expense {
-  font-size: 2.1rem;
+.tl-cardnews-badge {
+  background: #FBCFE8;
+  color: #0B3D2E;
+  font-size: 0.75rem;
   font-weight: 900;
-  color: #d97706;
+  padding: 0.25rem 0.7rem;
+  border-radius: 12px;
 }
 
-/* 모달 */
+.tl-cardnews-quote {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: #FFFFFF;
+  margin: 1rem 0;
+}
+
+.tl-cardnews-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 0.8rem;
+}
+
+/* 🎬 숏폼 대본 뷰 */
+.tl-script-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--tl-primary);
+  border-radius: 20px;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.tl-script-timecode {
+  display: inline-block;
+  background: var(--tl-primary);
+  color: #FBCFE8;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 0.3rem 0.8rem;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+}
+
+/* 📄 PDF 유료 출판 뷰 */
+.tl-pdf-preview-sheet {
+  background: #FFFFFF;
+  border: 2px solid var(--tl-primary);
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(11, 61, 46, 0.12);
+}
+
+/* 모달 커스텀 */
 .tl-modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(11, 61, 46, 0.6);
   backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex; justify-content: center; align-items: center;
+  z-index: 100000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 1.2rem;
 }
 
-.tl-modal-content {
-  background: #ffffff;
-  border-radius: 28px;
-  width: 100%; max-width: 580px; max-height: 90vh;
+.tl-modal-box {
+  background: #FFFFFF;
+  border: 2px solid var(--tl-primary);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
   overflow-y: auto;
   padding: 2.2rem;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
-  color: #0f172a;
+  box-shadow: 0 25px 60px rgba(11, 61, 46, 0.3);
 }
-
-.tl-sell-modal {
-  border: 2px solid #f59e0b;
-}
-
-.tl-price-tag {
-  font-size: 2.2rem; font-weight: 900; color: #d97706;
-  text-align: center; margin: 1.2rem 0;
-  background: #fffbeb; padding: 1.2rem; border-radius: 18px;
-  border: 1.5px dashed #fde68a;
-}
-
-.tl-pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.tl-pay-btn { padding: 1rem; border-radius: 16px; border: 1px solid #cbd5e1; background: #f8fafc; color: #0f172a; font-weight: 800; cursor: pointer; }
-.tl-pay-btn:hover { background: #fffbeb; border-color: #f59e0b; }
-.tl-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
-.tl-modal-header h3 { margin: 0; font-size: 1.35rem; font-weight: 800; color: #0f172a; }
-.tl-close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #64748b; }
-.tl-form-row { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.tl-form-row label { font-size: 0.88rem; color: #475569; font-weight: 700; }
-.tl-form-row input, .tl-form-row select, .tl-form-row textarea { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; padding: 0.85rem 1.1rem; color: #0f172a; font-size: 0.98rem; outline: none; }
-.tl-ai-result-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 1.5rem; color: #0369a1; line-height: 1.7; font-size: 1rem; white-space: pre-wrap; margin-bottom: 1.5rem; }
