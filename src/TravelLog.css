@@ -1,0 +1,469 @@
+/* TravelLog.css - 화사하고 맑은 힐링 브라이트 미니멀 디자인 (Light Theme) */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  --tl-primary: #0B3D2E; /* 🌲 Adobe Color 트렌드 #1: 딥 포레스트 그린 */
+  --tl-primary-hover: #0F6A4B; /* 🌲 Adobe Color 트렌드 #1: 럭셔리 에메랄드 */
+  --tl-accent: #1BAA78; /* 🌿 비브런트 민트/제이드 */
+  --tl-purple: #0F6A4B;
+  --tl-gold: #C9B27C; /* 🏆 샴페인 골드 포인트 */
+  --tl-bg: #ffffff; /* 퓨어 크리스프 화이트 */
+  --tl-card-bg: #ffffff;
+  --tl-card-border: #e2e8f0;
+  --tl-text-main: #0b3d2e;
+  --tl-text-sub: #475569;
+}
+
+/* 🌲 퓨어 화이트 & 딥 포레스트 그린 럭셔리 배경 */
+.travellog-container {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(6, 78, 59, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(4, 120, 87, 0.04) 0%, transparent 45%),
+    #ffffff;
+  color: var(--tl-text-main);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  padding: 2rem 1.2rem 6rem 1.2rem;
+}
+
+/* ✨ 상단 헤더 - 깔끔하고 밝은 카드 */
+.tl-header {
+  max-width: 1050px;
+  margin: 0 auto 2rem auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 1.6rem 2.2rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.tl-title-section h1 {
+  font-size: 2.1rem;
+  font-weight: 900;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.tl-subtitle {
+  color: var(--tl-text-sub);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.tl-action-btns {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* 🎙️ 화사한 음성 녹음 레드 핫 버튼 */
+.tl-voice-btn {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 800;
+  padding: 0.85rem 1.6rem;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tl-voice-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(239, 68, 68, 0.45);
+}
+
+/* 🔍 검색 바 */
+.tl-search-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.tl-search-input {
+  width: 100%;
+  padding: 1.1rem 1.5rem 1.1rem 3.5rem;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 24px;
+  color: #0f172a;
+  font-size: 1.05rem;
+  font-weight: 600;
+  outline: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.tl-search-input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 20px rgba(2, 132, 199, 0.2);
+}
+
+.tl-search-icon {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+}
+
+/* 일반 버튼 */
+.tl-btn {
+  padding: 0.75rem 1.4rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tl-btn-primary {
+  background: #059669;
+  color: white;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+}
+
+.tl-btn-primary:hover {
+  background: #047857;
+}
+
+.tl-btn-accent {
+  background: #0284c7;
+  color: white;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+}
+
+.tl-btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.tl-btn-danger {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+/* 🖼️ 메인 레이아웃 */
+.tl-main-layout {
+  max-width: 1050px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.8rem;
+}
+
+@media (max-width: 900px) {
+  .tl-main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 여행 히어로 카드 (화사한 백색) */
+.tl-trip-info-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+}
+
+.tl-trip-title-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed #cbd5e1;
+  color: #0f172a;
+  font-size: 1.7rem;
+  font-weight: 900;
+  width: 100%;
+  padding: 0.4rem 0;
+  outline: none;
+}
+
+.tl-dates-location {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.tl-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tl-input-group label {
+  font-size: 0.78rem;
+  color: #0284c7;
+  font-weight: 800;
+}
+
+.tl-input {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  color: #0f172a;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+/* Day 탭 */
+.tl-days-nav {
+  display: flex;
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding-bottom: 0.6rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tl-day-tab {
+  padding: 0.75rem 1.5rem;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tl-day-tab.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: white;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+}
+
+.tl-add-day-btn {
+  padding: 0.75rem 1.2rem;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 🔲 Sleek Grid Card View (recent.design 스타일) */
+.tl-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.tl-grid-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+}
+
+.tl-grid-card:hover {
+  transform: translateY(-4px);
+  border-color: #0284c7;
+  box-shadow: 0 15px 30px rgba(2, 132, 199, 0.15);
+}
+
+.tl-grid-img-holder {
+  width: 100%;
+  height: 160px;
+  background: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-grid-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tl-grid-body {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.tl-grid-badge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tl-view-toggle-btns {
+  display: flex;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px;
+  border-radius: 14px;
+  gap: 3px;
+}
+
+.tl-toggle-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tl-toggle-btn.active {
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tl-place-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tl-place-time {
+  font-size: 0.82rem;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.tl-place-memo {
+  font-size: 0.98rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.tl-place-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.tl-cost-tag {
+  color: #d97706;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.badge-food { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.badge-cafe { background: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
+.badge-sight { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+.badge-hotel { background: #f3e8ff; color: #7c3aed; border: 1px solid #e9d5ff; }
+.badge-shopping { background: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
+.badge-etc { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+/* 오른쪽 사이드바 */
+.tl-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.tl-card-widget {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 1.8rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+}
+
+.tl-widget-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 1.2rem 0;
+  color: #0f172a;
+}
+
+.tl-total-expense {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: #d97706;
+}
+
+/* 모달 */
+.tl-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex; justify-content: center; align-items: center;
+  padding: 1.2rem;
+}
+
+.tl-modal-content {
+  background: #ffffff;
+  border-radius: 28px;
+  width: 100%; max-width: 580px; max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.2rem;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  color: #0f172a;
+}
+
+.tl-sell-modal {
+  border: 2px solid #f59e0b;
+}
+
+.tl-price-tag {
+  font-size: 2.2rem; font-weight: 900; color: #d97706;
+  text-align: center; margin: 1.2rem 0;
+  background: #fffbeb; padding: 1.2rem; border-radius: 18px;
+  border: 1.5px dashed #fde68a;
+}
+
+.tl-pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.tl-pay-btn { padding: 1rem; border-radius: 16px; border: 1px solid #cbd5e1; background: #f8fafc; color: #0f172a; font-weight: 800; cursor: pointer; }
+.tl-pay-btn:hover { background: #fffbeb; border-color: #f59e0b; }
+.tl-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
+.tl-modal-header h3 { margin: 0; font-size: 1.35rem; font-weight: 800; color: #0f172a; }
+.tl-close-btn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #64748b; }
+.tl-form-row { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.tl-form-row label { font-size: 0.88rem; color: #475569; font-weight: 700; }
+.tl-form-row input, .tl-form-row select, .tl-form-row textarea { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; padding: 0.85rem 1.1rem; color: #0f172a; font-size: 0.98rem; outline: none; }
+.tl-ai-result-box { background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px; padding: 1.5rem; color: #0369a1; line-height: 1.7; font-size: 1rem; white-space: pre-wrap; margin-bottom: 1.5rem; }
