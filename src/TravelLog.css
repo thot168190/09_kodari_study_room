@@ -25,6 +25,20 @@
   color: var(--tl-text-main);
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   padding: 2rem 1.2rem 6rem 1.2rem;
+  transition: all 0.3s ease;
+}
+
+/* 🖥️ 단독 풀스크린 독립 모드 */
+.travellog-container.fullscreen-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  overflow-y: auto;
+  padding: 2.5rem 3rem 8rem 3rem;
+  background: #ffffff;
 }
 
 /* ✨ 상단 헤더 - 깔끔하고 밝은 카드 */

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import './TravelLog.css';
+import { 
+  MapPin, Calendar, Search, Mic, BookOpen, Sparkles, CreditCard, 
+  Edit2, Trash2, Clock, Compass, DollarSign, Maximize2, Minimize2, 
+  ChevronRight, ArrowLeft, Download, CheckCircle, Tag
+} from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'sight', label: '🏖️ 명소/관광', badgeClass: 'badge-sight' },
-  { id: 'food', label: '🍱 맛집/식사', badgeClass: 'badge-food' },
-  { id: 'cafe', label: '☕ 카페/디저트', badgeClass: 'badge-cafe' },
-  { id: 'hotel', label: '🏨 숙소', badgeClass: 'badge-hotel' },
-  { id: 'shopping', label: '🛍️ 쇼핑/마켓', badgeClass: 'badge-shopping' },
-  { id: 'etc', label: '🚕 교통/기타', badgeClass: 'badge-etc' },
+  { id: 'sight', label: '명소/관광', badgeClass: 'badge-sight' },
+  { id: 'food', label: '맛집/식사', badgeClass: 'badge-food' },
+  { id: 'cafe', label: '카페/디저트', badgeClass: 'badge-cafe' },
+  { id: 'hotel', label: '숙소', badgeClass: 'badge-hotel' },
+  { id: 'shopping', label: '쇼핑/마켓', badgeClass: 'badge-shopping' },
+  { id: 'etc', label: '교통/기타', badgeClass: 'badge-etc' },
 ];
 
 const INITIAL_TRIP_DATA = {
-  title: '🌲 대표님의 강원도 2박 3일 쾌속 힐링 여행',
+  title: '강원도 2박 3일 힐링 트래블로그',
   destination: '대한민국 강원도 (속초, 강릉, 평창)',
   startDate: '2026-07-20',
   endDate: '2026-07-22',
@@ -26,7 +31,7 @@ const INITIAL_TRIP_DATA = {
           time: '11:00',
           category: 'sight',
           cost: 0,
-          memo: '도착하자마자 바다 소리 듣기! 바람 시원함 🌊',
+          memo: '도착하자마자 동해 파도 소리 감상. 바람 시원함.',
           photos: []
         },
         {
@@ -35,7 +40,7 @@ const INITIAL_TRIP_DATA = {
           time: '12:30',
           category: 'food',
           cost: 32000,
-          memo: '초당 순두부랑 전골 고소함 미침! 아침 겸 점심으로 딱 ⭐⭐⭐⭐⭐',
+          memo: '초당 순두부 전골 고소한 풍미. 아침 겸 점심 식사.',
           photos: []
         },
         {
@@ -44,7 +49,7 @@ const INITIAL_TRIP_DATA = {
           time: '16:00',
           category: 'shopping',
           cost: 45000,
-          memo: '줄 짧아서 바로 겟! 오징어순대 따끈할 때 먹는 것 추천.',
+          memo: '중앙시장 포장 구매. 오징어순대 따끈할 때 추천.',
           photos: []
         }
       ]
@@ -59,7 +64,7 @@ const INITIAL_TRIP_DATA = {
           time: '10:30',
           category: 'sight',
           cost: 34000,
-          memo: '미디어아트 전시 최고! 사진 찍기 너무 좋음 📸',
+          memo: '미디어아트 전시 관람. 라이트 필드 공간 감상.',
           photos: []
         },
         {
@@ -68,7 +73,7 @@ const INITIAL_TRIP_DATA = {
           time: '14:00',
           category: 'cafe',
           cost: 16000,
-          memo: '바다 보면서 아이스 아메리카노 한 잔 ☕ 주차 공간 여유 있음.',
+          memo: '바다 전망 아이스 아메리카노. 주차 공간 여유.',
           photos: []
         }
       ]
@@ -83,7 +88,7 @@ const INITIAL_TRIP_DATA = {
           time: '11:00',
           category: 'sight',
           cost: 24000,
-          memo: '풍차랑 양떼 목장 풍경 대박! 공기가 진짜 맑음 🍃',
+          memo: '풍차 및 양떼 목장 대관령 경관 감상.',
           photos: []
         }
       ]
@@ -99,7 +104,8 @@ export default function TravelLog() {
 
   const [activeDayIdx, setActiveDayIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' (recent.design 스타일) | 'timeline'
+  const [viewMode, setViewMode] = useState('grid');
+  const [isFullscreen, setIsFullscreen] = useState(false); // 🖥️ 단독 풀스크린 독립 모드
 
   // 🎙️ 음성 인식 상태
   const [isListening, setIsListening] = useState(false);
@@ -296,67 +302,85 @@ export default function TravelLog() {
   };
 
   return (
-    <div className="travellog-container">
-      {/* 🌟 [첫 화면 메인 설명 & 1초 가이드 히어로 영역] */}
-      <div style={{ maxWidth: '1050px', margin: '0 auto 2rem auto', background: '#ffffff', border: '2px solid #064e3b', borderRadius: '28px', padding: '2rem 2.2rem', boxShadow: '0 15px 40px rgba(6, 78, 59, 0.08)' }}>
+    <div className={`travellog-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* 상단 툴바 및 단독 독립 모드 토글 */}
+      <header className="tl-header">
+        <div className="tl-title-section">
+          <h1>{trip.title}</h1>
+          <p className="tl-subtitle">
+            <MapPin size={14} style={{ display: 'inline', marginRight: 4 }} />
+            {trip.destination} | 
+            <Calendar size={14} style={{ display: 'inline', marginLeft: 8, marginRight: 4 }} />
+            {trip.startDate} ~ {trip.endDate}
+          </p>
+        </div>
+        <div className="tl-action-btns">
+          <button 
+            className="tl-btn" 
+            style={{ background: '#0B3D2E', color: '#FBCFE8', border: '1.5px solid #F472B6', fontWeight: 800 }} 
+            onClick={() => setIsSellModalOpen(true)}
+          >
+            <Download size={16} /> 전자책 3,900원 출판 정산 ({salesCount}건 완료)
+          </button>
+          <button className="tl-btn tl-btn-accent" onClick={() => setIsAiModalOpen(true)}>
+            <Sparkles size={16} /> AI 감성 에세이
+          </button>
+          <button 
+            className="tl-btn tl-btn-secondary" 
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title="단독 풀스크린 독립 모드"
+          >
+            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />} 
+            {isFullscreen ? '창 축소' : '단독 풀스크린'}
+          </button>
+        </div>
+      </header>
+
+      {/* 🌟 [1초 가이드 히어로 영역] */}
+      <div style={{ maxWidth: '1050px', margin: '0 auto 2rem auto', background: '#ffffff', border: '1.5px solid #0B3D2E', borderRadius: '24px', padding: '1.8rem 2.2rem', boxShadow: '0 10px 30px rgba(11, 61, 46, 0.06)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
           <div>
-            <span style={{ background: 'rgba(6, 78, 59, 0.1)', color: '#064e3b', padding: '0.3rem 0.9rem', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.05em' }}>
-              💡 앱 정체성 & 1초 가이드
+            <span style={{ background: 'rgba(11, 61, 46, 0.08)', color: '#0B3D2E', padding: '0.3rem 0.9rem', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.05em' }}>
+              TravelTrace AI System
             </span>
-            <h1 style={{ color: '#0f172a', fontSize: '1.8rem', fontWeight: 900, marginTop: '0.6rem', margin: '0.6rem 0 0.2rem 0' }}>
-              "갔던 곳인지 아닌지 기억이 안 날 때? 카톡보다 10배 쉬운 1초 장소 기억 일기장!"
-            </h1>
-            <p style={{ color: '#475569', fontSize: '0.95rem', margin: 0 }}>
-              카톡 나와의 대화방이나 밴드처럼 사진과 글이 파묻히지 않고, <b>1초 음성 녹음</b>과 <b>1초 검색</b>으로 내 모든 여행 기억을 깔끔히 보관하는 전용 앱입니다.
+            <h2 style={{ color: '#0B3D2E', fontSize: '1.5rem', fontWeight: 900, marginTop: '0.6rem', margin: '0.6rem 0 0.2rem 0' }}>
+              장소 기억과 감성 기록을 1초 만에 보관하는 미니멀 트래블로그
+            </h2>
+            <p style={{ color: '#475569', fontSize: '0.92rem', margin: 0 }}>
+              사진, 위치 메타데이터, 1초 음성 메모로 모든 여행 순간을 정갈하게 보관합니다.
             </p>
           </div>
           <button 
             className={`tl-voice-btn ${isListening ? 'recording' : ''}`}
             onClick={toggleVoiceRecording}
-            style={{ fontSize: '1.1rem', padding: '1rem 1.8rem', background: 'linear-gradient(135deg, #064e3b, #047857)', boxShadow: '0 8px 25px rgba(6, 78, 59, 0.25)' }}
+            style={{ fontSize: '1rem', padding: '0.9rem 1.6rem', background: '#0B3D2E', color: '#ffffff', boxShadow: '0 6px 20px rgba(11, 61, 46, 0.25)', border: 'none' }}
           >
-            {isListening ? '🔴 음성 듣는 중...' : '🎙️ 1초 음성으로 툭 기록하기'}
+            <Mic size={18} />
+            {isListening ? '음성 분석 중...' : '1초 음성 기록'}
           </button>
         </div>
 
-        {/* 3가지 핵심 기능 안내 카드 3종 세트 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '1.4rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.2rem' }}>
-          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '18px', border: '1px solid #e2e8f0' }}>
-            <h4 style={{ color: '#064e3b', margin: '0 0 0.3rem 0', fontSize: '1rem' }}>🎙️ 1. 이동 중 1초 음성 기록</h4>
-            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>차 안이나 걸어갈 때 마이크 누르고 말하면 장소, 메모, 금액이 자동 정리!</p>
+        {/* 3가지 핵심 기능 안내 카드 */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '1.2rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.2rem' }}>
+          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ color: '#0B3D2E', margin: '0 0 0.3rem 0', fontSize: '0.95rem', fontWeight: 800 }}>1. 1초 음성 입력</h4>
+            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>이동 중 음성 메시지로 장소, 금액, 메모 자동 파싱</p>
           </div>
-          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '18px', border: '1px solid #e2e8f0' }}>
-            <h4 style={{ color: '#047857', margin: '0 0 0.3rem 0', fontSize: '1rem' }}>🔍 2. "여기 왔던 곳인가?" 1초 검색</h4>
-            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>속초, 카페, 순두부 단어 1개만 검색해도 과거 방문 일자와 평가 1초 팝업!</p>
+          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ color: '#0F6A4B', margin: '0 0 0.3rem 0', fontSize: '0.95rem', fontWeight: 800 }}>2. 1초 순간 검색</h4>
+            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>과거 방문 장소 키워드 검색 시 이전 방문 일자 팝업</p>
           </div>
-          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '18px', border: '1px solid #e2e8f0' }}>
-            <h4 style={{ color: '#d97706', margin: '0 0 0.3rem 0', fontSize: '1rem' }}>🛒 3. 3,900원 수익형 PDF 변환</h4>
-            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>내 여행 일기가 1초 만에 유료 전자책 가이드북으로 빌드되어 정산 가능!</p>
+          <div style={{ background: '#f8fafc', padding: '1rem 1.2rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <h4 style={{ color: '#D97706', margin: '0 0 0.3rem 0', fontSize: '0.95rem', fontWeight: 800 }}>3. 3,900원 PDF 정산</h4>
+            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0 }}>여행 일기 자동 가이드북 익스포트 및 유료 결제</p>
           </div>
         </div>
       </div>
 
-      {/* 상단 툴바 */}
-      <header className="tl-header">
-        <div className="tl-title-section">
-          <h1>🌲 {trip.title}</h1>
-          <p className="tl-subtitle">📍 {trip.destination} | 🗓️ {trip.startDate} ~ {trip.endDate}</p>
-        </div>
-        <div className="tl-action-btns">
-          <button className="tl-btn" style={{ background: 'linear-gradient(135deg, #f59e0b, #ec4899)', color: 'white', fontWeight: 800 }} onClick={() => setIsSellModalOpen(true)}>
-            🛒 전자책 3,900원 결제/판매 ({salesCount}건 완료🔥)
-          </button>
-          <button className="tl-btn tl-btn-accent" onClick={() => setIsAiModalOpen(true)}>
-            🤖 AI 감성 일기
-          </button>
-        </div>
-      </header>
-
-      {/* 🔍 1초 검색 바 */}
+      {/* 1초 검색 바 */}
       <div style={{ maxWidth: '1050px', margin: '0 auto' }}>
         <div className="tl-search-box">
-          <span className="tl-search-icon">🔍</span>
+          <span className="tl-search-icon"><Search size={18} color="#0B3D2E" /></span>
           <input
             type="text"
             className="tl-search-input"
