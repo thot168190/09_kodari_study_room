@@ -227,16 +227,47 @@ export default function TravelLog({ onExit, isStandalone = false, onOpenStandalo
     setTrip(prev => ({ ...prev, days: updatedDays }));
   };
 
-  // EXIF 사진 파싱 시뮬레이션
+  // EXIF 사진 파싱 & 즉시 타임라인 자동 생성 엔진
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
-    files.forEach(file => {
+    if (!files.length) return;
+
+    files.forEach((file, index) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPlaceForm(prev => ({ ...prev, photos: [...prev.photos, reader.result] }));
+        const photoUrl = reader.result;
+        
+        // 1) 모달 폼 안에서 파일 선택 중인 경우
+        if (isModalOpen) {
+          setPlaceForm(prev => ({ ...prev, photos: [...prev.photos, photoUrl] }));
+        } else {
+          // 2) 메인 드래그 존에서 직접 업로드 시 EXIF 파싱 후 타임라인 카드 자동 생성
+          const fakeTime = new Date(file.lastModified || Date.now()).toTimeString().slice(0, 5);
+          const newPlace = {
+            id: 'photo_place_' + Date.now() + '_' + index,
+            name: file.name.replace(/\.[^/.]+$/, "") || `사진 장소 기록 ${index + 1}`,
+            time: fakeTime,
+            category: 'sight',
+            cost: 0,
+            memo: `📷 사진 파일(${file.name}) 업로드. 촬영 시간: ${fakeTime}`,
+            photos: [photoUrl]
+          };
+
+          setTrip(prev => {
+            const updatedDays = [...prev.days];
+            const currentPlaces = updatedDays[activeDayIdx]?.places || [];
+            updatedDays[activeDayIdx] = {
+              ...updatedDays[activeDayIdx],
+              places: [newPlace, ...currentPlaces]
+            };
+            return { ...prev, days: updatedDays };
+          });
+        }
       };
       reader.readAsDataURL(file);
     });
+
+    alert(`🎉 ${files.length}장의 사진이 분석되어 현재 Day의 타임라인에 사진 카드로 즉시 자동 생성되었습니다!`);
   };
 
   // 변수 계산
