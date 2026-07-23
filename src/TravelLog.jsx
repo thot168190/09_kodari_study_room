@@ -96,7 +96,7 @@ const INITIAL_TRIP_DATA = {
   ]
 };
 
-export default function TravelLog() {
+export default function TravelLog({ onExit, isStandalone = false, onOpenStandalone }) {
   const [trip, setTrip] = useState(() => {
     const saved = localStorage.getItem('kodari_travel_log_data');
     return saved ? JSON.parse(saved) : INITIAL_TRIP_DATA;
@@ -105,7 +105,7 @@ export default function TravelLog() {
   const [activeDayIdx, setActiveDayIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid');
-  const [isFullscreen, setIsFullscreen] = useState(false); // 🖥️ 단독 풀스크린 독립 모드
+  const [isFullscreen, setIsFullscreen] = useState(isStandalone);
 
   // 🎙️ 음성 인식 상태
   const [isListening, setIsListening] = useState(false);
@@ -306,7 +306,29 @@ export default function TravelLog() {
       {/* 상단 툴바 및 단독 독립 모드 토글 */}
       <header className="tl-header">
         <div className="tl-title-section">
-          <h1>{trip.title}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {onExit && (
+              <button 
+                onClick={onExit}
+                style={{
+                  background: '#0B3D2E',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '6px 14px',
+                  cursor: 'pointer',
+                  fontWeight: 800,
+                  fontSize: '13px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4
+                }}
+              >
+                <ArrowLeft size={16} /> 공부방 복귀
+              </button>
+            )}
+            <h1>{trip.title}</h1>
+          </div>
           <p className="tl-subtitle">
             <MapPin size={14} style={{ display: 'inline', marginRight: 4 }} />
             {trip.destination} | 
@@ -325,14 +347,16 @@ export default function TravelLog() {
           <button className="tl-btn tl-btn-accent" onClick={() => setIsAiModalOpen(true)}>
             <Sparkles size={16} /> AI 감성 에세이
           </button>
-          <button 
-            className="tl-btn tl-btn-secondary" 
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            title="단독 풀스크린 독립 모드"
-          >
-            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />} 
-            {isFullscreen ? '창 축소' : '단독 풀스크린'}
-          </button>
+          {!isStandalone && (
+            <button 
+              className="tl-btn tl-btn-secondary" 
+              onClick={onOpenStandalone || (() => setIsFullscreen(!isFullscreen))}
+              title="단독 풀페이지 독립 모드"
+              style={{ background: '#FBCFE8', color: '#0B3D2E', border: '1px solid #F472B6', fontWeight: 800 }}
+            >
+              <Maximize2 size={16} /> 단독 풀페이지 띄우기
+            </button>
+          )}
         </div>
       </header>
 

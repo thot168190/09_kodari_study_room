@@ -24,6 +24,7 @@ function App() {
   const [showHubPortal, setShowHubPortal] = useState(false);
   const [showNicheSaaS, setShowNicheSaaS] = useState(false);
   const [showColorChartModal, setShowColorChartModal] = useState(false);
+  const [showTravelStandalone, setShowTravelStandalone] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [activeTab, setActiveTab] = useState('travellog'); // 'travellog' 기본 탑재!
@@ -729,6 +730,10 @@ ${selectedNote.content}`
     return <ChannelHub onClose={() => setShowHubPortal(false)} />;
   }
 
+  if (showTravelStandalone) {
+    return <TravelLog onExit={() => setShowTravelStandalone(false)} isStandalone={true} />;
+  }
+
   return (
     <div className="study-app">
       {/* 📂 사이드바 */}
@@ -739,10 +744,34 @@ ${selectedNote.content}`
             <div className="logo-text">KODARI ROOM</div>
           </div>
           <button 
+            className="btn-open-travellog-standalone"
+            onClick={() => setShowTravelStandalone(true)}
+            style={{
+              marginTop: '12px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #0B3D2E, #0F6A4B)',
+              border: '2px solid #F472B6',
+              color: '#FBCFE8',
+              padding: '12px 10px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: '900',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 18px rgba(11, 61, 46, 0.4)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>✈️ TravelTrace AI (단독 풀페이지)</span>
+          </button>
+          <button 
             className="btn-open-saas"
             onClick={() => setShowNicheSaaS(true)}
             style={{
-              marginTop: '12px',
+              marginTop: '8px',
               width: '100%',
               background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
               border: 'none',
@@ -1989,7 +2018,7 @@ ${selectedNote.content}`
               )}
 
               {activeTab === 'travellog' && (
-                <TravelLog />
+                <TravelLog onOpenStandalone={() => setShowTravelStandalone(true)} />
               )}
             </div>
           </>
