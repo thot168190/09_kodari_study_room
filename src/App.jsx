@@ -17,11 +17,13 @@ import Textbook from './Textbook';
 import ReRoomAI from './ReRoomAI';
 import ScrollWorldLanding from './ScrollWorldLanding';
 import TravelLog from './TravelLog';
+import ColorChartModal from './ColorChartModal';
 
 function App() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const [showHubPortal, setShowHubPortal] = useState(false);
   const [showNicheSaaS, setShowNicheSaaS] = useState(false);
+  const [showColorChartModal, setShowColorChartModal] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [activeTab, setActiveTab] = useState('travellog'); // 'travellog' 기본 탑재!
@@ -783,6 +785,31 @@ ${selectedNote.content}`
             }}
           >
             <span>🌐 채널 포털 사이트 띄우기</span>
+          </button>
+
+          <button 
+            className="btn-open-colorchart"
+            onClick={() => setShowColorChartModal(true)}
+            style={{
+              marginTop: '8px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #0B3D2E, #0F6A4B)',
+              border: '1.5px solid #F472B6',
+              color: '#FBCFE8',
+              padding: '10px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '800',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 15px rgba(11, 61, 46, 0.3)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>🎨 Adobe 딥그린 색차트 갤러리</span>
           </button>
           
           <button 
@@ -1974,6 +2001,11 @@ ${selectedNote.content}`
           </div>
         )}
       </main>
+
+      {/* 🎨 Adobe 딥그린 & 파스텔 색차트 갤러리 모달 */}
+      {showColorChartModal && (
+        <ColorChartModal onClose={() => setShowColorChartModal(false)} />
+      )}
     </div>
   );
 }
