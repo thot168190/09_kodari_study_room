@@ -739,9 +739,78 @@ ${selectedNote.content}`
   }
 
   return (
-    <div className="study-app">
-      {/* 📂 사이드바 */}
-      <aside className="sidebar">
+    <div className="study-app top-nav-layout">
+      {/* 🚀 최상단 단 한 줄 통합 4대 기둥 헤더 바 (Full Width Top Bar) */}
+      <header className="global-top-header">
+        <div className="top-header-left">
+          <div className="brand-logo">
+            <span className="logo-icon">💜</span>
+            <span className="logo-text">KODARI ROOM</span>
+          </div>
+
+          {/* 📖 노트 선택 드롭다운 (사이드바 대신 최상단에서 바로 노트 선택) */}
+          <div className="top-note-selector">
+            <select 
+              className="note-dropdown-select"
+              value={selectedNote ? selectedNote.id : ''}
+              onChange={(e) => {
+                const found = notes.find(n => n.id === e.target.value);
+                if (found) {
+                  setSelectedNote(found);
+                  setIsAddingNote(false);
+                }
+              }}
+            >
+              {notes.map(n => (
+                <option key={n.id} value={n.id}>
+                  📖 {n.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* 🏛️ 대표님의 4대 명확한 대분류 메인 기둥 (4 Big Pillars) */}
+        <div className="top-pillars-nav">
+          {/* 1대 기둥: 🧠 멘토와 함께하는 인공지능 공부 */}
+          <div className="pillar-group">
+            <span className="pillar-tag">🧠 AI 공부</span>
+            <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
+            <button className={`pillar-pill ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>📝 모의고사</button>
+            <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
+          </div>
+
+          {/* 2대 기둥: 📚 잉크워드 (밈팩토리 100% 삭제 완료) */}
+          <div className="pillar-group">
+            <span className="pillar-tag">📚 잉크워드</span>
+            <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
+            <button className={`pillar-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
+          </div>
+
+          {/* 3대 기둥: 🧬 과학랩 */}
+          <div className="pillar-group">
+            <span className="pillar-tag">🧬 과학랩</span>
+            <button className={`pillar-pill ${activeTab === 'sciencelab' ? 'active' : ''}`} onClick={() => setActiveTab('sciencelab')}>⚖️ 식약처검수&DeepMind</button>
+          </div>
+
+          {/* 4대 기둥: ✈️ 여행기억하기 */}
+          <div className="pillar-group">
+            <span className="pillar-tag">✈️ 여행기억</span>
+            <button className={`pillar-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
+            <button className={`pillar-pill ${activeTab === 'reroom' ? 'active' : ''}`} onClick={() => setActiveTab('reroom')}>🎨 ReRoom AI</button>
+          </div>
+        </div>
+
+        {/* 🚀 우측 퀵 실행 도구 */}
+        <div className="top-quick-tools">
+          <button onClick={() => setShowNicheSaaS(true)} className="quick-tool-btn niche">🎯 틈새진단기</button>
+          <button onClick={() => setShowHubPortal(true)} className="quick-tool-btn hub">🌐 채널포털</button>
+          <button onClick={() => setIsAddingNote(true)} className="quick-tool-btn add">➕ 노트추가</button>
+        </div>
+      </header>
+
+      {/* 📂 숨겨진 사이드바 (최상단 탑 헤더로 이전됨) */}
+      <aside className="sidebar" style={{ display: 'none' }}>
         <div className="sidebar-header">
           <div className="logo-area">
             <div className="logo-icon">💜</div>
