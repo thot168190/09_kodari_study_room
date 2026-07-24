@@ -1,9 +1,9 @@
-/* ScienceLabAI.css - Premium DeepTech Bio Style */
+/* ScienceLabAI.css - Premium High Contrast DeepTech Bio Style */
 .science-lab-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 24px;
-  color: #e2e8f0;
+  color: #0f172a;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -12,10 +12,10 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 40px 24px;
-  background: radial-gradient(circle at top center, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.8) 70%);
-  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
   border-radius: 24px;
-  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .science-hero-badge {
@@ -23,40 +23,39 @@
   align-items: center;
   gap: 8px;
   padding: 6px 16px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+  background: #0f172a;
+  border: 1px solid #0f172a;
   border-radius: 9999px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 800;
   color: #34d399;
   margin-bottom: 20px;
 }
 
 .science-hero-title {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: 34px;
+  font-weight: 900;
   letter-spacing: -0.02em;
   margin-bottom: 16px;
-  color: #ffffff;
+  color: #000000;
 }
 
 .gradient-text-emerald {
-  background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #059669;
 }
 
 .science-hero-desc {
   font-size: 16px;
-  color: #94a3b8;
+  color: #1e293b;
+  font-weight: 600;
   max-width: 720px;
   margin: 0 auto 32px;
   line-height: 1.6;
 }
 
 .highlight-text {
-  color: #38bdf8;
-  font-weight: 700;
+  color: #0284c7;
+  font-weight: 800;
 }
 
 /* 스탯 바 */
@@ -73,30 +72,31 @@
   align-items: center;
   gap: 14px;
   padding: 16px 20px;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
   border-radius: 16px;
   text-align: left;
 }
 
-.stat-icon.emerald { color: #34d399; background: rgba(52, 211, 153, 0.1); padding: 10px; border-radius: 12px; }
-.stat-icon.cyan { color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 10px; border-radius: 12px; }
-.stat-icon.purple { color: #c084fc; background: rgba(192, 132, 252, 0.1); padding: 10px; border-radius: 12px; }
-.stat-icon.gold { color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 10px; border-radius: 12px; }
+.stat-icon.emerald { color: #059669; background: rgba(52, 211, 153, 0.15); padding: 10px; border-radius: 12px; }
+.stat-icon.cyan { color: #0284c7; background: rgba(56, 189, 248, 0.15); padding: 10px; border-radius: 12px; }
+.stat-icon.purple { color: #7c3aed; background: rgba(192, 132, 252, 0.15); padding: 10px; border-radius: 12px; }
+.stat-icon.gold { color: #d97706; background: rgba(251, 191, 36, 0.15); padding: 10px; border-radius: 12px; }
 
 .stat-num {
   display: block;
   font-size: 18px;
-  font-weight: 800;
-  color: #ffffff;
+  font-weight: 900;
+  color: #000000;
 }
 
 .stat-label {
   font-size: 12px;
-  color: #94a3b8;
+  font-weight: 700;
+  color: #334155;
 }
 
-/* 탭 네비게이션 */
+/* 탭 네비게이션 - 100% 선명한 고대조 버튼 */
 .science-tabs {
   display: flex;
   gap: 12px;
@@ -112,48 +112,55 @@
   align-items: center;
   gap: 10px;
   padding: 16px 20px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 2.5px solid #cbd5e1;
   border-radius: 16px;
-  color: #94a3b8;
-  font-weight: 600;
+  color: #000000;
+  font-weight: 900;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .tab-btn:hover {
-  background: rgba(30, 41, 59, 0.9);
-  color: #ffffff;
+  background: #f1f5f9;
+  border-color: #0f172a;
+  color: #000000;
 }
 
 .tab-btn.active {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: #34d399;
-  color: #ffffff;
-  box-shadow: 0 4px 20px rgba(52, 211, 153, 0.15);
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.3) !important;
 }
 
 .badge-skill {
   margin-left: auto;
   font-size: 11px;
-  padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+  padding: 4px 10px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
-  color: #64748b;
+  color: #0f172a;
 }
 
 .tab-btn.active .badge-skill {
-  background: rgba(52, 211, 153, 0.2);
-  color: #34d399;
+  background: #059669;
+  color: #ffffff;
+  border: none;
 }
 
 /* 검색 입력 섹션 */
 .science-search-section {
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0f172a;
+  border: 2px solid #0f172a;
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 32px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
 }
 
 .search-input-wrapper {
@@ -166,23 +173,24 @@
 .search-icon {
   position: absolute;
   left: 18px;
-  color: #64748b;
+  color: #0f172a;
 }
 
 .science-input {
   width: 100%;
   padding: 16px 16px 16px 52px;
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
   border-radius: 14px;
-  color: #ffffff;
+  color: #000000;
   font-size: 15px;
+  font-weight: 800;
   outline: none;
   transition: border-color 0.2s;
 }
 
 .science-input:focus {
-  border-color: #34d399;
+  border-color: #10b981;
 }
 
 .btn-analyze {
@@ -190,11 +198,12 @@
   align-items: center;
   gap: 8px;
   padding: 16px 28px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #10b981;
   border: none;
   border-radius: 14px;
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 900;
+  font-size: 15px;
   white-space: nowrap;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -215,24 +224,26 @@
 
 .preset-label {
   font-size: 13px;
-  color: #64748b;
+  font-weight: 800;
+  color: #ffffff;
 }
 
 .chip-btn {
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 7px 14px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
   border-radius: 8px;
-  color: #cbd5e1;
+  color: #000000;
+  font-weight: 800;
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .chip-btn:hover {
-  background: rgba(52, 211, 153, 0.15);
-  border-color: #34d399;
-  color: #34d399;
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
 }
 
 /* 로딩 박스 */
