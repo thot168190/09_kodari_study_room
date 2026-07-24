@@ -31,19 +31,29 @@ export default function ScienceLabAI() {
   // 예시 키워드 데이터
   const presetQueries = {
     paper: [
-      "mRNA 백신의 리피드 나노입자(LNP) 전달 기전 최신 논문",
+      "탈모(Alopecia) 원인 - 5α-reductase 효소 및 DHT 호르몬 차단 논문",
+      "어성초·자소엽·녹차 파이토케미컬의 두피 항염 & 모근 성장 기전",
       "NMN 및 NAD+ 증진제가 줄기세포 장수에 미치는 임상 효과",
-      "알츠하이머 타우 단백질 억제제 관련 2026 bioRxiv 동향"
+      "mRNA 백신의 리피드 나노입자(LNP) 전달 기전 최신 논문"
     ],
     ingredient: [
-      "나이아신아마이드 (Niacinamide) - 콜라겐 합성 반응 기전",
-      "레스베라트롤 (Resveratrol) - SIRT1 장수 유전자 활성화",
-      "병풀 추출물 (Centella Asiatica) - 상처 회복 파웨이 분석"
+      "Saw Palmetto (쏘팔메토) - DHT 탈모 호르몬 결합 억제 분자",
+      "Ginsenoside (인삼 사포닌) - 모유두 세포 활성화 파이토케미컬",
+      "Resveratrol (레스베라트롤) - SIRT1 장수 유전자 활성화",
+      "Centella Asiatica (병풀 추출물) - 두피 상처 회복 파스웨이"
     ],
     protein: [
+      "SRD5A2 (5알파 리덕타아제 2형) - 탈모 주원인 단백질 3D 구조",
+      "AR (Androgen Receptor) - 남성호르몬 수용체 결합 부위 분석",
       "EGFR (폐암 관련 단백질) AlphaFold 3D 구조 & 억제제 서치",
-      "BRCA1 유전자 단일 변이(rs80357906) 알파지놈 병원성 예측",
       "SIRT6 장수 단백질 결합 부위 3D 렌더링 분석"
+    ],
+    signal: [
+      "saw palmetto (쏘팔메토 - 🔴 RED 괴리성분)",
+      "turmeric (강황/커큐민 - 🔴 RED 위험성분)",
+      "melatonin (멜라토닌 - 🟡 YELLOW 성분)",
+      "collagen (콜라겐 - 🟡 YELLOW 성분)",
+      "ashwagandha (아쉬와간다 - ⚪ GRAY 공백성분)"
     ]
   };
 
@@ -176,6 +186,14 @@ export default function ScienceLabAI() {
           <Dna size={18} />
           <span>3. AlphaFold 3D 구조 & 유전자 변이</span>
           <span className="badge-skill">AlphaFold & AlphaGenome</span>
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'signal' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('signal'); setAnalyzed(false); setSearchQuery(''); }}
+        >
+          <ShieldCheck size={18} />
+          <span>4. 🔴🟢 성분 신호등 (openFDA×논문 교차)</span>
+          <span className="badge-skill" style={{ background: '#ef4444', color: '#ffffff' }}>openFDA × EuropePMC</span>
         </button>
       </div>
 
@@ -455,6 +473,75 @@ export default function ScienceLabAI() {
                   <div className="business-callout">
                     <h4>💡 1인 기업가를 위한 비즈니스 가치</h4>
                     <p>이 3D 예측 리포트를 바이오 벤처나 제약사 BD팀에 건당 50~100만 원 선의 분석 보고서로 공급할 수 있습니다.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: 🔴🟢 성분 신호등 (openFDA x EuropePMC 교차 데이터셋 결과) */}
+          {activeTab === 'signal' && (
+            <div className="result-card signal-result" style={{ background: '#0f172a', border: '1.5px solid #ef4444', borderRadius: '16px', padding: '24px' }}>
+              <div className="result-header" style={{ marginBottom: '20px' }}>
+                <div>
+                  <span className="tag-category" style={{ background: '#ef4444', color: '#fff', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+                    openFDA × EuropePMC 교차 파이프라인
+                  </span>
+                  <h2 style={{ color: '#fff', fontSize: '22px', margin: '10px 0 6px 0' }}>
+                    🚦 성분 신호등 40종 교차 데이터셋 대시보드
+                  </h2>
+                  <p className="sub-info" style={{ color: '#94a3b8', fontSize: '13px' }}>
+                    openFDA 부작용 신고 실측치 ($M_{{adv}}$=2,230건) × EuropePMC 임상/리뷰 논문 수 ($M_{{ev}}$=943.5건) 교차 분석 완료
+                  </p>
+                </div>
+                <div className="action-buttons" style={{ display: 'flex', gap: '8px' }}>
+                  <button className="btn-action" onClick={() => window.open('/signal_dataset.csv')} style={{ background: '#334155', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer' }}>
+                    <Download size={16}/> signal_dataset.csv 다운로드
+                  </button>
+                </div>
+              </div>
+
+              {/* 4대 사분면 요약 카드 grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
+                <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', borderRadius: '12px', padding: '16px' }}>
+                  <h4 style={{ color: '#f87171', margin: '0 0 8px 0', fontSize: '15px' }}>🔴 RED (부작용↑ / 근거↓)</h4>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#ef4444', marginBottom: '6px' }}>7종 (17.5%)</div>
+                  <p style={{ fontSize: '11px', color: '#cbd5e1', margin: 0 }}>saw palmetto, turmeric, CoQ10, lutein, milk thistle, garcinia, apple cider vinegar</p>
+                </div>
+                <div style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid #22c55e', borderRadius: '12px', padding: '16px' }}>
+                  <h4 style={{ color: '#4ade80', margin: '0 0 8px 0', fontSize: '15px' }}>🟢 GREEN (부작용↓ / 근거↑)</h4>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#22c55e', marginBottom: '6px' }}>7종 (17.5%)</div>
+                  <p style={{ fontSize: '11px', color: '#cbd5e1', margin: 0 }}>NAC, glutathione, MSM, glucosamine, hyaluronic acid, GABA, creatine</p>
+                </div>
+                <div style={{ background: 'rgba(234, 179, 8, 0.15)', border: '1px solid #eab308', borderRadius: '12px', padding: '16px' }}>
+                  <h4 style={{ color: '#facc15', margin: '0 0 8px 0', fontSize: '15px' }}>🟡 YELLOW (둘 다 상위권)</h4>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#eab308', marginBottom: '6px' }}>13종 (32.5%)</div>
+                  <p style={{ fontSize: '11px', color: '#cbd5e1', margin: 0 }}>melatonin, collagen, magnesium, omega-3, probiotics, vitamin D, zinc, ginseng...</p>
+                </div>
+                <div style={{ background: 'rgba(148, 163, 184, 0.15)', border: '1px solid #94a3b8', borderRadius: '12px', padding: '16px' }}>
+                  <h4 style={{ color: '#cbd5e1', margin: '0 0 8px 0', fontSize: '15px' }}>⚪ GRAY (데이터 공백)</h4>
+                  <div style={{ fontSize: '24px', fontWeight: '800', color: '#94a3b8', marginBottom: '6px' }}>13종 (32.5%)</div>
+                  <p style={{ fontSize: '11px', color: '#cbd5e1', margin: 0 }}>ashwagandha, berberine, green tea extract, spirulina, chlorella, maca, rhodiola...</p>
+                </div>
+              </div>
+
+              {/* 사업 가설 검증 결과 */}
+              <div style={{ background: '#1e293b', padding: '18px', borderRadius: '12px', border: '1px solid #475569' }}>
+                <h3 style={{ color: '#38bdf8', fontSize: '16px', margin: '0 0 12px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Activity size={18} /> 로부장 지시서 기반 3대 사업 가설 실측 검증
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0f172a', padding: '10px 14px', borderRadius: '8px' }}>
+                    <span>가설 1: "성분 신호등 콘텐츠/앱" (RED+GRAY 25% 이상)</span>
+                    <strong style={{ color: '#4ade80' }}>✅ 성립 (실측 50.0% / 20종)</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0f172a', padding: '10px 14px', borderRadius: '8px' }}>
+                    <span>가설 2: "유행템 조기경보 프리미엄 뉴스레터" (괴리성분 3종 이상)</span>
+                    <strong style={{ color: '#4ade80' }}>✅ 성립 (포착 4종: 쏘팔메토, CoQ10, 루테인, 밀크씨슬)</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0f172a', padding: '10px 14px', borderRadius: '8px' }}>
+                    <span>가설 3: "성분 팩트 배지 커머스 위젯 API" (자동화 기술 채움률)</span>
+                    <strong style={{ color: '#4ade80' }}>✅ 성립 (채움률 100% / SKIP 0종)</strong>
                   </div>
                 </div>
               </div>
