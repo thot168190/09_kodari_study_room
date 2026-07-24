@@ -187,108 +187,159 @@ body {
   color: #34d399;
 }
 
-/* 🖥️ Main Workspace */
+/* 🤍 Single Ultra-Slim 48px Top Bar Header Design */
 .workspace {
   flex: 1;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: radial-gradient(circle at top right, rgba(var(--secondary-glow-rgb), 0.08), transparent 45%);
+  background: #f8fafc;
 }
 
-.workspace-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--border-color);
-  background: rgba(8, 11, 17, 0.8);
-  backdrop-filter: blur(15px);
+.slim-header {
+  height: 48px;
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
 }
 
-.header-title-area h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.header-title-area p {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
-
-.nav-tabs {
+.header-left {
   display: flex;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
+  max-width: 280px;
+  overflow: hidden;
+}
+
+.note-mini-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-del-note {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.header-right-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.tab-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #f1f5f9;
+  padding: 3px 5px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.pill-group-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  margin-right: 2px;
+  padding: 0 4px;
+}
+
+.slim-pill {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.slim-pill:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.slim-pill.active {
+  background: #0f172a;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.2);
 }
 
 .tab-container-nested {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
 }
 
 .tab-group-navigation {
   display: flex;
-  gap: 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  width: fit-content;
 }
 
 .group-tab-btn {
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--text-secondary, #9b95a6);
-  padding: 10px 20px;
-  font-size: 15px;
-  font-weight: 800;
+  color: #64748b;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-  border-radius: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .group-tab-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .group-tab-btn.active {
-  color: var(--gold, #f5c451);
-  background: rgba(245, 196, 81, 0.08);
-}
-
-.group-tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -9px;
-  left: 12px;
-  right: 12px;
-  height: 2px;
-  background: var(--gold, #f5c451);
-  box-shadow: 0 0 8px var(--gold, #f5c451);
+  color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-weight: 800;
 }
 
 .sub-nav-tabs {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  padding: 6px !important;
+  display: flex;
+  gap: 6px;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  padding: 8px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 7px 14px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -296,18 +347,19 @@ body {
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tab-btn:hover {
-  color: var(--text-primary);
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .tab-btn.active {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
 }
 
 .workspace-body {

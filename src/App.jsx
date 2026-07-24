@@ -18,6 +18,10 @@ import ReRoomAI from './ReRoomAI';
 import ScrollWorldLanding from './ScrollWorldLanding';
 import TravelLog from './TravelLog';
 import ColorChartModal from './ColorChartModal';
+import KodariLab from './KodariLab';
+import ScienceLabAI from './ScienceLabAI';
+
+
 
 function App() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -34,7 +38,7 @@ function App() {
   useEffect(() => {
     if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld'].includes(activeTab)) {
       setActiveTabGroup('study');
-    } else if (['reroom', 'inkword', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
+    } else if (['sciencelab', 'reroom', 'inkword', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
     } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
       setActiveTabGroup('builder');
@@ -743,78 +747,68 @@ ${selectedNote.content}`
             <div className="logo-icon">💜</div>
             <div className="logo-text">KODARI ROOM</div>
           </div>
-          <button 
-            className="btn-open-travellog-standalone"
-            onClick={() => setShowTravelStandalone(true)}
-            style={{
-              marginTop: '12px',
-              width: '100%',
-              background: 'linear-gradient(135deg, #0B3D2E, #0F6A4B)',
-              border: '2px solid #F472B6',
-              color: '#FBCFE8',
-              padding: '12px 10px',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 18px rgba(11, 61, 46, 0.4)',
-              transition: 'all 0.2s'
-            }}
-          >
-            <span>✈️ TravelTrace AI (단독 풀페이지)</span>
-          </button>
-          <button 
-            className="btn-open-saas"
-            onClick={() => setShowNicheSaaS(true)}
-            style={{
-              marginTop: '8px',
-              width: '100%',
-              background: 'linear-gradient(135deg, #7c3aed, #06b6d4)',
-              border: 'none',
-              color: '#fff',
-              padding: '10px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '700',
-              fontSize: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)',
-              transition: 'all 0.2s'
-            }}
-          >
-            <span>🚀 NicheScanner SaaS 런칭</span>
-          </button>
-          <button 
-            className="btn-open-hub"
-            onClick={() => setShowHubPortal(true)}
-            style={{
-              marginTop: '8px',
-              width: '100%',
-              background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-              border: 'none',
-              color: '#fff',
-              padding: '10px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '700',
-              fontSize: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 15px rgba(236, 72, 153, 0.2)',
-              transition: 'all 0.2s'
-            }}
-          >
-            <span>🌐 채널 포털 사이트 띄우기</span>
-          </button>
+          <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+            <button 
+              onClick={() => { setActiveTabGroup('study'); setActiveTab('content'); }}
+              style={{
+                background: '#0f172a',
+                border: '1px solid #38bdf8',
+                color: '#38bdf8',
+                padding: '9px 6px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}
+            >
+              🧠 AI 공부 (멘토)
+            </button>
+            <button 
+              onClick={() => { setActiveTabGroup('practice'); setActiveTab('inkword'); }}
+              style={{
+                background: '#0f172a',
+                border: '1px solid #c084fc',
+                color: '#c084fc',
+                padding: '9px 6px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}
+            >
+              📚 잉크워드
+            </button>
+            <button 
+              onClick={() => { setActiveTabGroup('practice'); setActiveTab('sciencelab'); }}
+              style={{
+                background: '#0f172a',
+                border: '1px solid #34d399',
+                color: '#34d399',
+                padding: '9px 6px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}
+            >
+              🧬 과학랩
+            </button>
+            <button 
+              onClick={() => setShowTravelStandalone(true)}
+              style={{
+                background: '#0f172a',
+                border: '1px solid #f472b6',
+                color: '#f472b6',
+                padding: '9px 6px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '11px'
+              }}
+            >
+              ✈️ 여행기억하기
+            </button>
+          </div>
 
           <button 
             className="btn-open-colorchart"
@@ -842,6 +836,31 @@ ${selectedNote.content}`
           </button>
           
           <button 
+            className="btn-open-kodarilab"
+            onClick={() => { setActiveTabGroup('builder'); setActiveTab('kodarilab'); setIsAddingNote(false); }}
+            style={{
+              marginTop: '8px',
+              width: '100%',
+              background: 'linear-gradient(135deg, #a855f7, #6366f1)',
+              border: 'none',
+              color: '#fff',
+              padding: '10px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '700',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 15px rgba(168, 85, 247, 0.3)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>🧪 AI 융합 연구실 (Science Lab)</span>
+          </button>
+
+          <button 
             className="btn-open-niche"
             onClick={() => { setActiveTabGroup('builder'); setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
             style={{
@@ -865,6 +884,7 @@ ${selectedNote.content}`
           >
             <span>🎯 니치 발굴기 v1 바로가기</span>
           </button>
+
 
           <button 
             className="btn-open-textbook"
@@ -1089,211 +1109,43 @@ ${selectedNote.content}`
           </div>
         ) : selectedNote ? (
           <>
-            <header className="workspace-header">
-              <div className="header-title-area">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <h2>{selectedNote.title}</h2>
-                  {selectedNote.id.startsWith('custom-') && (
-                    <button 
-                      onClick={() => handleDeleteCustomNote(selectedNote.id)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#ef4444',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '2px'
-                      }}
-                    >
-                      🗑️ 삭제
-                    </button>
-                  )}
-                </div>
-                <p>노션 소스: {selectedNote.id.startsWith('custom-') ? '로컬 작성 노트' : <a href={selectedNote.url} target="_blank" rel="noopener noreferrer" style={{ color: '#8b5cf6', textDecoration: 'none' }}>원본 보기 ↗</a>}</p>
+            <header className="workspace-header slim-header">
+              <div className="header-left">
+                <h2 className="note-mini-title">{selectedNote.title}</h2>
+                {selectedNote.id.startsWith('custom-') && (
+                  <button onClick={() => handleDeleteCustomNote(selectedNote.id)} className="btn-del-note">🗑️</button>
+                )}
               </div>
-              <div className="tab-container-nested">
-                {/* 📂 4대 센터별 딥그린 & 파스텔 컬러 구분 탭 */}
-                <div className="tab-group-navigation">
-                  <button 
-                    className={`group-tab-btn ${activeTab === 'travellog' ? 'active' : ''}`}
-                    onClick={() => { setActiveTabGroup('practice'); setActiveTab('travellog'); }}
-                    style={{
-                      background: activeTab === 'travellog' ? '#0B3D2E' : '#ffffff',
-                      color: activeTab === 'travellog' ? '#FBCFE8' : '#0B3D2E',
-                      fontWeight: '900',
-                      border: '2px solid #F472B6',
-                      boxShadow: '0 4px 15px rgba(244, 114, 182, 0.25)',
-                      padding: '8px 16px',
-                      borderRadius: '12px'
-                    }}
-                  >
-                    <span>🌸 1초 여행로그 센터 (더스트 핑크)</span>
-                  </button>
-                  <button 
-                    className={`group-tab-btn ${activeTabGroup === 'study' && activeTab !== 'travellog' ? 'active' : ''}`}
-                    onClick={() => { setActiveTabGroup('study'); setActiveTab('content'); }}
-                    style={{
-                      background: activeTabGroup === 'study' && activeTab !== 'travellog' ? '#0F6A4B' : '#ffffff',
-                      color: activeTabGroup === 'study' && activeTab !== 'travellog' ? '#BAE6FD' : '#0F6A4B',
-                      fontWeight: '900',
-                      border: '2px solid #38BDF8',
-                      boxShadow: '0 4px 15px rgba(56, 189, 248, 0.25)',
-                      padding: '8px 16px',
-                      borderRadius: '12px'
-                    }}
-                  >
-                    <span>🩵 배움 & 스터디 센터 (스카이 민트)</span>
-                  </button>
-                  <button 
-                    className={`group-tab-btn ${activeTabGroup === 'practice' && activeTab !== 'travellog' ? 'active' : ''}`}
-                    onClick={() => { setActiveTabGroup('practice'); setActiveTab('reroom'); }}
-                    style={{
-                      background: activeTabGroup === 'practice' && activeTab !== 'travellog' ? '#047857' : '#ffffff',
-                      color: activeTabGroup === 'practice' && activeTab !== 'travellog' ? '#FEF08A' : '#047857',
-                      fontWeight: '900',
-                      border: '2px solid #FDE047',
-                      boxShadow: '0 4px 15px rgba(253, 224, 71, 0.25)',
-                      padding: '8px 16px',
-                      borderRadius: '12px'
-                    }}
-                  >
-                    <span>🍋 AI 실습 센터 (레몬 버터)</span>
-                  </button>
-                  <button 
-                    className={`group-tab-btn ${activeTabGroup === 'builder' ? 'active' : ''}`}
-                    onClick={() => { setActiveTabGroup('builder'); setActiveTab('fugu'); }}
-                    style={{
-                      background: activeTabGroup === 'builder' ? '#022C22' : '#ffffff',
-                      color: activeTabGroup === 'builder' ? '#DDD6FE' : '#022C22',
-                      fontWeight: '900',
-                      border: '2px solid #C084FC',
-                      boxShadow: '0 4px 15px rgba(192, 132, 252, 0.25)',
-                      padding: '8px 16px',
-                      borderRadius: '12px'
-                    }}
-                  >
-                    <span>🪻 1인 기업 빌더 센터 (파스텔 라벤더)</span>
-                  </button>
+
+              {/* 📂 대표님의 4대 명확한 대분류 메인 기둥 (4 Big Pillars) */}
+              <div className="header-right-tabs">
+                {/* 1대 기둥: 🧠 멘토와 함께하는 인공지능 공부 */}
+                <div className="tab-pill-group">
+                  <span className="pill-group-label">🧠 AI 공부</span>
+                  <button className={`slim-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
+                  <button className={`slim-pill ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>📝 모의고사</button>
+                  <button className={`slim-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
                 </div>
 
-                {/* 📂 2단계 소분류 서브 탭 */}
-                <div className="nav-tabs sub-nav-tabs">
-                  {activeTabGroup === 'study' && (
-                    <>
-                      <button 
-                        className={`tab-btn ${activeTab === 'content' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('content')}
-                      >
-                        <BookOpen size={16} /> 노트 본문 & AI 브리핑
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'quiz' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('quiz')}
-                      >
-                        <Award size={16} /> AI 모의고사
-                      </button>
-                      {wrongNotes[selectedNote.id] && (
-                        <button 
-                          className={`tab-btn ${activeTab === 'wrong' ? 'active' : ''}`}
-                          onClick={() => setActiveTab('wrong')}
-                        >
-                          <AlertTriangle size={16} style={{ color: '#ef4444' }} /> 오답노트
-                        </button>
-                      )}
-                      <button 
-                        className={`tab-btn ${activeTab === 'textbook' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('textbook'); setIsAddingNote(false); }}
-                      >
-                        <BookOpen size={16} /> 해부 교재란
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'study' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('study'); setIsAddingNote(false); }}
-                      >
-                        <Play size={16} style={{ color: '#ec4899' }} /> 🎥 같이 수업 듣기
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'casestudy' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('casestudy'); setIsAddingNote(false); }}
-                      >
-                        <Award size={16} style={{ color: '#3b82f6' }} /> 🌐 글로벌 케이스스터디
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'fable5' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('fable5'); setIsAddingNote(false); }}
-                      >
-                        <span style={{ marginRight: '4px' }}>💬</span> 페이블 5 대화방
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'scrollworld' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('scrollworld'); setIsAddingNote(false); }}
-                      >
-                        <span style={{ marginRight: '4px' }}>🌀</span> Scroll World 데모
-                      </button>
-                    </>
-                  )}
+                {/* 2대 기둥: 📚 잉크워드 */}
+                <div className="tab-pill-group">
+                  <span className="pill-group-label">📚 잉크워드</span>
+                  <button className={`slim-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
+                  <button className={`slim-pill ${activeTab === 'memefactory' ? 'active' : ''}`} onClick={() => setActiveTab('memefactory')}>🎬 밈팩토리</button>
+                  <button className={`slim-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
+                </div>
 
-                  {activeTabGroup === 'practice' && (
-                    <>
-                      <button 
-                        className={`tab-btn ${activeTab === 'travellog' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('travellog'); setIsAddingNote(false); }}
-                        style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', fontWeight: 'bold' }}
-                      >
-                        <Sparkles size={16} style={{ color: '#10b981' }} /> ✈️ 트래블로그 (여행 기록)
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'reroom' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('reroom'); setIsAddingNote(false); }}
-                        style={{ background: 'rgba(245, 196, 81, 0.15)' }}
-                      >
-                        <Sparkles size={16} style={{ color: '#f5c451' }} /> 🎨 피터레벨스 ReRoom AI
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'inkword' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('inkword'); setIsAddingNote(false); }}
-                      >
-                        <BookOpen size={16} style={{ color: '#ff6b95' }} /> 📚 둠칫 잉크워드 사전 (inkword.site)
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'memefactory' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('memefactory'); setIsAddingNote(false); }}
-                      >
-                        <Sparkles size={16} style={{ color: '#ec4899' }} /> 🎬 밈 팩토리 데모
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'avatarstudio' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('avatarstudio'); setIsAddingNote(false); }}
-                      >
-                        <Sparkles size={16} style={{ color: '#a855f7' }} /> 🪄 마법 아바타 & 이력서
-                      </button>
-                    </>
-                  )}
+                {/* 3대 기둥: 🧬 과학랩 */}
+                <div className="tab-pill-group">
+                  <span className="pill-group-label">🧬 과학랩</span>
+                  <button className={`slim-pill ${activeTab === 'sciencelab' ? 'active' : ''}`} onClick={() => setActiveTab('sciencelab')}>⚖️ 식약처검수&DeepMind</button>
+                </div>
 
-                  {activeTabGroup === 'builder' && (
-                    <>
-                      <button 
-                        className={`tab-btn ${activeTab === 'fugu' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('fugu')}
-                      >
-                        <Layers size={16} style={{ color: '#10b981' }} /> 🐡 우리집 푸구 (Fugu)
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'chatbotbuilder' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('chatbotbuilder'); setIsAddingNote(false); }}
-                      >
-                        <Settings size={16} style={{ color: '#06b6d4' }} /> 🤖 AI 챗봇 빌더
-                      </button>
-                      <button 
-                        className={`tab-btn ${activeTab === 'nichediagnoser' ? 'active' : ''}`}
-                        onClick={() => { setActiveTab('nichediagnoser'); setIsAddingNote(false); }}
-                      >
-                        <Target size={16} style={{ color: '#10b981' }} /> 🎯 니치 발굴기 v1
-                      </button>
-                    </>
-                  )}
+                {/* 4대 기둥: ✈️ 여행기억하기 */}
+                <div className="tab-pill-group">
+                  <span className="pill-group-label">✈️ 여행기억</span>
+                  <button className={`slim-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
+                  <button className={`slim-pill ${activeTab === 'reroom' ? 'active' : ''}`} onClick={() => setActiveTab('reroom')}>🎨 ReRoom AI</button>
                 </div>
               </div>
             </header>
@@ -1981,6 +1833,10 @@ ${selectedNote.content}`
                 <ScrollWorldLanding onExit={() => setActiveTab('content')} />
               )}
 
+              {activeTab === 'kodarilab' && (
+                <KodariLab geminiApiKey={geminiApiKey} />
+              )}
+
               {activeTab === 'memefactory' && (
                 <MemeFactory />
               )}
@@ -2015,6 +1871,10 @@ ${selectedNote.content}`
 
               {activeTab === 'reroom' && (
                 <ReRoomAI />
+              )}
+
+              {activeTab === 'sciencelab' && (
+                <ScienceLabAI />
               )}
 
               {activeTab === 'travellog' && (
