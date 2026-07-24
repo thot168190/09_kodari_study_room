@@ -785,7 +785,6 @@ ${selectedNote.content}`
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
             <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
-            <button className={`pillar-pill ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>📝 모의고사</button>
             <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
           </div>
 
@@ -1180,47 +1179,6 @@ ${selectedNote.content}`
           </div>
         ) : selectedNote ? (
           <>
-            <header className="workspace-header slim-header">
-              <div className="header-left">
-                <h2 className="note-mini-title">{selectedNote.title}</h2>
-                {selectedNote.id.startsWith('custom-') && (
-                  <button onClick={() => handleDeleteCustomNote(selectedNote.id)} className="btn-del-note">🗑️</button>
-                )}
-              </div>
-
-              {/* 📂 대표님의 4대 명확한 대분류 메인 기둥 (4 Big Pillars) */}
-              <div className="header-right-tabs">
-                {/* 1대 기둥: 🧠 멘토와 함께하는 인공지능 공부 */}
-                <div className="tab-pill-group">
-                  <span className="pill-group-label">🧠 AI 공부</span>
-                  <button className={`slim-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
-                  <button className={`slim-pill ${activeTab === 'quiz' ? 'active' : ''}`} onClick={() => setActiveTab('quiz')}>📝 모의고사</button>
-                  <button className={`slim-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
-                </div>
-
-                {/* 2대 기둥: 📚 잉크워드 */}
-                <div className="tab-pill-group">
-                  <span className="pill-group-label">📚 잉크워드</span>
-                  <button className={`slim-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
-                  <button className={`slim-pill ${activeTab === 'memefactory' ? 'active' : ''}`} onClick={() => setActiveTab('memefactory')}>🎬 밈팩토리</button>
-                  <button className={`slim-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
-                </div>
-
-                {/* 3대 기둥: 🧬 과학랩 */}
-                <div className="tab-pill-group">
-                  <span className="pill-group-label">🧬 과학랩</span>
-                  <button className={`slim-pill ${activeTab === 'sciencelab' ? 'active' : ''}`} onClick={() => setActiveTab('sciencelab')}>⚖️ 식약처검수&DeepMind</button>
-                </div>
-
-                {/* 4대 기둥: ✈️ 여행기억하기 */}
-                <div className="tab-pill-group">
-                  <span className="pill-group-label">✈️ 여행기억</span>
-                  <button className={`slim-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
-                  <button className={`slim-pill ${activeTab === 'reroom' ? 'active' : ''}`} onClick={() => setActiveTab('reroom')}>🎨 ReRoom AI</button>
-                </div>
-              </div>
-            </header>
-
             <div className="workspace-body">
               {/* 탭 1: 본문 및 요약 */}
               {activeTab === 'content' && (
@@ -1357,71 +1315,7 @@ ${selectedNote.content}`
                 </div>
               )}
 
-              {/* 탭 2: AI 모의고사 */}
-              {activeTab === 'quiz' && (
-                <div className="quiz-container">
-                  {quizList.length === 0 ? (
-                    <div className="empty-state">
-                      <div className="empty-icon">🎯</div>
-                      <h3>대표님을 위한 시험을 준비할까요?</h3>
-                      <p>노션 본문을 분석하여 맞춤형 모의고사 3문제를 즉시 출제합니다.</p>
-                      <button className="btn-submit" onClick={generateQuiz} disabled={loadingAI.quiz} style={{ marginTop: '12px' }}>
-                        {loadingAI.quiz ? '시험지 만드는 중...' : '📝 AI 모의고사 출제하기'}
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      {quizList.map((quiz, qIdx) => (
-                        <div key={qIdx} className="quiz-card">
-                          <h4 className="quiz-question">Q{qIdx + 1}. {quiz.question}</h4>
-                          <div className="quiz-options">
-                            {quiz.options.map((option, oIdx) => {
-                              let optClass = '';
-                              if (userAnswers[qIdx] === oIdx) optClass = 'selected';
-                              if (quizSubmitted) {
-                                if (oIdx === quiz.answerIndex) optClass = 'correct';
-                                else if (userAnswers[qIdx] === oIdx) optClass = 'wrong';
-                              }
-                              return (
-                                <button
-                                  key={oIdx}
-                                  className={`option-btn ${optClass}`}
-                                  onClick={() => !quizSubmitted && setUserAnswers({ ...userAnswers, [qIdx]: oIdx })}
-                                  disabled={quizSubmitted}
-                                >
-                                  <span>{option}</span>
-                                  {quizSubmitted && oIdx === quiz.answerIndex && <CheckCircle2 size={16} style={{ color: '#10b981' }} />}
-                                </button>
-                              );
-                            })}
-                          </div>
-                          {quizSubmitted && (
-                            <div className="explanation-box">
-                              <strong>💡 코다리 해설:</strong> {quiz.explanation}
-                            </div>
-                          )}
-                        </div>
-                      ))}
 
-                      <div className="quiz-footer">
-                        {!quizSubmitted ? (
-                          <button 
-                            className="btn-submit" 
-                            onClick={submitQuiz}
-                            disabled={Object.keys(userAnswers).length < quizList.length}
-                          >
-                            제출하고 채점받기
-                          </button>
-                        ) : (
-                          <button className="btn-sync" onClick={generateQuiz}>
-                            다시 시험보기
-                          </button>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
 
               {/* 탭 3: 오답노트 */}
               {activeTab === 'wrong' && wrongNotes[selectedNote.id] && (
