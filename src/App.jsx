@@ -14,7 +14,6 @@ import NicheScanner from './NicheScanner';
 import AlwayzzLanding from './AlwayzzLanding';
 import MarketeamLanding from './MarketeamLanding';
 import Textbook from './Textbook';
-import ReRoomAI from './ReRoomAI';
 import ScrollWorldLanding from './ScrollWorldLanding';
 import TravelLog from './TravelLog';
 import ColorChartModal from './ColorChartModal';
@@ -31,14 +30,14 @@ function App() {
   const [showTravelStandalone, setShowTravelStandalone] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('travellog'); // 'travellog' 기본 탑재!
-  const [activeTabGroup, setActiveTabGroup] = useState('practice');
+  const [activeTab, setActiveTab] = useState('study'); // 'study' (같이 수업듣기) 기본 탑재!
+  const [activeTabGroup, setActiveTabGroup] = useState('study');
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
     if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld'].includes(activeTab)) {
       setActiveTabGroup('study');
-    } else if (['sciencelab', 'reroom', 'inkword', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
+    } else if (['sciencelab', 'inkword', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
     } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
       setActiveTabGroup('builder');
@@ -73,12 +72,12 @@ function App() {
   const [newNoteContent, setNewNoteContent] = useState('');
 
   // 🎥 같이 수업 듣기 상태
-  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=dKgzepcAvE0&t=28s');
-  const [embedId, setEmbedId] = useState('dKgzepcAvE0');
+  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=1p0Dqqu9hJI');
+  const [embedId, setEmbedId] = useState('1p0Dqqu9hJI');
   const [studyChat, setStudyChat] = useState([
     {
       sender: 'kodari',
-      text: '대표님, 충성! 에이전트 총괄부장 코다리입니다. 오늘 함께 들으실 유튜브 강의 링크를 입력해주시면 영상 재생과 함께 대표님의 학습을 성심성의껏 보좌하겠습니다!'
+      text: '대표님, 충성! 에이전트 총괄부장 코다리입니다. 오늘 함께 들으실 🔴 [모닝AI] 토니 딘 복습편 (하루 만에 만들어 7일에 3천만 원) 영상이 준비되었습니다! 영상 시청 도중 질문이나 아이디어가 떠오르시면 언제든지 지시해 주십시오!'
     }
   ]);
   const [studyInput, setStudyInput] = useState('');
@@ -784,6 +783,7 @@ ${selectedNote.content}`
           {/* 1. 🧠 AI 공부 */}
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
+            <button className={`pillar-pill ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>📺 같이 수업듣기</button>
             <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
             <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
           </div>
@@ -805,7 +805,6 @@ ${selectedNote.content}`
           <div className="pillar-group">
             <span className="pillar-tag">✈️ 여행기억</span>
             <button className={`pillar-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
-            <button className={`pillar-pill ${activeTab === 'reroom' ? 'active' : ''}`} onClick={() => setActiveTab('reroom')}>🎨 ReRoom AI</button>
           </div>
         </div>
       </header>
@@ -1832,10 +1831,6 @@ ${selectedNote.content}`
 
               {activeTab === 'textbook' && (
                 <Textbook />
-              )}
-
-              {activeTab === 'reroom' && (
-                <ReRoomAI />
               )}
 
               {activeTab === 'sciencelab' && (
