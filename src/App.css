@@ -1159,17 +1159,23 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  padding-bottom: 36px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .study-chat-messages::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
+}
+
+.study-chat-messages::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .study-chat-messages::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #8b5cf6, #ec4899);
   border-radius: 4px;
 }
 

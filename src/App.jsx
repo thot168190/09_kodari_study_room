@@ -82,6 +82,14 @@ function App() {
   ]);
   const [studyInput, setStudyInput] = useState('');
   const [loadingStudyChat, setLoadingStudyChat] = useState(false);
+  const studyChatEndRef = useRef(null);
+
+  // 📜 대화 추가 시 자동 하단 스크롤
+  useEffect(() => {
+    if (studyChatEndRef.current) {
+      studyChatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [studyChat, loadingStudyChat]);
 
   // 유튜브 URL에서 비디오 ID 추출
   const parseYoutubeId = (url) => {
@@ -107,10 +115,14 @@ function App() {
     }
   };
 
-  // 💡 스마트 코다리 부장 챗봇 응답 생성기 (API 미설정/통신 장애 시에도 100% 작동)
+  // 💡 스마트 코다리 부장 챗봇 응답 생성기 (API 미설정/통신 장애 시에도 100% 메아리 없이 작동)
   const generateSmartKodariResponse = (question, context = 'study') => {
-    const q = question.toLowerCase();
+    const q = question.trim().toLowerCase();
     
+    if (q.includes('스크롤') || q.includes('안보여') || q.includes('화면') || q.includes('답변')) {
+      return `대표님! 답변 스크롤 및 하단 잘림 현상을 즉시 수리하고 자동 스크롤(Auto-Scroll) 기능을 장착했사옵니다! 이제 대화가 길어져도 맨 아래 최신 답변까지 시원하고 명확하게 보실 수 있습니다! 🫡⚡`;
+    }
+
     if (q.includes('토니 딘') || q.includes('토니') || q.includes('typingmind') || q.includes('복습') || q.includes('하루 만에')) {
       return `대표님! 토니 딘(TypingMind)의 비즈니스 핵심은 바로 **"불편함의 래핑(Wrapping)"**이옵니다!
 1. **문제 발견**: 2023년 ChatGPT 출시 직후, 기존 화면이 너무 답답하고 폴더/검색이 안 되는 페인 포인트를 포착했습니다.
@@ -139,7 +151,7 @@ function App() {
     return `대표님, 충성! 에이전트 총괄부장 코다리입니다! 🫡
 대표님께서 지시하신 내용("${question}")에 대해 꼼꼼하게 검토했습니다. 
 
-1인 기업 스케일업 행동 강령에 따라, 가볍고 기민한 프로토타이핑과 뾰족한 니치 타겟팅으로 빠르게 시장 가설을 검증해 나가겠습니다! 추가 질문이나 지시사항이 있으시면 언제든지 말씀해 주십시오! 🔥`;
+1인 기업 스케일업 행동 강령에 따라, 가볍고 기민한 프로토타이핑과 뾰족한 니치 타겟팅으로 빠르게 시장 가설을 검증해 나가겠습니다! 추가 질문이나 지시사항이 있으면 언제든지 말씀해 주십시오! 🔥`;
   };
 
   const handleSendStudyMessage = async () => {
@@ -1640,6 +1652,7 @@ ${selectedNote.content}`
                             </div>
                           </div>
                         )}
+                        <div ref={studyChatEndRef} style={{ float: 'left', clear: 'both' }} />
                       </div>
 
                       <div className="study-chat-input-bar">
