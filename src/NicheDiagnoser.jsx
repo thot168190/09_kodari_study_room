@@ -24,6 +24,25 @@ export default function NicheDiagnoser({ isSaaSMode, membership, onScanComplete 
   // 4축 검증을 거친 프리셋 데이터
   const presetIdeas = [
     {
+      id: "ai_study_tutor",
+      title: "🎬 AI 동영상 인강 1:1 학습 멘토 공부방 (Video Lecture AI Tutor SaaS)",
+      category: "1인 에듀테크 & AI 래퍼 SaaS (대박 추천 🟢)",
+      status: "APPROVED",
+      nicheScore: 99,
+      vectorPos: { x: 95, y: 98 },
+      rejectionReason: null,
+      fourAxis: {
+        pain: { score: 5, desc: "인강 시청 중 막힐 때 Q&A 답변 며칠씩 기다리는 답답함을 1초 만에 해소 (긴급성 최고)" },
+        data: { score: 5, desc: "유튜브/강의 자막, 수강생 Q&A 대화 및 노션 스크랩 DB 100% 합법 수집 및 RAG 학습" },
+        flywheel: { score: 5, desc: "매일 인강 들을 때마다 튜터 룸 접속 + 질문 내역과 요약 노트 자동 누적 (리텐션 독점)" },
+        incumbent: { score: 5, desc: "대형 인강 플랫폼(메가스터디, 인프런)에 플레이어 결합형 1:1 AI 튜터 래퍼가 없음 (무주공산)" }
+      },
+      pivots: [
+        "1단계: 수강생 1회성 소장권 (29,000원 ~ 49,000원) + BYOK(API 키 유저 부담)로 마진 95% 사수",
+        "2단계: 학원/과외 강사 전용 1:1 AI 튜터링 룸 B2B SaaS (월 9.9만 원 구독 수수료)"
+      ]
+    },
+    {
       id: "deepskin_failed",
       title: "📸 DeepSkin AI (스마트폰 셀카 피부 분석 & 맞춤 화장품 처방)",
       category: "B2C 피부 분석",
