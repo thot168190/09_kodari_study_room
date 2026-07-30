@@ -37,7 +37,7 @@ function App() {
   useEffect(() => {
     if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld'].includes(activeTab)) {
       setActiveTabGroup('study');
-    } else if (['sciencelab', 'inkword', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
+    } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
     } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
       setActiveTabGroup('builder');
@@ -860,9 +860,10 @@ ${selectedNote.content}`
             <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
           </div>
 
-          {/* 2. 📚 잉크워드 (밈팩토리 100% 삭제 완료) */}
+          {/* 2. 📚 잉크워드 */}
           <div className="pillar-group">
             <span className="pillar-tag">📚 잉크워드</span>
+            <button className={`pillar-pill ${activeTab === 'scenehub' ? 'active' : ''}`} onClick={() => setActiveTab('scenehub')}>🎬 제작허브</button>
             <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
             <button className={`pillar-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
           </div>
@@ -1884,6 +1885,16 @@ ${selectedNote.content}`
 
               {activeTab === 'nichediagnoser' && (
                 <NicheDiagnoser />
+              )}
+
+              {activeTab === 'scenehub' && (
+                <div style={{ width: '100%', height: 'calc(100vh - 140px)', minHeight: '800px', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', background: '#fff' }}>
+                  <iframe 
+                    src={`${import.meta.env.BASE_URL}hub.html`} 
+                    title="장면 제작허브" 
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                  />
+                </div>
               )}
 
               {activeTab === 'avatarstudio' && (
