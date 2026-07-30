@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import notesData from './assets/notion-notes.json';
 import season2Notes from './assets/season2-notes.json';
