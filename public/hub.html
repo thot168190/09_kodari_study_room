@@ -47,7 +47,13 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 function save(){localStorage.setItem(K,JSON.stringify(S));paint()}
 function st(id,v){if(v)S[id]=v;else delete S[id];save()}
 function cp(id){const p=document.getElementById(id).querySelector('pre').textContent;navigator.clipboard.writeText(p).then(()=>{const b=document.getElementById(id).querySelector('button');b.textContent='✅ 복사됨';setTimeout(()=>b.textContent='📋 프롬프트 복사',1200)})}
-function card(s){const id=esc(s.id),badge=s.excluded?'<span class="dupnote">완성 · 이미 그림 있음</span>':'',actions=s.excluded?'':`<button onclick="st('${id}','생성완료')">🎬 생성완료</button><button onclick="st('${id}','합격')">✅ 합격</button><button onclick="st('${id}','불합격')">❌ 불합격</button><button onclick="st('${id}','')">↺</button>`;return `<details class="sc" id="${id}"><summary><b>${esc(s.name)}</b>${badge} <span class="w">${esc(s.words.join(' · '))}</span> <span class="st" data-id="${id}"></span></summary><pre>${esc(s.prompt)}</pre><div class="btns">${s.excluded?'<b style="color:#a06">⛔ 제작 금지 — 사이트에 이미 완성 영상 있음 (크레딧 낭비)</b>':`<button onclick="cp('${id}')">📋 프롬프트 복사</button>`}${actions}</div></details>`}
+function card(s){
+  const id=esc(s.id);
+  const badge=s.excluded?'<span class="dupnote">완성 · 이미 그림 있음</span>':'';
+  const copyBtn='<button onclick="cp(''+id+'')" class="copy-btn-prominent" style="background:#10b981;color:#fff;font-weight:bold;padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;box-shadow:0 2px 5px rgba(0,0,0,0.15);display:inline-flex;align-items:center;gap:6px;">📋 프롬프트 복사</button>';
+  const actions=s.excluded?'':'<button onclick="st(''+id+'','생성완료')">🎬 생성완료</button><button onclick="st(''+id+'','합격')">✅ 합격</button><button onclick="st(''+id+'','불합격')">❌ 불합격</button><button onclick="st(''+id+'','')">↺</button>';
+  return '<details class="sc" id="'+id+'"><summary style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:8px 0;"><div><b>'+esc(s.name)+'</b> '+badge+' <span class="w">'+esc(s.words.join(' · '))+'</span> <span class="st" data-id="'+id+'"></span></div><div onclick="event.stopPropagation()">'+copyBtn+'</div></summary><pre style="white-space:pre-wrap;user-select:all;background:#f0faf5;border:1px solid #a7f3d0;padding:12px;border-radius:8px;font-size:0.85rem;color:#064e3b;font-weight:600;">'+esc(s.prompt)+'</pre><div class="btns" style="margin-top:8px;display:flex;gap:8px;align-items:center;">'+copyBtn+actions+'</div></details>';
+}
 const allScenes=()=>CHAPTERS.flatMap(c=>c.groups.flatMap(g=>g.scenes));
 const chapterScenes=c=>c.groups.flatMap(g=>g.scenes);
 const accepted=g=>g.scenes.filter(s=>S[s.id]==='합격').length;
