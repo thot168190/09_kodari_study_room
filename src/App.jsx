@@ -1890,7 +1890,7 @@ ${selectedNote.content}`
               {activeTab === 'scenehub' && (
                 <div style={{ width: '100%', height: 'calc(100vh - 140px)', minHeight: '800px', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', background: '#fff' }}>
                   <iframe 
-                    src={`${import.meta.env.BASE_URL}hub.html`} 
+                    src={`${import.meta.env.BASE_URL}hub.html?v=${Date.now()}`} 
                     title="장면 제작허브" 
                     style={{ width: '100%', height: '100%', border: 'none' }}
                   />
