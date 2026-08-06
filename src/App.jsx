@@ -20,7 +20,61 @@ import ColorChartModal from './ColorChartModal';
 import KodariLab from './KodariLab';
 import ScienceLabAI from './ScienceLabAI';
 
+const parseInlineBold = (str) => {
+  if (!str) return str;
+  const parts = str.split(/(\*\*.*?\*\*|`.*?`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="md-bold">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} className="md-code">{part.slice(1, -1)}</code>;
+    }
+    return part;
+  });
+};
 
+const renderRichMarkdown = (text) => {
+  if (!text) return <p>노트 본문 내용이 비어 있습니다.</p>;
+  const lines = text.split('\n');
+  return lines.map((line, idx) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('# ')) {
+      return <h1 key={idx} className="md-h1">{parseInlineBold(trimmed.replace('# ', ''))}</h1>;
+    }
+    if (trimmed.startsWith('## ')) {
+      return <h2 key={idx} className="md-h2">{parseInlineBold(trimmed.replace('## ', ''))}</h2>;
+    }
+    if (trimmed.startsWith('### ')) {
+      return <h3 key={idx} className="md-h3">{parseInlineBold(trimmed.replace('### ', ''))}</h3>;
+    }
+    if (trimmed.startsWith('#### ')) {
+      return <h4 key={idx} className="md-h4">{parseInlineBold(trimmed.replace('#### ', ''))}</h4>;
+    }
+    if (trimmed === '---' || trimmed === '***') {
+      return <hr key={idx} className="md-hr" />;
+    }
+    if (trimmed.startsWith('> ')) {
+      return <blockquote key={idx} className="md-quote">{parseInlineBold(trimmed.replace('> ', ''))}</blockquote>;
+    }
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      return <li key={idx} className="md-li">{parseInlineBold(trimmed.substring(2))}</li>;
+    }
+    if (/^\d+\.\s/.test(trimmed)) {
+      const numMatch = trimmed.match(/^\d+/);
+      const itemText = trimmed.replace(/^\d+\.\s/, '');
+      return (
+        <div key={idx} className="md-num-item">
+          <span className="md-num">{numMatch ? numMatch[0] : ''}.</span> {parseInlineBold(itemText)}
+        </div>
+      );
+    }
+    if (!trimmed) {
+      return <div key={idx} style={{ height: '6px' }} />;
+    }
+    return <p key={idx} className="md-p">{parseInlineBold(line)}</p>;
+  });
+};
 
 function App() {
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -1258,7 +1312,7 @@ ${selectedNote.content}`
                   <div className="note-card">
                     <h3 className="note-title">📖 대표님 학습 요약 노트</h3>
                     <div className="note-content">
-                      {selectedNote.content || "노트 본문 내용이 비어 있습니다."}
+                      {renderRichMarkdown(selectedNote.content)}
                     </div>
                   </div>
 

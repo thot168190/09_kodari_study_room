@@ -597,7 +597,32 @@ body {
   line-height: 1.8;
   color: #0f172a !important;
   font-weight: 500;
-  white-space: pre-wrap;
+}
+
+/* Markdown Rich Render Styles */
+.note-content .md-h1 { font-size: 20px; font-weight: 800; color: #0284c7 !important; margin: 18px 0 10px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+.note-content .md-h2 { font-size: 17px; font-weight: 700; color: #db2777 !important; margin: 16px 0 8px 0; }
+.note-content .md-h3 { font-size: 15px; font-weight: 700; color: #7c3aed !important; margin: 14px 0 6px 0; }
+.note-content .md-h4 { font-size: 14px; font-weight: 700; color: #059669 !important; margin: 12px 0 6px 0; }
+.note-content .md-p { font-size: 14px; line-height: 1.7; color: #1e293b !important; margin: 6px 0; }
+.note-content .md-bold { font-weight: 700; color: #d97706 !important; background: #fef3c7; padding: 2px 5px; border-radius: 4px; }
+.note-content .md-code { font-family: monospace; background: #f1f5f9; color: #0f766e !important; padding: 2px 6px; border-radius: 4px; font-size: 13px; font-weight: 600; }
+.note-content .md-quote { background: #f8fafc; border-left: 4px solid #8b5cf6; padding: 10px 14px; border-radius: 6px; color: #334155 !important; margin: 10px 0; font-weight: 500; }
+.note-content .md-li { list-style: disc; margin-left: 20px; font-size: 14px; color: #1e293b !important; margin-bottom: 6px; line-height: 1.6; }
+.note-content .md-num-item { font-size: 14px; color: #1e293b !important; margin-bottom: 6px; line-height: 1.6; }
+.note-content .md-num { font-weight: 700; color: #2563eb !important; }
+.note-content .md-hr { border: none; border-top: 1px dashed #cbd5e1; margin: 20px 0; }
+
+/* 📱 390px Mobile Viewport Dropdown Optimization */
+@media (max-width: 480px) {
+  .top-note-selector {
+    max-width: 100% !important;
+  }
+  .note-dropdown-select {
+    max-width: 200px !important;
+    font-size: 12px !important;
+    text-overflow: ellipsis;
+  }
 }
 
 /* 🤖 AI Assist Panel */
