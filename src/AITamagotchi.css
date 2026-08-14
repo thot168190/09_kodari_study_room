@@ -1,0 +1,239 @@
+.tamagotchi-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 100px);
+  font-family: 'Inter', sans-serif;
+}
+
+.tamagotchi-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tamagotchi-header h2 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.tamagotchi-header p {
+  color: #6b7280;
+}
+
+.tamagotchi-machine {
+  background: #ff5252;
+  border-radius: 50px 50px 70px 70px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 5px 15px rgba(255,255,255,0.4);
+  width: 350px;
+  border: 4px solid #cc0000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.screen-bezel {
+  background: #374151;
+  padding: 15px;
+  border-radius: 20px;
+  width: 100%;
+  margin-bottom: 2rem;
+  box-shadow: inset 0 5px 10px rgba(0,0,0,0.5);
+}
+
+.screen-inner {
+  background: #9ca3af;
+  border-radius: 10px;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-status-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: rgba(0,0,0,0.1);
+}
+
+.pet-level {
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.exp-bar-container {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #4b5563;
+}
+
+.exp-bar-fill {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.3s ease;
+}
+
+.pet-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pet-character {
+  font-size: 5rem;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+}
+
+.pet-character.bounce {
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.pet-character.sick {
+  animation: shake 1s infinite ease-in-out;
+  opacity: 0.7;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.poop-emoji {
+  position: absolute;
+  font-size: 2rem;
+  cursor: pointer;
+  animation: dropIn 0.3s ease-out;
+  filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.3));
+}
+
+.poop-emoji:hover {
+  transform: scale(1.2);
+}
+
+@keyframes dropIn {
+  0% { transform: translateY(-50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.dialog-box {
+  background: rgba(255,255,255,0.9);
+  border-top: 2px solid #4b5563;
+  padding: 10px;
+  font-size: 0.85rem;
+  text-align: center;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.control-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tama-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.2s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+
+.tama-btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.tama-btn.primary {
+  background: #fcd34d;
+  color: #92400e;
+}
+
+.tama-btn.secondary {
+  background: #d1d5db;
+  color: #374151;
+}
+
+.quiz-area {
+  width: 100%;
+  background: rgba(255,255,255,0.2);
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.quiz-area h3 {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quiz-opt-btn {
+  padding: 10px;
+  background: white;
+  border: 2px solid #374151;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.quiz-opt-btn:hover {
+  background: #f3f4f6;
+}
+
+.debug-panel {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  display: flex;
+  gap: 15px;
+}
+
+.debug-panel button {
+  padding: 8px 15px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.debug-panel button:hover {
+  background: #f3f4f6;
+}

@@ -340,6 +340,19 @@ body {
   color: #ffffff;
 }
 
+.quick-tool-btn.interview {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  color: #fef08a;
+  border: 1px solid #34d399;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  animation: pulseGlow 2.5s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.6); }
+}
+
 .full-width-workspace {
   width: 100% !important;
   max-width: 100% !important;

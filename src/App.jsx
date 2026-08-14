@@ -6,6 +6,7 @@ import { BookOpen, Award, Sparkles, RefreshCw, Layers, CheckCircle2, AlertTriang
 import ChannelHub from './ChannelHub';
 import CaseStudy from './CaseStudy';
 import MemeFactory from './MemeFactory';
+import LocalAIStudio from './LocalAIStudio';
 import ChatbotBuilder from './ChatbotBuilder';
 import AvatarStudio from './AvatarStudio';
 import InkWordPlayer from './InkWordPlayer';
@@ -19,6 +20,9 @@ import TravelLog from './TravelLog';
 import ColorChartModal from './ColorChartModal';
 import KodariLab from './KodariLab';
 import ScienceLabAI from './ScienceLabAI';
+import AIBlogWriter from './AIBlogWriter';
+import AITamagotchi from './AITamagotchi';
+import InterviewPrep from './InterviewPrep';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -89,11 +93,11 @@ function App() {
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'interviewprep'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
-    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser'].includes(activeTab)) {
+    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser', 'aiblogwriter'].includes(activeTab)) {
       setActiveTabGroup('builder');
     }
   }, [activeTab]);
@@ -898,6 +902,7 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
+            <button onClick={() => setActiveTab('interviewprep')} className="quick-tool-btn interview">🏛️ 국세청 면접TF</button>
             <button onClick={() => setShowNicheSaaS(true)} className="quick-tool-btn niche">🎯 틈새진단기</button>
             <button onClick={() => setShowHubPortal(true)} className="quick-tool-btn hub">🌐 채널포털</button>
             <button onClick={() => setIsAddingNote(true)} className="quick-tool-btn add">➕ 노트추가</button>
@@ -909,6 +914,7 @@ ${selectedNote.content}`
           {/* 1. 🧠 AI 공부 */}
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
+            <button className={`pillar-pill ${activeTab === 'interviewprep' ? 'active' : ''}`} onClick={() => setActiveTab('interviewprep')} style={{ color: '#fde047', fontWeight: 800 }}>🏛️ 국세청 면접TF</button>
             <button className={`pillar-pill ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>📺 같이 수업듣기</button>
             <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
             <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
@@ -932,6 +938,13 @@ ${selectedNote.content}`
           <div className="pillar-group">
             <span className="pillar-tag">✈️ 여행기억</span>
             <button className={`pillar-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
+          </div>
+
+          {/* 5. ✍️ AI 랩 */}
+          <div className="pillar-group">
+            <span className="pillar-tag">✍️ AI 랩</span>
+            <button className={`pillar-pill ${activeTab === 'aiblogwriter' ? 'active' : ''}`} onClick={() => setActiveTab('aiblogwriter')}>✍️ AI 블로그</button>
+            <button className={`pillar-pill ${activeTab === 'aitamagotchi' ? 'active' : ''}`} onClick={() => setActiveTab('aitamagotchi')}>🎮 잉크 펫</button>
           </div>
         </div>
       </header>
@@ -1977,6 +1990,16 @@ ${selectedNote.content}`
 
               {activeTab === 'travellog' && (
                 <TravelLog onOpenStandalone={() => setShowTravelStandalone(true)} />
+              )}
+
+              {activeTab === 'aiblogwriter' && (
+                <AIBlogWriter />
+              )}
+              {activeTab === 'aitamagotchi' && (
+                <AITamagotchi />
+              )}
+              {activeTab === 'interviewprep' && (
+                <InterviewPrep />
               )}
             </div>
           </>

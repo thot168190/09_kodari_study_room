@@ -28,6 +28,52 @@ export default function KodariLab({ geminiApiKey }) {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
 
+  // 허깅페이스 테스트 상태
+  const [hfApiKey, setHfApiKey] = useState(import.meta.env.VITE_HUGGINGFACE_API_KEY || '');
+  const [hfPrompt, setHfPrompt] = useState('A futuristic agentic AI laboratory, cyberpunk style, highly detailed');
+  const [hfImage, setHfImage] = useState(null);
+  const [hfLoading, setHfLoading] = useState(false);
+  const [hfError, setHfError] = useState('');
+
+  const handleGenerateHfImage = async () => {
+    if (!hfApiKey) {
+      setHfError('허깅페이스 API 키(hf_...)를 입력해주세요!');
+      return;
+    }
+    if (!hfPrompt.trim()) return;
+    setHfLoading(true);
+    setHfError('');
+    setHfImage(null);
+
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+        {
+          headers: {
+            Authorization: `Bearer ${hfApiKey}`,
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({ inputs: hfPrompt }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'API 요청 실패');
+      }
+
+      const blob = await response.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      setHfImage(imageUrl);
+    } catch (err) {
+      setHfError(`에러 발생: ${err.message}`);
+    } finally {
+      setHfLoading(false);
+    }
+  };
+
+
   // 💊 [1번 아이디어 MVP 데모] NutraProof AI 상태
   const [nutraIngredient, setNutraIngredient] = useState('NMN (베타 니코틴아미드 모노뉴클레오타이드)');
   const [nutraLoading, setNutraLoading] = useState(false);
@@ -63,7 +109,7 @@ JSON 포맷 (pure JSON):
 }`;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -71,6 +117,7 @@ JSON 포맷 (pure JSON):
           }
         );
         const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
         const text = data.candidates[0].content.parts[0].text.trim();
         const jsonMatch = text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -78,6 +125,15 @@ JSON 포맷 (pure JSON):
         }
       } catch (err) {
         console.error(err);
+        setNutraReport({
+          ingredient: ingName,
+          pubmedCount: 0,
+          fdaStatus: '오류 발생',
+          efficacyScore: 0,
+          keyBenefits: ['API 키 오류', err.message],
+          safetySignal: '조회 실패',
+          kodariSummary: `대표님, 통신 중 에러가 발생했습니다: ${err.message}`
+        });
       } finally {
         setNutraLoading(false);
       }
@@ -132,7 +188,7 @@ JSON 포맷 (pure JSON):
 }`;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -140,6 +196,8 @@ JSON 포맷 (pure JSON):
           }
         );
         const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
+        
         const text = data.candidates[0].content.parts[0].text.trim();
         const jsonMatch = text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -151,20 +209,20 @@ JSON 포맷 (pure JSON):
         console.error(err);
         setAnalysisResult({
           title: ideaInput,
-          nicheScore: 92,
-          vectorDistance: '기존 대형 제약/연구소 시스템이 닿지 않는 초격차 니치 공간 점유 완료!',
-          usedSkills: ['pubmed_database', 'openfda_database', 'chembl_database'],
+          nicheScore: 0,
+          vectorDistance: 'API 통신 오류 발생',
+          usedSkills: [],
           shortTrack: {
-            title: '단기 트랙: 성분 & 근거 검증 마이크로 SaaS',
-            desc: 'PubMed 및 FDA 데이터 자동 횡단 1장 보고서 생성 서비스',
-            monetization: '월 4.9만 원 / 9.9만 원 구독'
+            title: '에러 발생',
+            desc: err.message,
+            monetization: '-'
           },
           longTrack: {
-            title: '장기 트랙: 바이오 IP 선점 & 특허 에이전트',
-            desc: 'AlphaFold 및 ClinVar 기반 특허 충돌 진단 플랫폼',
-            monetization: 'B2B 건당 100만 원 리포트'
+            title: '에러 발생',
+            desc: err.message,
+            monetization: '-'
           },
-          kodariComment: '대표님! 이 아이디어 당장 밤샘 가설 검증 들어가겠습니다! 🚀'
+          kodariComment: `대표님! API 통신 중 문제가 생겼습니다. (${err.message}) API 키를 확인해 주십시오! 😭`
         });
       } finally {
         setAnalyzing(false);
@@ -208,7 +266,7 @@ JSON 포맷 (pure JSON):
 충성스러운 어조(예: "~하옵니다 대표님!", "~이옵니다", "코다리 부장이 즉시 검토하겠습니다!")로 명쾌하고 열정적으로 대답해주세요.`;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -216,10 +274,11 @@ JSON 포맷 (pure JSON):
           }
         );
         const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
         const reply = data.candidates[0].content.parts[0].text.trim();
         setChatHistory(prev => [...prev, { sender: 'kodari', text: reply }]);
       } catch (err) {
-        setChatHistory(prev => [...prev, { sender: 'kodari', text: '대표님, 통신 중 불꽃이 튀었으나 코다리 부장은 건재합니다! 다시 말씀해 주십시오! 🫡' }]);
+        setChatHistory(prev => [...prev, { sender: 'kodari', text: `대표님, 통신 중 불꽃이 튀었습니다! 😭 에러 원인: ${err.message}` }]);
       } finally {
         setChatLoading(false);
       }
@@ -265,6 +324,13 @@ JSON 포맷 (pure JSON):
           >
             <Sparkles size={18} />
             24H 아이디어 난상토론
+          </button>
+          <button 
+            className={`lab-nav-btn ${activeLabTab === 'huggingface' ? 'active' : ''}`}
+            onClick={() => setActiveLabTab('huggingface')}
+          >
+            <Layers size={18} />
+            허깅페이스 API 체험장
           </button>
         </div>
       </div>
@@ -478,6 +544,72 @@ JSON 포맷 (pure JSON):
             <button onClick={handleSendChat} disabled={chatLoading}>
               <Send size={18} />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 탭 4: 허깅페이스 체험장 */}
+      {activeLabTab === 'huggingface' && (
+        <div className="lab-content-section" style={{ padding: '24px', backgroundColor: '#fff', borderRadius: '12px' }}>
+          <div className="skills-grid-header">
+            <h3><Layers size={20} color="#3b82f6" /> 허깅페이스 무료 API (Text-to-Image) 테스트</h3>
+            <p>발급받은 허깅페이스 Access Token을 넣고 'Stable Diffusion XL' 이미지 생성 모델을 10초 만에 공짜로 돌려보세요!</p>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontWeight: 'bold', fontSize: '14px', color: '#4b5563' }}>🔑 Hugging Face Access Token</label>
+              <input 
+                type="password" 
+                value={hfApiKey} 
+                onChange={(e) => setHfApiKey(e.target.value)} 
+                placeholder="hf_xxxxxxxxxxxxxxxxxxxxxx"
+                style={{ padding: '12px', border: '1px solid #d1d5db', borderRadius: '8px', width: '100%' }}
+              />
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                * .env 파일에 VITE_HUGGINGFACE_API_KEY를 넣으셨다면 자동으로 불러와집니다.
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontWeight: 'bold', fontSize: '14px', color: '#4b5563' }}>🎨 이미지 생성 프롬프트 (영어로 입력)</label>
+              <textarea 
+                value={hfPrompt} 
+                onChange={(e) => setHfPrompt(e.target.value)} 
+                rows={3}
+                style={{ padding: '12px', border: '1px solid #d1d5db', borderRadius: '8px', width: '100%', resize: 'none' }}
+              />
+            </div>
+
+            <button 
+              onClick={handleGenerateHfImage} 
+              disabled={hfLoading}
+              style={{
+                backgroundColor: hfLoading ? '#9ca3af' : '#2563eb',
+                color: 'white',
+                padding: '14px',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                cursor: hfLoading ? 'not-allowed' : 'pointer',
+                border: 'none',
+                transition: 'background-color 0.2s'
+              }}
+            >
+              {hfLoading ? '이미지 생성 중... (10~20초 소요 ⏳)' : '허깅페이스로 그림 그리기 🚀'}
+            </button>
+
+            {hfError && (
+              <div style={{ padding: '12px', backgroundColor: '#fee2e2', color: '#b91c1c', borderRadius: '8px', fontSize: '14px' }}>
+                {hfError}
+              </div>
+            )}
+
+            {hfImage && (
+              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                <h4 style={{ color: '#10b981', margin: 0 }}>✅ 100% 무료 허깅페이스 API 이미지 생성 성공!</h4>
+                <img src={hfImage} alt="Generated by Hugging Face" style={{ maxWidth: '100%', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+              </div>
+            )}
           </div>
         </div>
       )}
