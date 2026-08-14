@@ -19,7 +19,7 @@
   border: 1.5px solid #e2e8f0;
   border-radius: 18px;
   padding: 14px 22px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   flex-wrap: wrap;
   gap: 12px;
@@ -96,13 +96,104 @@
 
 .upgrade-nav-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
 }
 
-/* 🌟 2. 히어로 섹션 */
+/* 📈 2. 합격 성장 트래커 & 마스터리 레벨 대시보드 */
+.growth-tracker-card {
+  background: linear-gradient(135deg, #ecfdf5 0%, #eff6ff 50%, #fef3c7 100%);
+  border: 2px solid #a7f3d0;
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.1);
+}
+
+.gt-left {
+  flex: 1 1 360px;
+}
+
+.mastery-level-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gt-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.highlight-pass {
+  color: #059669;
+  font-size: 1.6rem;
+}
+
+.gt-subtitle {
+  font-size: 0.92rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.gt-stats-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gt-stat-box {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.gt-stat-box .lbl {
+  font-size: 0.76rem;
+  color: #64748b;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gt-stat-box .val {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.diff-up {
+  font-size: 0.78rem;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* 🌟 3. 히어로 섹션 */
 .pv-hero-section {
   text-align: center;
-  padding: 36px 16px 24px;
+  padding: 30px 16px 20px;
   margin-bottom: 24px;
   background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
   border-radius: 24px;
@@ -113,22 +204,22 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff7ed;
-  color: #c2410c;
-  border: 1.5px solid #ffedd5;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1.5px solid #a7f3d0;
   padding: 6px 14px;
   border-radius: 9999px;
   font-size: 0.86rem;
   font-weight: 800;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .pv-hero-title {
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 900;
   color: #0f172a;
   line-height: 1.35;
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
   letter-spacing: -0.5px;
 }
 
@@ -139,49 +230,14 @@
 }
 
 .pv-hero-desc {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: #475569;
   line-height: 1.6;
   max-width: 680px;
-  margin: 0 auto 24px;
+  margin: 0 auto;
 }
 
-.pv-trust-stats {
-  display: inline-flex;
-  align-items: center;
-  gap: 24px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 12px 28px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat-item strong {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.stat-item span {
-  font-size: 0.76rem;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.stat-sep {
-  width: 1px;
-  height: 28px;
-  background: #e2e8f0;
-}
-
-/* 🎮 3. 실전 AI 음성 면접 스튜디오 */
+/* 🎮 4. 실전 AI 음성 면접 스튜디오 */
 .pv-studio-section {
   background: #ffffff;
   border: 2px solid #e2e8f0;
@@ -253,33 +309,67 @@
   border-radius: 4px;
 }
 
-.custom-job-input-box {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
+/* 💊 활성 원포인트 드릴 안내 배너 */
+.active-drill-banner {
+  background: #faf5ff;
+  border: 2px solid #d8b4fe;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  animation: pulseLight 2s infinite;
 }
 
-.custom-job-input-box input {
-  flex: 1 1 300px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #cbd5e1;
-  font-size: 0.92rem;
-  font-family: inherit;
+@keyframes pulseLight {
+  0%, 100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.35); }
 }
 
-.custom-job-input-box button {
-  background: #0284c7;
-  color: #ffffff;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-weight: 800;
-  cursor: pointer;
+.adb-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.adb-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: #7e22ce;
+  color: #ffffff;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.adb-close {
+  background: transparent;
+  border: none;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.active-drill-banner h4 {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #6b21a8;
+  margin: 0 0 6px 0;
+}
+
+.adb-desc {
+  font-size: 0.92rem;
+  color: #4a044e;
+  margin: 0 0 10px 0;
+}
+
+.adb-action-box {
+  background: #ffffff;
+  border: 1.5px dashed #c084fc;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  color: #581c87;
+  font-weight: 700;
 }
 
 /* 질문 스테이지 카드 */
@@ -405,7 +495,7 @@
   color: #64748b;
 }
 
-/* 빅 마이크 녹음 버튼 */
+/* 마이크 버튼 */
 .big-mic-area {
   display: flex;
   flex-direction: column;
@@ -544,7 +634,7 @@
   cursor: not-allowed;
 }
 
-/* 📊 채점 리포트 */
+/* 📊 3단계: 채점 리포트 & 원포인트 레슨 */
 .score-summary-banner {
   display: flex;
   align-items: center;
@@ -602,6 +692,108 @@
   font-size: 1.05rem;
   font-weight: 800;
   color: #0f172a;
+}
+
+/* 💊 원포인트 처방전 카드 */
+.one-point-prescription-card {
+  background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+  border: 2px solid #d8b4fe;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.1);
+}
+
+.opp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.opp-tag {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #7e22ce;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.opp-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #7e22ce;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.opp-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #581c87;
+  margin: 0 0 10px 0;
+}
+
+.opp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.opp-problem {
+  font-size: 0.88rem;
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.opp-prescription {
+  font-size: 0.9rem;
+  color: #065f46;
+  background: #ecfdf5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.opp-drill-box {
+  background: #ffffff;
+  border: 1.5px dashed #c084fc;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  color: #581c87;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.start-drill-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #7e22ce 0%, #6b21a8 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(126, 34, 206, 0.25);
+  transition: all 0.2s ease;
+}
+
+.start-drill-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(126, 34, 206, 0.35);
 }
 
 .summary-quote {
@@ -687,15 +879,6 @@
   white-space: pre-line;
 }
 
-.coach-tip-box {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  color: #92400e;
-}
-
 .pdf-export-btn {
   background: #ffffff;
   border: 1.5px solid #cbd5e1;
@@ -750,7 +933,7 @@
   font-weight: 700;
 }
 
-/* 💰 4. SaaS 요금제 섹션 */
+/* 💰 5. SaaS 요금제 섹션 */
 .pv-pricing-section {
   padding: 36px 16px;
   background: #ffffff;
@@ -888,7 +1071,7 @@
   border: 1.5px solid #cbd5e1;
 }
 
-/* 💳 5. 결제 모달 */
+/* 💳 6. 결제 모달 */
 .pv-modal-backdrop {
   position: fixed;
   top: 0;
@@ -1038,18 +1221,21 @@
   }
 
   .pv-hero-title {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
   }
 
-  .pv-trust-stats {
-    flex-direction: column;
-    gap: 10px;
+  .growth-tracker-card {
+    padding: 16px;
+  }
+
+  .gt-stats-grid {
     width: 100%;
-    box-sizing: border-box;
+    justify-content: space-between;
   }
 
-  .stat-sep {
-    display: none;
+  .gt-stat-box {
+    flex: 1 1 90px;
+    padding: 10px;
   }
 
   .studio-interactive-grid {

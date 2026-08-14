@@ -4,15 +4,16 @@ import {
   Mic, MicOff, Sparkles, Trophy, Award, CheckCircle2, AlertTriangle, 
   Volume2, VolumeX, RefreshCw, Send, ArrowRight, Shield, Zap, Star, 
   CreditCard, Lock, Download, Printer, Check, ChevronRight, HelpCircle,
-  FileText, Smartphone, ThumbsUp, UserCheck, Flame, Compass, MessageSquare
+  FileText, Smartphone, ThumbsUp, UserCheck, Flame, Compass, MessageSquare,
+  TrendingUp, Activity, Lightbulb, Target, Stethoscope, Play, RotateCcw
 } from 'lucide-react';
 
-// 🎯 다양한 직종별 프리셋 족보 데이터
+// 🎯 직종별 프리셋 족보 데이터
 const PRESET_JOB_CATEGORIES = [
   {
     id: 'public_tax',
     name: '🏛️ 국세청·공공기관 체납관리단',
-    target: '국세청 / 지방자치단체 체납관리단 & 실태확인원',
+    target: '국세청 / 지자체 체납관리단 & 실태확인원',
     badge: '인기 1위',
     questions: [
       {
@@ -129,12 +130,42 @@ export default function PassVoiceSaaS() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
 
+  // 📈 합격 성장 트래커 & 레벨업 시스템 (Progressive Mastery)
+  const [practiceHistory, setPracticeHistory] = useState(() => {
+    const saved = localStorage.getItem('pv_practice_history');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [activeOnePointDrill, setActiveOnePointDrill] = useState(null);
+
+  // 누적 연습 통계 계산
+  const totalPracticeCount = practiceHistory.length;
+  const latestScore = practiceHistory.length > 0 ? practiceHistory[practiceHistory.length - 1].score : 0;
+  const prevScore = practiceHistory.length > 1 ? practiceHistory[practiceHistory.length - 2].score : 0;
+  const scoreDiff = latestScore - prevScore;
+
+  // 합격 레벨 & 확률 계산
+  const getMasteryInfo = (count, score) => {
+    if (count >= 5 && score >= 90) {
+      return { level: 'Lv.4 프리패스 마스터 👑', passRate: 98, color: '#10b981', badge: '합격 보증' };
+    }
+    if (count >= 3 && score >= 80) {
+      return { level: 'Lv.3 실전 합격권 🎯', passRate: 88, color: '#3b82f6', badge: '유력 합격' };
+    }
+    if (count >= 1) {
+      return { level: 'Lv.2 성장 유망주 🌱', passRate: 75, color: '#f59e0b', badge: '실력 급상승' };
+    }
+    return { level: 'Lv.1 면접 새싹 🐣', passRate: 60, color: '#64748b', badge: '첫 연습 시작' };
+  };
+
+  const mastery = getMasteryInfo(totalPracticeCount, latestScore);
+
   // 결제 모달 상태
   const [showPayModal, setShowPayModal] = useState(false);
-  const [userPlan, setUserPlan] = useState('free'); // 'free', 'vip'
+  const [userPlan, setUserPlan] = useState('free');
   const [freeTrialCount, setFreeTrialCount] = useState(3);
 
-  // 🎙️ Web Speech API 초기화
+  // 🎙️ Web Speech API 세팅
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -216,67 +247,10 @@ export default function PassVoiceSaaS() {
     setCurrentQIndex(0);
     setSpokenText('');
     setFeedbackData(null);
+    setActiveOnePointDrill(null);
   };
 
-  // 커스텀 직무 AI 질문 생성
-  const handleGenerateCustomQuestions = async () => {
-    if (!customJobTitle.trim()) {
-      alert('원하시는 직무나 채용 분야를 입력해 주십시오.');
-      return;
-    }
-    setIsAnalyzing(true);
-    const prompt = `
-너는 채용 면접 전문가다. 
-지원 직무: "${customJobTitle}"
-위 직무에 꼭 나오는 가장 핵심적인 실전 면접 질문 3개를 한국어로 생성해줘.
-JSON 포맷으로만 응답해:
-[
-  {
-    "q": "질문 1",
-    "intent": "질문 의도",
-    "best": "합격 모범 답변"
-  },
-  {
-    "q": "질문 2",
-    "intent": "질문 의도",
-    "best": "합격 모범 답변"
-  },
-  {
-    "q": "질문 3",
-    "intent": "질문 의도",
-    "best": "합격 모범 답변"
-  }
-]
-`;
-    try {
-      if (geminiApiKey) {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          }
-        );
-        const data = await res.json();
-        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-        const parsed = JSON.parse(raw);
-        if (parsed.length > 0) {
-          setQuestionList(parsed);
-          setCurrentQIndex(0);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  // 🤖 AI 음성 다면 채점
+  // 🤖 AI 음성 다면 채점 및 원포인트 레슨 추출
   const handleAnalyzeAnswer = async () => {
     if (!spokenText.trim()) {
       alert('마이크로 답변을 말씀하시거나 텍스트를 입력해 주십시오.');
@@ -294,13 +268,13 @@ JSON 포맷으로만 응답해:
     const currentQ = questionList[currentQIndex] || selectedJob.questions[0];
 
     const prompt = `
-너는 실전 채용 면접관이자 AI 스피치 코칭 전문가다.
+너는 대한민국 최고의 채용 면접관이자 1:1 스피치 코칭 명강사다.
 지원 직무: "${selectedJob.name} (${customJobTitle || selectedJob.target})"
 면접 질문: "${currentQ.q}"
 질문 의도: "${currentQ.intent}"
 지원자 실제 답변: "${spokenText}"
 
-지원자의 답변을 다각도로 채점하고 합격 스크립트를 작성해줘.
+지원자의 답변을 면밀히 분석하여, 점수와 함께 "지금 당장 합격률을 2배 올리는 1:1 원포인트 레슨(One-Point Lesson)"을 처방해줘.
 반드시 아래 JSON 포맷으로만 응답해:
 {
   "totalScore": 94,
@@ -308,14 +282,21 @@ JSON 포맷으로만 응답해:
   "speechScore": 90,
   "fitScore": 96,
   "summaryComment": "면접관을 사로잡는 한 줄 총평",
+  "onePointLesson": {
+    "title": "원포인트 처방 명칭 (예: 말끝 흐림 교정 / 두괄식 핵심 타격 / 필수 공직 키워드 주입)",
+    "problem": "지원자의 답변에서 가장 아쉬웠던 구체적 문제점 1가지",
+    "prescription": "이렇게 바꾸면 면접관이 무조건 감탄하는 핵심 솔루션",
+    "drillAction": "지금 바로 소리 내어 말해볼 1문장 실전 연습 과제"
+  },
   "goodPoints": ["잘한 점 1", "잘한 점 2"],
   "badPoints": ["아쉬운 점 또는 고칠 점 1"],
-  "goldScript": "지원자의 경험을 살려 실제 면접관이 100점 줄 수 있도록 업그레이드한 모범 대본",
+  "goldScript": "지원자의 경험을 살려 실제 면접관이 100점 줄 수 있도록 완벽하게 업그레이드한 모범 대본",
   "coachTip": "현장에서 합격 확률을 2배 높이는 스피치 태도 꿀팁"
 }
 `;
 
     try {
+      let parsed = null;
       if (geminiApiKey) {
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
@@ -330,29 +311,46 @@ JSON 포맷으로만 응답해:
         );
         const data = await res.json();
         const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-        const parsed = JSON.parse(raw);
-        setFeedbackData(parsed);
+        parsed = JSON.parse(raw);
       } else {
-        // 스마트 폴백
-        setTimeout(() => {
-          setFeedbackData({
-            totalScore: 92,
-            logicScore: 90,
-            speechScore: 95,
-            fitScore: 92,
-            summaryComment: "차분하고 진정성이 느껴지는 훌륭한 답변입니다!",
-            goodPoints: [
-              "상황에 대한 이해도가 높고 침착한 어조가 좋습니다.",
-              "핵심 소통 역량을 직무와 잘 연결했습니다."
-            ],
-            badPoints: [
-              "문장의 마무리를 조금 더 명확하게 끝맺으면 더욱 신뢰감을 줍니다."
-            ],
-            goldScript: `${spokenText}\n\n이와 더불어, 항상 매뉴얼과 안전 수칙을 준수하며 팀과 화합하여 성실히 기여하겠습니다.`,
-            coachTip: "말끝을 흐리지 않고 '~하겠습니다!'로 당당하게 맺어주시면 완벽합니다."
-          });
-        }, 1000);
+        // 스마트 폴백 (원포인트 레슨 포함)
+        parsed = {
+          totalScore: 92,
+          logicScore: 92,
+          speechScore: 90,
+          fitScore: 95,
+          summaryComment: "차분하고 진정성이 느껴지는 훌륭한 답변입니다!",
+          onePointLesson: {
+            title: "💊 말끝 어미 단호하게 맺기 (자신감 200% 상승)",
+            problem: "말미에 '~인 것 같습니다만...'처럼 말끝을 흐리면 자신감이 다소 부족해 보일 수 있습니다.",
+            prescription: "문장의 끝을 '~하겠습니다!', '~을 최우선으로 준수합니다!'처럼 단호하고 또렷하게 맺어주세요.",
+            drillAction: "'2인 1조 현장 안전 수칙을 철저히 준수하며 포천세무서의 신뢰도를 높이겠습니다!'"
+          },
+          goodPoints: [
+            "상황에 대한 이해도가 높고 침착한 어조가 좋습니다.",
+            "핵심 소통 역량을 직무와 잘 연결했습니다."
+          ],
+          badPoints: [
+            "문장의 마무리를 조금 더 명확하게 끝맺으면 더욱 신뢰감을 줍니다."
+          ],
+          goldScript: `${spokenText}\n\n이와 더불어, 항상 2인 1조 안전 수칙을 철저히 준수하며 팀과 화합하여 성실히 기여하겠습니다!`,
+          coachTip: "말끝을 흐리지 않고 '~하겠습니다!'로 당당하게 맺어주시면 완벽합니다."
+        };
       }
+
+      setFeedbackData(parsed);
+
+      // 📈 히스토리 누적 저장
+      const newRecord = {
+        attempt: totalPracticeCount + 1,
+        job: selectedJob.name,
+        question: currentQ.q,
+        score: parsed.totalScore,
+        date: new Date().toLocaleDateString()
+      };
+      const updatedHistory = [...practiceHistory, newRecord];
+      setPracticeHistory(updatedHistory);
+      localStorage.setItem('pv_practice_history', JSON.stringify(updatedHistory));
 
       if (userPlan === 'free') {
         setFreeTrialCount(prev => Math.max(0, prev - 1));
@@ -362,6 +360,16 @@ JSON 포맷으로만 응답해:
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  // 원포인트 레슨 적용하여 즉시 2차 도전
+  const handleStartOnePointDrill = (lesson) => {
+    setActiveOnePointDrill(lesson);
+    setSpokenText('');
+    setFeedbackData(null);
+    setTimerSeconds(60);
+    // 스크롤 상단으로 이동
+    window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
   // TTS 음성 읽기
@@ -392,12 +400,12 @@ JSON 포맷으로만 응답해:
             <span className="logo-mic">🎙️</span>
             <span className="logo-title">패스보이스<span className="logo-ai">AI</span></span>
           </div>
-          <span className="pv-sub-tag">1분 음성 면접 트레이너 SaaS</span>
+          <span className="pv-sub-tag">1:1 원포인트 음성 면접 트레이너 SaaS</span>
         </div>
 
         <div className="pv-nav-right">
           <span className="trial-badge">
-            {userPlan === 'vip' ? '👑 VIP 무제한 패스 이용 중' : `🎁 무료 진단 잔여: ${freeTrialCount}회`}
+            {userPlan === 'vip' ? '👑 VIP 무제한 패스 이용 중' : `🎁 무료 진단: ${freeTrialCount}회 남음`}
           </span>
           <button 
             className="upgrade-nav-btn"
@@ -408,44 +416,59 @@ JSON 포맷으로만 응답해:
         </div>
       </nav>
 
-      {/* 🌟 2. 히어로 배너 (High Conversion Hero) */}
-      <section className="pv-hero-section">
-        <div className="hero-pill-badge">
-          <Flame className="w-4 h-4 text-orange-500" /> 합격률 94.8% • 4060 공공근로/알바/취준생 필수 마이크로 SaaS
+      {/* 📈 2. 합격 성장 트래커 & 마스터리 레벨 대시보드 */}
+      <section className="growth-tracker-card">
+        <div className="gt-left">
+          <div className="mastery-level-tag" style={{ background: mastery.color, color: '#ffffff' }}>
+            {mastery.level}
+          </div>
+          <h3 className="gt-title">
+            대표님의 현재 합격 가능성: <span className="highlight-pass">{mastery.passRate}%</span>
+          </h3>
+          <p className="gt-subtitle">
+            연습할수록 AI가 부족한 점을 딱 1개씩 처방하여 <strong>100점 만점 합격권</strong>으로 끌어올립니다!
+          </p>
         </div>
-        <h1 className="pv-hero-title">
-          키보드 치지 마세요.<br />
-          <span className="gradient-text">폰에 대고 말하면 3초 만에</span> 100점 만점 성적표!
-        </h1>
-        <p className="pv-hero-desc">
-          구글 음성인식(Speech API)과 Gemini AI가 지원자의 답변을 실시간으로 듣고,<br />
-          면접관 취향저격 <strong>합격 모범 대본</strong>과 <strong>스피치 다면평가</strong>를 즉시 처방해 드립니다.
-        </p>
 
-        {/* 신뢰 지표 바 */}
-        <div className="pv-trust-stats">
-          <div className="stat-item">
-            <strong>12,480+</strong>
-            <span>누적 음성 연습</span>
+        <div className="gt-stats-grid">
+          <div className="gt-stat-box">
+            <span className="lbl"><Activity className="w-4 h-4 text-emerald-500" /> 누적 연습 횟수</span>
+            <strong className="val">{totalPracticeCount}회 완성</strong>
           </div>
-          <div className="stat-sep" />
-          <div className="stat-item">
-            <strong>98.6점</strong>
-            <span>평균 스피치 향상</span>
+          <div className="gt-stat-box">
+            <span className="lbl"><Trophy className="w-4 h-4 text-amber-500" /> 최근 스피치 점수</span>
+            <strong className="val">
+              {latestScore > 0 ? `${latestScore}점` : '진단 전'}
+              {scoreDiff > 0 && <span className="diff-up">+{scoreDiff}점 🚀</span>}
+            </strong>
           </div>
-          <div className="stat-sep" />
-          <div className="stat-item">
-            <strong>3초</strong>
-            <span>초고속 AI 피드백</span>
+          <div className="gt-stat-box">
+            <span className="lbl"><Shield className="w-4 h-4 text-sky-500" /> 합격 안정권</span>
+            <strong className="val text-emerald-600">{mastery.badge}</strong>
           </div>
         </div>
       </section>
 
-      {/* 🎮 3. 실전 AI 음성 면접 스튜디오 (Core SaaS Feature) */}
+      {/* 🌟 3. 히어로 배너 */}
+      <section className="pv-hero-section">
+        <div className="hero-pill-badge">
+          <Stethoscope className="w-4 h-4 text-emerald-600" /> AI 실시간 원포인트 레슨(One-Point Lesson) 탑재!
+        </div>
+        <h1 className="pv-hero-title">
+          말만 하면 단점을 콕 집어 고쳐주는<br />
+          <span className="gradient-text">1:1 원포인트 음성 면접 트레이너</span>
+        </h1>
+        <p className="pv-hero-desc">
+          장황한 피드백 대신, <strong>지금 당장 고쳐야 할 딱 1가지 습관</strong>과 <strong>100점 모범 대본</strong>을 처방하여<br />
+          반복 연습할수록 합격 확률을 드라마틱하게 수직 상승시킵니다.
+        </p>
+      </section>
+
+      {/* 🎮 4. 실전 AI 음성 면접 스튜디오 */}
       <section className="pv-studio-section">
         <div className="studio-header">
-          <h2>🎯 실시간 1:1 AI 음성 면접 스튜디오</h2>
-          <p>직종을 선택하고 마이크 버튼을 누른 뒤 실제 면접처럼 소리 내어 답변해 보세요.</p>
+          <h2>🎯 실시간 1:1 원포인트 면접 스튜디오</h2>
+          <p>원하시는 직종을 선택하고 마이크를 눌러 편안하게 말씀해 보세요.</p>
         </div>
 
         {/* 1단계: 직종 선택 탭 바 */}
@@ -462,26 +485,22 @@ JSON 포맷으로만 응답해:
           ))}
         </div>
 
-        {/* 커스텀 직무 입력창 (custom 선택 시) */}
-        {selectedJob.id === 'custom' && (
-          <div className="custom-job-input-box">
-            <input 
-              type="text"
-              placeholder="예: 어린이집 보조교사, 아파트 관리사무소 경비, 병원 원무과 등"
-              value={customJobTitle}
-              onChange={(e) => setCustomJobTitle(e.target.value)}
-            />
-            <button 
-              onClick={handleGenerateCustomQuestions}
-              disabled={isAnalyzing}
-            >
-              {isAnalyzing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              AI 맞춤 면접 질문 3개 추출
-            </button>
+        {/* 💊 활성화된 원포인트 드릴 안내 배너 (클리닉 모드) */}
+        {activeOnePointDrill && (
+          <div className="active-drill-banner">
+            <div className="adb-header">
+              <span className="adb-tag">💊 2차 집중 처방 훈련 진행 중!</span>
+              <button className="adb-close" onClick={() => setActiveOnePointDrill(null)}>✕ 닫기</button>
+            </div>
+            <h4>{activeOnePointDrill.title}</h4>
+            <p className="adb-desc">👉 <strong>처방 지침:</strong> {activeOnePointDrill.prescription}</p>
+            <div className="adb-action-box">
+              🎯 <strong>집중 연습 문장:</strong> "{activeOnePointDrill.drillAction}"
+            </div>
           </div>
         )}
 
-        {/* 질문 카드 및 전환 */}
+        {/* 질문 카드 */}
         <div className="question-stage-card">
           <div className="q-stage-header">
             <span className="q-num-pill">질문 {currentQIndex + 1} / {questionList.length}</span>
@@ -503,6 +522,7 @@ JSON 포맷으로만 응답해:
                   setCurrentQIndex(idx);
                   setSpokenText('');
                   setFeedbackData(null);
+                  setActiveOnePointDrill(null);
                 }}
               >
                 Q{idx + 1}
@@ -511,7 +531,7 @@ JSON 포맷으로만 응답해:
           </div>
         </div>
 
-        {/* 🎙️ 2단계: 음성 녹음 & 타이머 & 실시간 STT 인터랙션 */}
+        {/* 🎙️ 2단계: 음성 녹음 & 타이머 & 인터랙션 */}
         <div className="studio-interactive-grid">
           <div className="voice-input-card">
             <div className="vic-header">
@@ -524,7 +544,7 @@ JSON 포맷으로만 응답해:
               </span>
             </div>
 
-            {/* 마이크 녹음 빅 버튼 */}
+            {/* 마이크 녹음 버튼 */}
             <div className="big-mic-area">
               <button 
                 className={`big-mic-btn ${isRecording ? 'recording' : ''}`}
@@ -536,28 +556,23 @@ JSON 포맷으로만 응답해:
                 {isRecording ? (
                   <strong className="text-red-500">말씀이 끝나면 버튼을 다시 눌러주세요!</strong>
                 ) : (
-                  <span>마이크 버튼을 누르고 말씀하세요</span>
+                  <span>마이크 버튼을 누르고 소리 내어 말씀하세요</span>
                 )}
               </div>
 
-              {/* 음성 파형 애니메이션 */}
               {isRecording && (
                 <div className="sound-wave-bars">
-                  <span className="bar" />
-                  <span className="bar" />
-                  <span className="bar" />
-                  <span className="bar" />
-                  <span className="bar" />
+                  <span className="bar" /><span className="bar" /><span className="bar" /><span className="bar" /><span className="bar" />
                 </div>
               )}
             </div>
 
             {/* 실시간 텍스트 변환창 */}
             <div className="transcription-box">
-              <label>실시간 인식된 답변 (직접 수정도 가능):</label>
+              <label>인식된 답변 내용:</label>
               <textarea
                 rows={4}
-                placeholder="마이크로 말씀하시거나, 여기에 답변을 직접 작성해 보세요."
+                placeholder="마이크로 말씀하시거나, 여기에 답변을 작성해 보세요."
                 value={spokenText}
                 onChange={(e) => setSpokenText(e.target.value)}
               />
@@ -575,13 +590,13 @@ JSON 포맷으로만 응답해:
                 onClick={handleAnalyzeAnswer}
                 disabled={isAnalyzing}
               >
-                {isAnalyzing ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                {isAnalyzing ? 'AI 심층 채점 분석 중...' : '3초 만에 AI 합격 채점 받기'}
+                {isAnalyzing ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Stethoscope className="w-5 h-5" />}
+                {isAnalyzing ? 'AI 원포인트 진단 중...' : '3초 만에 AI 원포인트 레슨 받기'}
               </button>
             </div>
           </div>
 
-          {/* 📊 3단계: AI 채점 리포트 카드 */}
+          {/* 📊 3단계: AI 채점 & 원포인트 레슨 처방전 카드 */}
           <div className="analysis-report-card">
             {feedbackData ? (
               <div className="report-content">
@@ -606,6 +621,39 @@ JSON 포맷으로만 응답해:
                   </div>
                 </div>
 
+                {/* 💊 1:1 AI 원포인트 레슨 처방전 (킬러 기능!) */}
+                {feedbackData.onePointLesson && (
+                  <div className="one-point-prescription-card">
+                    <div className="opp-header">
+                      <div className="opp-tag">
+                        <Sparkles className="w-4 h-4 text-purple-600" /> AI 1:1 원포인트 레슨 처방전
+                      </div>
+                      <span className="opp-badge">즉시 교정</span>
+                    </div>
+
+                    <h4 className="opp-title">{feedbackData.onePointLesson.title}</h4>
+                    
+                    <div className="opp-body">
+                      <p className="opp-problem">
+                        ⚠️ <strong>발견된 아쉬운 점:</strong> {feedbackData.onePointLesson.problem}
+                      </p>
+                      <p className="opp-prescription">
+                        💡 <strong>이렇게 바꿔보세요:</strong> {feedbackData.onePointLesson.prescription}
+                      </p>
+                      <div className="opp-drill-box">
+                        🎯 <strong>실전 1문장 처방:</strong> "{feedbackData.onePointLesson.drillAction}"
+                      </div>
+                    </div>
+
+                    <button 
+                      className="start-drill-btn"
+                      onClick={() => handleStartOnePointDrill(feedbackData.onePointLesson)}
+                    >
+                      <RotateCcw className="w-4 h-4" /> 이 처방 적용해서 바로 다시 말해보기 (+점수 UP!)
+                    </button>
+                  </div>
+                )}
+
                 <div className="summary-quote">
                   💬 <strong>면접관 총평:</strong> "{feedbackData.summaryComment}"
                 </div>
@@ -619,19 +667,10 @@ JSON 포맷으로만 응답해:
                   </ul>
                 </div>
 
-                <div className="feedback-section bad">
-                  <h5><AlertTriangle className="w-4 h-4 text-amber-600" /> 주의 및 보완점</h5>
-                  <ul>
-                    {feedbackData.badPoints?.map((p, i) => (
-                      <li key={i}>⚠️ {p}</li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* 🌟 100점 합격 골드 스크립트 */}
                 <div className="gold-script-box">
                   <div className="gs-header">
-                    <h5><Sparkles className="w-4 h-4 text-purple-600" /> 100점 만점 합격 모범 스크립트</h5>
+                    <h5><Trophy className="w-4 h-4 text-purple-600" /> 100점 만점 모범 스크립트</h5>
                     <button 
                       className="tts-btn"
                       onClick={() => speakText(feedbackData.goldScript)}
@@ -645,10 +684,6 @@ JSON 포맷으로만 응답해:
                   </div>
                 </div>
 
-                <div className="coach-tip-box">
-                  💡 <strong>합격 스피치 팁:</strong> {feedbackData.coachTip}
-                </div>
-
                 <button 
                   className="pdf-export-btn"
                   onClick={() => window.print()}
@@ -658,16 +693,16 @@ JSON 포맷으로만 응답해:
               </div>
             ) : (
               <div className="report-empty-state">
-                <div className="empty-icon-circle">📊</div>
-                <h4>아직 채점 결과가 없습니다</h4>
+                <div className="empty-icon-circle">🩺</div>
+                <h4>아직 원포인트 진단 결과가 없습니다</h4>
                 <p>
-                  왼쪽 마이크 버튼을 눌러 답변을 말씀하신 뒤<br />
-                  <strong>[3초 만에 AI 합격 채점 받기]</strong>를 눌러보세요!
+                  마이크 버튼을 누르고 답변을 말씀해 주시면<br />
+                  AI가 <strong>합격 확률을 높이는 딱 1가지 핵심 처방</strong>을 내려드립니다!
                 </p>
                 <div className="preview-checklist">
-                  <div>✓ 100점 만점 다각도 성적표</div>
-                  <div>✓ 면접관 맞춤형 골드 대본 제공</div>
-                  <div>✓ 원클릭 음성 듣기(TTS) 지원</div>
+                  <div>✓ 1:1 실시간 원포인트 레슨 처방</div>
+                  <div>✓ 100점 만점 합격 골드 대본</div>
+                  <div>✓ 모범 음성 TTS 듣기 및 A4 인쇄</div>
                 </div>
               </div>
             )}
@@ -675,15 +710,14 @@ JSON 포맷으로만 응답해:
         </div>
       </section>
 
-      {/* 💰 4. SaaS 요금제 & 결제 플랜 */}
+      {/* 💰 5. SaaS 요금제 섹션 */}
       <section className="pv-pricing-section">
         <div className="pricing-header">
           <h2>💎 합격 확률을 300% 높이는 패스보이스 플랜</h2>
-          <p>비싼 오프라인 스피치 학원(30만 원) 대신, 9,900원으로 무제한 AI 코칭을 받으세요.</p>
+          <p>비싼 오프라인 스피치 학원(30만 원) 대신, 9,900원으로 무제한 AI 원포인트 코칭을 받으세요.</p>
         </div>
 
         <div className="pricing-cards-grid">
-          {/* 무료 플랜 */}
           <div className={`price-card ${userPlan === 'free' ? 'current' : ''}`}>
             <div className="price-tag">무료 체험</div>
             <div className="price-val">0원</div>
@@ -691,14 +725,13 @@ JSON 포맷으로만 응답해:
             <ul className="plan-perks">
               <li><Check className="w-4 h-4 text-emerald-500" /> 무료 음성 진단 3회</li>
               <li><Check className="w-4 h-4 text-emerald-500" /> 기본 직종 프리셋 족보</li>
-              <li><Check className="w-4 h-4 text-emerald-500" /> 기초 점수 분석</li>
+              <li><Check className="w-4 h-4 text-emerald-500" /> 1회성 원포인트 레슨</li>
             </ul>
             <button className="plan-btn outline" disabled={userPlan === 'free'}>
               {userPlan === 'free' ? '현재 이용 중' : '무료 체험'}
             </button>
           </div>
 
-          {/* VIP 무제한 합격 패스 */}
           <div className={`price-card featured ${userPlan === 'vip' ? 'current' : ''}`}>
             <div className="popular-badge">👑 가장 많이 선택</div>
             <div className="price-tag">VIP 무제한 합격패스</div>
@@ -708,9 +741,9 @@ JSON 포맷으로만 응답해:
             </div>
             <p className="price-desc">이번 면접에서 무조건 단번에 합격하고 싶은 분</p>
             <ul className="plan-perks">
-              <li><Check className="w-4 h-4 text-emerald-500" /> <strong>무제한 실시간 AI 음성 채점</strong></li>
+              <li><Check className="w-4 h-4 text-emerald-500" /> <strong>무제한 1:1 AI 원포인트 레슨 처방</strong></li>
+              <li><Check className="w-4 h-4 text-emerald-500" /> <strong>합격 성장 트래커 & 마스터리 레벨업</strong></li>
               <li><Check className="w-4 h-4 text-emerald-500" /> <strong>모든 기관/기업 기출 족보 무제한</strong></li>
-              <li><Check className="w-4 h-4 text-emerald-500" /> <strong>나만의 맞춤형 합격 대본 자동 작성</strong></li>
               <li><Check className="w-4 h-4 text-emerald-500" /> <strong>A4 인쇄용 합격 족보 PDF 무제한 다운</strong></li>
               <li><Check className="w-4 h-4 text-emerald-500" /> 모범 음성 TTS 무제한 듣기</li>
             </ul>
@@ -724,7 +757,7 @@ JSON 포맷으로만 응답해:
         </div>
       </section>
 
-      {/* 💳 5. 결제 시뮬레이션 모달 */}
+      {/* 💳 6. 결제 시뮬레이션 모달 */}
       {showPayModal && (
         <div className="pv-modal-backdrop" onClick={() => setShowPayModal(false)}>
           <div className="pv-modal-card" onClick={e => e.stopPropagation()}>
