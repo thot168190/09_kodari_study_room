@@ -24,6 +24,7 @@ import AIBlogWriter from './AIBlogWriter';
 import AITamagotchi from './AITamagotchi';
 import InterviewPrep from './InterviewPrep';
 import PassVoiceSaaS from './PassVoiceSaaS';
+import VoiceToNoteStudio from './VoiceToNoteStudio';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -98,7 +99,7 @@ function App() {
       setActiveTabGroup('study');
     } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
-    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser', 'aiblogwriter', 'passvoicesaas'].includes(activeTab)) {
+    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser', 'aiblogwriter', 'passvoicesaas', 'voicetonote'].includes(activeTab)) {
       setActiveTabGroup('builder');
     }
   }, [activeTab]);
@@ -903,6 +904,7 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
+            <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
             <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
             <button onClick={() => setActiveTab('interviewprep')} className="quick-tool-btn interview">🏛️ 국세청 면접TF</button>
             <button onClick={() => setShowNicheSaaS(true)} className="quick-tool-btn niche">🎯 틈새진단기</button>
@@ -945,6 +947,7 @@ ${selectedNote.content}`
           {/* 5. ✍️ AI 랩 */}
           <div className="pillar-group">
             <span className="pillar-tag">✍️ AI 랩</span>
+            <button className={`pillar-pill ${activeTab === 'voicetonote' ? 'active' : ''}`} onClick={() => setActiveTab('voicetonote')} style={{ color: '#4ade80', fontWeight: 800 }}>🗣️ 보이스 정제노트</button>
             <button className={`pillar-pill ${activeTab === 'passvoicesaas' ? 'active' : ''}`} onClick={() => setActiveTab('passvoicesaas')} style={{ color: '#38bdf8', fontWeight: 800 }}>🎙️ 패스보이스 SaaS</button>
             <button className={`pillar-pill ${activeTab === 'aiblogwriter' ? 'active' : ''}`} onClick={() => setActiveTab('aiblogwriter')}>✍️ AI 블로그</button>
             <button className={`pillar-pill ${activeTab === 'aitamagotchi' ? 'active' : ''}`} onClick={() => setActiveTab('aitamagotchi')}>🎮 잉크 펫</button>
@@ -2006,6 +2009,9 @@ ${selectedNote.content}`
               )}
               {activeTab === 'passvoicesaas' && (
                 <PassVoiceSaaS />
+              )}
+              {activeTab === 'voicetonote' && (
+                <VoiceToNoteStudio />
               )}
             </div>
           </>
