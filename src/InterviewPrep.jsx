@@ -4,7 +4,7 @@ import {
   Award, Shield, Calendar, MapPin, AlertTriangle, CheckCircle2, 
   HelpCircle, Sparkles, Send, Mic, MicOff, Volume2, Timer, RefreshCw, 
   BookOpen, Compass, ChevronRight, UserCheck, PhoneCall, ExternalLink,
-  Target, FileText, CheckSquare, HeartHandshake, Zap, Trophy, ThumbsUp
+  Target, FileText, CheckSquare, HeartHandshake, Zap, Trophy, ThumbsUp, Printer
 } from 'lucide-react';
 
 // 🎯 NTRPOPCON 및 국세청 공고 기반 핵심 면접 족보 데이터
@@ -533,6 +533,9 @@ ${personaPrompt}
             </button>
             <button className="qa-btn" onClick={() => setActiveTab('knowledge')}>
               <BookOpen className="w-5 h-5" /> 국세외수입 핵심 용어 보기
+            </button>
+            <button className="qa-btn print" onClick={() => window.print()}>
+              <Printer className="w-5 h-5" /> 🖨️ A4 족보 인쇄 / PDF 저장
             </button>
           </div>
         </div>
