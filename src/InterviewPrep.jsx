@@ -351,25 +351,26 @@ ${personaPrompt}
       {/* 👑 상단 합격 기원 VIP 헤더 */}
       <header className="prep-hero-card">
         <div className="hero-badge-row">
-          <span className="hero-badge crown">🏛️ 국세청 합격 TF</span>
-          <span className="hero-badge sub">공개경쟁채용 2차 면접전형</span>
-          <span className="hero-badge target">📍 합격 지망: 포천세무서</span>
+          <span className="hero-badge crown">👑 최종합격 기원 TF</span>
+          <span className="hero-badge sub">✨ 인천지방국세청 2차 면접</span>
+          <span className="hero-badge target">🍀 합격 1순위: 포천세무서</span>
+          <span className="hero-badge crown">💖 행운 가득</span>
         </div>
 
         <div className="hero-main-content">
           <div className="hero-text-box">
             <h1 className="hero-title">
-              <span className="gold-text">이미현 대표님</span> 국세청 체납관리단 면접 프리패스 센터 🎯
+              🌸 <span className="gold-text">이미현 대표님</span> 국세청 면접 프리패스 룸 🎯
             </h1>
             <p className="hero-subtitle">
-              국세외수입 체납관리단 실태확인원 (인천지방국세청 / 포천세무서) 최종 합격을 위한 1:1 전담 보좌 시스템
+              "대표님은 이미 최고의 인재이십니다! 떨지 말고 당당하게 대표님의 빛나는 역량을 보여주고 오세요! 🍀✨"
             </p>
           </div>
 
           {/* ⏱️ 실시간 D-Day 카운터 */}
           <div className="hero-timer-box">
             <div className="timer-title">
-              <Timer className="w-4 h-4 text-emerald-400" /> 면접 D-Day 카운트다운
+              <Sparkles className="w-4 h-4 text-emerald-500" /> 🏆 면접 D-Day 카운트다운
             </div>
             <div className="timer-digits">
               <div className="digit-unit">
