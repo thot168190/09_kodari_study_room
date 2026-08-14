@@ -88,7 +88,7 @@ function App() {
   const [showTravelStandalone, setShowTravelStandalone] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('study'); // 'study' (같이 수업듣기) 기본 탑재!
+  const [activeTab, setActiveTab] = useState('interviewprep'); // 🏛️ 국세청 면접TF 기본 활성화!
   const [activeTabGroup, setActiveTabGroup] = useState('study');
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
