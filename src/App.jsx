@@ -25,6 +25,7 @@ import AITamagotchi from './AITamagotchi';
 import InterviewPrep from './InterviewPrep';
 import PassVoiceSaaS from './PassVoiceSaaS';
 import VoiceToNoteStudio from './VoiceToNoteStudio';
+import CheolmanVoiceStudio from './CheolmanVoiceStudio';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -904,6 +905,7 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
+            <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
             <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
             <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
             <button onClick={() => setActiveTab('interviewprep')} className="quick-tool-btn interview">🏛️ 국세청 면접TF</button>
@@ -927,6 +929,7 @@ ${selectedNote.content}`
           {/* 2. 📚 잉크워드 */}
           <div className="pillar-group">
             <span className="pillar-tag">📚 잉크워드</span>
+            <button className={`pillar-pill ${activeTab === 'cheolmanvoice' ? 'active' : ''}`} onClick={() => setActiveTab('cheolmanvoice')} style={{ color: '#60a5fa', fontWeight: 800 }}>🎙️ 철만이 보이스</button>
             <button className={`pillar-pill ${activeTab === 'scenehub' ? 'active' : ''}`} onClick={() => setActiveTab('scenehub')}>🎬 제작허브</button>
             <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
             <button className={`pillar-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
@@ -1958,6 +1961,10 @@ ${selectedNote.content}`
 
               {activeTab === 'nichediagnoser' && (
                 <NicheDiagnoser />
+              )}
+
+              {activeTab === 'cheolmanvoice' && (
+                <CheolmanVoiceStudio />
               )}
 
               {activeTab === 'scenehub' && (
