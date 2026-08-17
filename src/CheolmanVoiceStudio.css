@@ -319,3 +319,60 @@
   color: #334155;
   border: 1px solid #bbf7d0;
 }
+
+/* 내장 로컬 음성 생성 스튜디오 섹션 */
+.cv-embedded-studio-section {
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.cv-embedded-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #0f172a;
+  color: #f8fafc;
+  border-bottom: 1px solid #1e293b;
+}
+
+.cv-embedded-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-embedded-title h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.cv-embedded-tip {
+  font-size: 0.84rem;
+  color: #93c5fd;
+  background: rgba(30, 58, 138, 0.5);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.cv-iframe-container {
+  width: 100%;
+  height: 680px;
+  background: #f8fafc;
+  position: relative;
+}
+
+.cv-studio-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+

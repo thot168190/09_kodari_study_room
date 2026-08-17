@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CheolmanVoiceStudio.css';
 import { Mic, Play, Download, Copy, Check, Sparkles, RefreshCw, Volume2, ArrowRight, Layers, FileAudio, ExternalLink, Zap } from 'lucide-react';
 
@@ -31,6 +31,8 @@ export default function CheolmanVoiceStudio() {
   const [isLocalRunning, setIsLocalRunning] = useState(false);
   const [selectedItem, setSelectedItem] = useState(NARRATION_SCRIPT[0]);
   const [customText, setCustomText] = useState(NARRATION_SCRIPT[0].text);
+  const [showEmbeddedStudio, setShowEmbeddedStudio] = useState(true);
+  const studioRef = useRef(null);
 
   useEffect(() => {
     fetch('http://localhost:7860/', { mode: 'no-cors' })
@@ -42,6 +44,14 @@ export default function CheolmanVoiceStudio() {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 1500);
+  };
+
+  const handleGenerateClick = () => {
+    handleCopy('main', customText);
+    setShowEmbeddedStudio(true);
+    setTimeout(() => {
+      studioRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -63,9 +73,15 @@ export default function CheolmanVoiceStudio() {
             <span className={`cv-status-dot ${isLocalRunning ? 'green' : 'blue'}`}></span>
             <span>로컬 백엔드 엔진: <strong>{isLocalRunning ? '🚀 맥북 가속 가동 중 (localhost:7860)' : '⚡ 독립 대본/복사 모드 작동 중'}</strong></span>
           </div>
-          <a href="http://localhost:7860" target="_blank" rel="noopener noreferrer" className="cv-open-local-btn">
-            <ExternalLink size={15} /> 로컬 스튜디오 창 바로가기
-          </a>
+          <button 
+            onClick={() => {
+              setShowEmbeddedStudio(prev => !prev);
+              setTimeout(() => studioRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+            }} 
+            className="cv-open-local-btn"
+          >
+            <Sparkles size={15} /> {showEmbeddedStudio ? '스튜디오 접기' : '내장 스튜디오 열기'}
+          </button>
         </div>
       </div>
 
@@ -133,14 +149,13 @@ export default function CheolmanVoiceStudio() {
                 {copiedId === 'main' ? '대본 복사 완료!' : '문장 텍스트 복사'}
               </button>
 
-              <a 
-                href="http://localhost:7860" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <button 
+                type="button"
+                onClick={handleGenerateClick}
                 className="cv-gen-main-btn"
               >
-                <Zap size={16} /> 남편 목소리로 즉시 생성 (스튜디오 이동)
-              </a>
+                <Zap size={16} /> {copiedId === 'main' ? '대본 복사 완료! 하단에서 생성' : '대본 복사 & 하단 스튜디오로 이동'}
+              </button>
             </div>
           </div>
 
@@ -154,6 +169,28 @@ export default function CheolmanVoiceStudio() {
           </div>
         </div>
       </div>
+
+      {/* 내장 로컬 음성 생성 스튜디오 (창 이동 없는 일체형 iframe) */}
+      {showEmbeddedStudio && (
+        <div className="cv-embedded-studio-section" ref={studioRef}>
+          <div className="cv-embedded-header">
+            <div className="cv-embedded-title">
+              <span className="cv-status-dot green"></span>
+              <h3>🎛️ 일체형 남편 보이스 생성 스튜디오 (Gradio 내장 엔진)</h3>
+            </div>
+            <div className="cv-embedded-actions">
+              <span className="cv-embedded-tip">💡 다른 창으로 나가지 않고 이 화면에서 바로 생성 및 재생이 가능합니다!</span>
+            </div>
+          </div>
+          <div className="cv-iframe-container">
+            <iframe 
+              src="http://localhost:7860" 
+              title="Cheolman Local Voice Studio"
+              className="cv-studio-iframe"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
