@@ -7,30 +7,117 @@ import {
   Target, FileText, CheckSquare, HeartHandshake, Zap, Trophy, ThumbsUp, Printer
 } from 'lucide-react';
 
+// 🎯 1분 자기소개 3대 맞춤형 텔레프롬프터 스크립트 (일의 절실함 & 성실성 극대화)
+export const INTRO_SCRIPTS = {
+  needWork: {
+    id: 'needWork',
+    tag: '⭐ 대표님 1순위 강력추천 (절실함 & 성실성 극대화)',
+    title: '일의 소중함과 간절함 부각형',
+    target: '50초~55초',
+    desc: '일자리에 대한 진정성과 절실함, 단 하루의 결근도 없는 묵묵한 성실성을 강력 어필하는 가장 높은 평가를 받는 버전입니다.',
+    keywords: ['일의 소중함과 절실함', '단단한 생활력과 성실함', '모든 열정을 쏟을 소중한 기회', '단 하루의 결근 없이', '가장 듬직한 실태확인원'],
+    steps: [
+      {
+        part: '도입 (15초)',
+        point: '일의 소중함과 강한 생활력 선언',
+        text: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다.'
+      },
+      {
+        part: '본론 (30초)',
+        point: '진정성 있는 소통 + 포천 현장 기동력',
+        text: '저에게 이번 실태확인원 직무는 단순한 일자리를 넘어, 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다.'
+      },
+      {
+        part: '마무리 (15초)',
+        point: '결근 없는 성실성과 감사한 각오',
+        text: '일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!'
+      }
+    ],
+    fullText: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다. 저에게 이번 실태확인원 직무는 단순한 일자리를 넘어, 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다. 일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!'
+  },
+  lifeExp: {
+    id: 'lifeExp',
+    tag: '버전 2 (강한 생활력 & 뚝심 강조)',
+    title: '생활력과 묵묵한 책임감형',
+    target: '48초~52초',
+    desc: '어떤 궂은일도 묵묵히 해내는 뚝심과 가족 같은 따뜻한 소통력을 강조하는 버전입니다.',
+    keywords: ['묵묵히 제 몫을 해내는 생활력', '삶의 든든한 버팀목', '실태 정확 파악과 복지 연계', '내 집 앞마당처럼 성실히', '결과와 성실함으로 보답'],
+    steps: [
+      {
+        part: '도입 (15초)',
+        point: '강한 책임감과 생활력 어필',
+        text: '안녕하십니까! 포천세무서 실태확인원에 지원한 이미현입니다. 저는 어떤 어려운 환경 속에서도 묵묵히 제 몫을 해내며 삶을 지탱해 온 강한 책임감과 생활력을 가지고 있습니다.'
+      },
+      {
+        part: '본론 (30초)',
+        point: '따뜻한 설득과 현장 끈기',
+        text: '제게 이 일은 제 삶의 든든한 버팀목이자 꼭 완수해야 할 절실한 기회입니다. 사람을 진심으로 대하는 태도로 현장에서 체납자의 실태를 정확히 파악하고, 어려운 분들에게는 복지 연계를, 고의 체납자에게는 단호하고 명확한 안내를 전하겠습니다. 넓은 포천 관할 현장을 내 집 앞마당처럼 성실히 누비겠습니다.'
+      },
+      {
+        part: '마무리 (15초)',
+        point: '변함없는 성실성 다짐',
+        text: '절실한 마음으로 시작하여 끝까지 변함없이 책임지는 가장 성실한 실태확인원이 되겠습니다. 일할 기회를 주신다면 결과와 성실함으로 반드시 보답하겠습니다. 감사합니다!'
+      }
+    ],
+    fullText: '안녕하십니까! 포천세무서 실태확인원에 지원한 이미현입니다. 저는 어떤 어려운 환경 속에서도 묵묵히 제 몫을 해내며 삶을 지탱해 온 강한 책임감과 생활력을 가지고 있습니다. 제게 이 일은 제 삶의 든든한 버팀목이자 꼭 완수해야 할 절실한 기회입니다. 사람을 진심으로 대하는 태도로 현장에서 체납자의 실태를 정확히 파악하고, 어려운 분들에게는 복지 연계를, 고의 체납자에게는 단호하고 명확한 안내를 전하겠습니다. 넓은 포천 관할 현장을 내 집 앞마당처럼 성실히 누비겠습니다. 절실한 마음으로 시작하여 끝까지 변함없이 책임지는 가장 성실한 실태확인원이 되겠습니다. 일할 기회를 주신다면 결과와 성실함으로 반드시 보답하겠습니다. 감사합니다!'
+  },
+  fieldPower: {
+    id: 'fieldPower',
+    tag: '버전 3 (포천 현장 & 기동성 중심)',
+    title: '현장 기동력 & 준비된 소통형',
+    target: '45초~50초',
+    desc: '포천의 넓은 도농복합 관할 지역을 지치지 않고 뛸 기동성과 철저한 사전 준비를 어필하는 버전입니다.',
+    keywords: ['최고의 집중력과 성실함', '사전 동선 철저 계획', '2인 1조 안전 협력', '절실함이 곧 책임감', '신뢰 주는 동반자'],
+    steps: [
+      {
+        part: '도입 (15초)',
+        point: '절실함과 집중력 준비 선언',
+        text: '안녕하십니까! 국세외수입 실태확인원에 지원한 이미현입니다. 저에게 이 일자리는 그 어느 때보다 소중하고 절실하며, 그렇기에 단 하루도 헛되이 보내지 않고 최고의 집중력과 성실함으로 임할 준비가 되어 있습니다.'
+      },
+      {
+        part: '본론 (30초)',
+        point: '동선 효율화 및 끈기 있는 설득',
+        text: '실태확인원의 본질은 발로 뛰며 체납자의 실제 형편을 정확히 파악하고 소통하는 것입니다. 포천 지역의 지리적 특성에 맞춰 사전 동선을 꼼꼼히 짜고, 2인 1조로 동료와 안전하게 협력하며 체납자를 정중하고 끈기 있게 설득하겠습니다.'
+      },
+      {
+        part: '마무리 (15초)',
+        point: '흔들리지 않는 책임감 각오',
+        text: '일이 필요한 절실함이 곧 흔들리지 않는 책임감입니다. 국세청과 납세자 모두에게 신뢰를 주는 든든한 동반자가 되겠습니다. 감사합니다!'
+      }
+    ],
+    fullText: '안녕하십니까! 국세외수입 실태확인원에 지원한 이미현입니다. 저에게 이 일자리는 그 어느 때보다 소중하고 절실하며, 그렇기에 단 하루도 헛되이 보내지 않고 최고의 집중력과 성실함으로 임할 준비가 되어 있습니다. 실태확인원의 본질은 발로 뛰며 체납자의 실제 형편을 정확히 파악하고 소통하는 것입니다. 포천 지역의 지리적 특성에 맞춰 사전 동선을 꼼꼼히 짜고, 2인 1조로 동료와 안전하게 협력하며 체납자를 정중하고 끈기 있게 설득하겠습니다. 일이 필요한 절실함이 곧 흔들리지 않는 책임감입니다. 국세청과 납세자 모두에게 신뢰를 주는 든든한 동반자가 되겠습니다. 감사합니다!'
+  }
+};
+
 // 🎯 NTRPOPCON 및 국세청 공고 기반 핵심 면접 족보 데이터
 const INTERVIEW_QUESTIONS = [
   {
     id: 1,
     category: '기본역량',
-    title: '1분 자기소개',
+    title: '1분 자기소개 (일의 절실함 & 성실성 부각)',
     question: '1분 동안 지원자님을 가장 잘 나타내는 자기소개를 해 주십시오.',
-    intent: '지원자의 자신감, 대인 소통 역량, 실태확인원 직무와의 적합성을 신속하게 파악하기 위함.',
-    bestAnswer: `안녕하십니까, 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다.
-저는 다양한 사람들과의 풍부한 소통 경험을 통해 어떤 상황에서도 상대방의 말을 경청하고 갈등을 유연하게 풀어내는 침착한 소통력을 가지고 있습니다.
+    intent: '지원자의 자신감, 일에 대한 절실함과 진정성, 묵묵한 성실성, 실태확인원 직무와의 적합성을 신속하게 파악하기 위함.',
+    bestAnswer: `안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다.
 
-실태확인원의 핵심은 단순한 독촉이 아니라, 현장에서 체납자의 실태를 정확히 파악하고 납부를 성실히 유도하는 데 있습니다. 포천세무서 관할 지역의 특성을 잘 이해하고, 발로 뛰는 성실함과 투철한 책임감으로 국세청의 신뢰도를 높이는 든든한 실태확인원이 되겠습니다. 감사합니다.`,
-    tips: '눈을 마주치며 단정하고 또렷한 목소리로 전달하세요. 소통력과 성실함을 강조하는 것이 핵심입니다.'
+저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다.
+
+저에게 이번 실태확인원 직무는 단순한 일자리를 넘어, 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다.
+
+일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!`,
+    tips: '★최고 득점 포인트★ "이 일이 얼마나 소중하고 절실한지", "그렇기에 결근 없이 끝까지 묵묵히 일할 사람"임을 진정성 있는 눈빛과 또렷한 목소리로 전달하세요.'
   },
   {
     id: 2,
     category: '직무이해',
     title: '지원 동기 및 직무 이해',
     question: '왜 국세외수입 체납관리단 실태확인원에 지원하셨으며, 본 직무의 가장 중요한 역할은 무엇이라 생각하십니까?',
-    intent: '국세와 국세외수입의 차이를 이해하고 있는지, 현장 실태확인의 취지를 알고 있는지 확인.',
+    intent: '국세와 국세외수입의 차이를 이해하고 있는지, 일에 대한 진정성과 사명감을 확인.',
     bestAnswer: `국가의 행정 목적을 달성하기 위한 국세외수입은 성실 납부자와의 형평성과 건전한 국가재정을 위해 반드시 공정하게 관리되어야 합니다.
 
-제가 생각하는 실태확인원의 가장 중요한 역할은 '현장 밀착형 실태 파악과 맞춤형 소통'입니다. 고의적 체납자에게는 법적 절차와 납부 필요성을 단호하고 명확하게 안내하되, 경제적 어려움을 겪는 생계형 체납자에게는 분납 및 유예 제도, 나아가 복지 지원 체계를 연계하는 가교 역할을 수행하는 것입니다. 공직 보조자로서의 사명감을 가지고 공정하고 신뢰받는 징수 행정에 기여하고자 지원했습니다.`,
-    tips: '단순히 돈을 받아내는 일이 아니라, "실태 확인 및 납부 유도 + 복지 연계"라는 공익적 가치를 짚어주면 고득점입니다.'
+아울러 제 개인적으로도 이번 실태확인원 직무는 제 모든 역량을 쏟아부을 너무나 소중하고 절실한 일자리입니다. 일이 꼭 필요한 만큼 매 순간 감사하는 마음과 투철한 책임감으로 임하고자 지원했습니다.
+
+제가 생각하는 실태확인원의 가장 중요한 역할은 '현장 밀착형 실태 파악과 맞춤형 소통'입니다. 고의적 체납자에게는 법적 절차와 납부 필요성을 단호하고 명확하게 안내하되, 경제적 어려움을 겪는 생계형 체납자에게는 분납 및 유예 제도, 나아가 복지 지원 체계를 연계하는 가교 역할을 수행하는 것입니다. 공직 보조자로서의 사명감을 가지고 공정하고 신뢰받는 징수 행정에 기여하겠습니다.`,
+    tips: '단순히 돈을 받아내는 일이 아니라, "일의 소중함 + 실태 확인 및 납부 유도 + 복지 연계"라는 진정성과 공익적 가치를 짚어주면 고득점입니다.'
   },
   {
     id: 3,
@@ -124,15 +211,15 @@ const INTERVIEW_QUESTIONS = [
   {
     id: 10,
     category: '포부',
-    title: '마지막으로 하고 싶은 말',
+    title: '마지막으로 하고 싶은 말 (간절함 & 굳은 각오)',
     question: '마지막으로 꼭 하고 싶은 말씀이나 각오가 있다면 해 주십시오.',
-    intent: '최종 합격 의지와 열정 확인.',
+    intent: '최종 합격 의지와 일에 대한 진정성, 성실한 각오 확인.',
     bestAnswer: `기회를 주셔서 진심으로 감사드립니다. 
 
-국세청 국세외수입 체납관리단 실태확인원은 국가 재정의 건전성을 지키고 국민과 가장 가까운 곳에서 소통하는 매우 뜻깊은 자리라고 생각합니다.
+저에게 이번 실태확인원 지원은 단순한 도전이 아니라, 일할 수 있다는 것에 대한 깊은 감사함과 '꼭 성실하게 해내겠다'는 간절한 다짐의 결실입니다.
 
-저에게 기회를 주신다면, 항상 겸손하고 단정한 태도로 포천세무서의 일원이라는 자부심을 갖고, 맡겨주신 현장을 성실하고 빈틈없이 누비겠습니다. 반드시 기대에 부응하는 듬직한 실태확인원이 되겠습니다. 감사합니다!`,
-    tips: '밝은 미소와 깍듯한 인사로 마무리하세요.'
+저에게 일할 기회를 주신다면, 항상 겸손하고 단정한 태도로 포천세무서의 일원이라는 자부심을 갖고, 단 하루의 게으름이나 결근 없이 맡겨주신 현장을 성실히 누비겠습니다. '정말 채용하길 잘했다'는 칭찬을 들을 수 있도록 최고의 성실함과 듬직함으로 증명하겠습니다. 감사합니다!`,
+    tips: '밝은 미소와 깍듯한 인사로 진심 어린 감사를 전하세요.'
   }
 ];
 
@@ -241,6 +328,38 @@ export default function InterviewPrep() {
   const resetSpeechTimer = () => {
     setIsTimerRunning(false);
     setSpeechTimer(60);
+  };
+
+  // 📜 1분 자기소개 버전 선택 및 TTS 상태
+  const [selectedIntroKey, setSelectedIntroKey] = useState('needWork');
+  const [isPlayingIntroTTS, setIsPlayingIntroTTS] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
+
+  const handlePlayIntroTTS = (text) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      if (isPlayingIntroTTS) {
+        window.speechSynthesis.cancel();
+        setIsPlayingIntroTTS(false);
+      } else {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ko-KR';
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+        utterance.onend = () => setIsPlayingIntroTTS(false);
+        utterance.onerror = () => setIsPlayingIntroTTS(false);
+        window.speechSynthesis.speak(utterance);
+        setIsPlayingIntroTTS(true);
+      }
+    }
+  };
+
+  const handleCopyIntroScript = (text) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedScript(true);
+      setTimeout(() => setCopiedScript(false), 2000);
+    }
   };
 
   // 📝 체크리스트 상태
@@ -883,23 +1002,54 @@ ${personaPrompt}
         </div>
       )}
 
-      {/* ⏱️ TAB 5: 1분 스피치 연습실 */}
+      {/* ⏱️ TAB 5: 1분 스피치 연습실 (실습지 양식 & 3대 맞춤 버전 완벽 탑재) */}
       {activeTab === 'speech' && (
         <div className="tab-pane speech-pane">
           <div className="section-head">
-            <h2>⏱️ 1분 스피치 실전 연습실</h2>
-            <p>실제 면접장에서는 45초~55초 분량으로 또렷하게 전달하는 것이 가장 이상적입니다.</p>
+            <h2>⏱️ 1분 스피치 실전 연습실 & 실습 워크시트</h2>
+            <p>실제 면접관 앞에서는 45초~52초 분량으로 또렷하게 전달하는 것이 가장 이상적입니다. '일이 필요한 절실함'과 '묵묵한 성실성'을 담은 3대 맞춤 대본으로 실전 연습하십시오.</p>
+          </div>
+
+          {/* 🏷️ 1분 자기소개 버전 선택 바 */}
+          <div className="intro-version-selector">
+            {Object.keys(INTRO_SCRIPTS).map(key => {
+              const item = INTRO_SCRIPTS[key];
+              return (
+                <button
+                  key={key}
+                  className={`intro-v-btn ${selectedIntroKey === key ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedIntroKey(key);
+                    if (isPlayingIntroTTS) {
+                      window.speechSynthesis.cancel();
+                      setIsPlayingIntroTTS(false);
+                    }
+                  }}
+                >
+                  <span className="v-tag">{item.tag}</span>
+                  <strong className="v-title">{item.title}</strong>
+                  <span className="v-time">⏱️ {item.target}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="speech-container">
+            {/* ⏱️ 스톱워치 및 가이드 */}
             <div className="timer-display-box">
+              <div className="timer-top-info">
+                <span className="target-badge">🎯 목표 시간: {INTRO_SCRIPTS[selectedIntroKey].target}</span>
+                <span className="desc-text">{INTRO_SCRIPTS[selectedIntroKey].desc}</span>
+              </div>
+
               <div className={`large-timer ${speechTimer <= 10 ? 'urgent' : ''}`}>
                 {speechTimer} <span className="sec-unit">초</span>
               </div>
+
               <div className="timer-controls">
                 {!isTimerRunning ? (
                   <button className="t-btn start" onClick={() => setIsTimerRunning(true)}>
-                    ▶️ 스톱워치 시작
+                    ▶️ 60초 스톱워치 시작
                   </button>
                 ) : (
                   <button className="t-btn pause" onClick={() => setIsTimerRunning(false)}>
@@ -907,29 +1057,132 @@ ${personaPrompt}
                   </button>
                 )}
                 <button className="t-btn reset" onClick={resetSpeechTimer}>
-                  🔄 60초 리셋
+                  🔄 리셋
+                </button>
+                <button 
+                  className={`t-btn tts ${isPlayingIntroTTS ? 'playing' : ''}`}
+                  onClick={() => handlePlayIntroTTS(INTRO_SCRIPTS[selectedIntroKey].fullText)}
+                >
+                  {isPlayingIntroTTS ? '⏹️ 낭독 정지' : '🔊 AI 보이스 낭독 듣기'}
+                </button>
+                <button 
+                  className="t-btn copy"
+                  onClick={() => handleCopyIntroScript(INTRO_SCRIPTS[selectedIntroKey].fullText)}
+                >
+                  {copiedScript ? '✅ 복사 완료!' : '📋 대본 복사'}
                 </button>
               </div>
+
               <p className="timer-guide-text">
-                {speechTimer > 40 && "💡 도입: 밝은 인사와 지원 동기 핵심 (10~15초)"}
-                {speechTimer <= 40 && speechTimer > 15 && "💡 본론: 소통력, 경험, 포천세무서 적합성 (25~30초)"}
-                {speechTimer <= 15 && speechTimer > 0 && "💡 결론: 단단한 포부와 감사 인사 (10초)"}
+                {speechTimer > 40 && "💡 [0~15초] 도입: 일의 소중함과 강한 생활력·책임감 선언"}
+                {speechTimer <= 40 && speechTimer > 15 && "💡 [15~45초] 본론: 간절한 지원 이유 + 소통력 + 포천 관할 현장 기동력"}
+                {speechTimer <= 15 && speechTimer > 0 && "💡 [45~55초] 마무리: 단 하루의 결근도 없는 성실성과 감사한 각오"}
                 {speechTimer === 0 && "🔔 1분이 종료되었습니다! 수고하셨습니다!"}
               </p>
             </div>
 
+            {/* 📜 대표님 맞춤형 실전 텔레프롬프터 */}
             <div className="script-teleprompter">
-              <h3>📜 대표님을 위한 맞춤형 1분 자기소개 텔레프롬프터</h3>
-              <div className="prompter-body">
-                <p className="p-part"><strong>[도입: 15초]</strong></p>
-                <p>"안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 어떤 어려운 상황에서도 상대방의 이야기에 귀 기울이고 갈등을 유연하게 풀어내는 경청과 침착한 소통력을 가지고 있습니다."</p>
-                
-                <p className="p-part"><strong>[본론: 30초]</strong></p>
-                <p>"실태확인원의 핵심은 단순한 독촉이 아니라, 현장에서 체납자의 실제 상황을 정확히 확인하고 자진 납부를 돕는 일입니다. 포천세무서 관할 지역의 특성을 잘 이해하고, 발로 뛰는 성실함과 투철한 책임감으로 2인 1조 현장 수칙을 철저히 준수하겠습니다."</p>
-
-                <p className="p-part"><strong>[마무리: 15초]</strong></p>
-                <p>"국세청의 신뢰도를 높이고 공정한 국가 재정 확립에 기여하는 듬직한 실태확인원이 되겠습니다. 감사합니다!"</p>
+              <div className="prompter-head">
+                <div>
+                  <h3>📜 [{INTRO_SCRIPTS[selectedIntroKey].title}] 실전 텔레프롬프터</h3>
+                  <div className="keyword-chips">
+                    {INTRO_SCRIPTS[selectedIntroKey].keywords.map((kw, idx) => (
+                      <span key={idx} className="kw-chip">🔑 {kw}</span>
+                    ))}
+                  </div>
+                </div>
+                <button 
+                  className="quick-mock-apply-btn"
+                  onClick={() => {
+                    setCustomAnswer(INTRO_SCRIPTS[selectedIntroKey].fullText);
+                    setSelectedQuestion(INTERVIEW_QUESTIONS[0]);
+                    setActiveTab('aiMock');
+                  }}
+                >
+                  ⚡ AI 모의면접에 적용하여 채점받기 ➔
+                </button>
               </div>
+
+              <div className="prompter-body">
+                {INTRO_SCRIPTS[selectedIntroKey].steps.map((st, i) => (
+                  <div key={i} className="step-prompter-block">
+                    <div className="step-badge-row">
+                      <span className="step-time-badge">{st.part}</span>
+                      <span className="step-point-text">🎯 핵심: {st.point}</span>
+                    </div>
+                    <p className="step-script-text">
+                      "{st.text}"
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 📝 [실습] 1분 자기소개 스크립트 작성 워크시트 매핑 카드 */}
+            <div className="worksheet-result-card">
+              <div className="ws-card-header">
+                <h3>📋 [실습] 1분 자기소개 워크시트 완벽 작성본</h3>
+                <span className="ws-stamp">국세청 실태확인원 맞춤</span>
+              </div>
+
+              <div className="ws-grid">
+                <div className="ws-field">
+                  <span className="ws-label">■ 자기소개 주제는</span>
+                  <div className="ws-val">
+                    <strong>( 일에 대한 절실함 및 강한 생활력 기반의 지원동기와 포부 )</strong> 이다.
+                  </div>
+                </div>
+
+                <div className="ws-field">
+                  <span className="ws-label">■ 어필할 키워드는</span>
+                  <div className="ws-val">
+                    <strong>( 일의 소중함과 절실함, 단단한 생활력, 결근 없는 성실성, 따뜻한 경청 소통 )</strong> 이다.
+                  </div>
+                </div>
+
+                <div className="ws-field full">
+                  <span className="ws-label">■ 구체적인 경험사례 1가지 한줄 요약</span>
+                  <div className="ws-val">
+                    <strong>( 풍부한 사회경험으로 다져진 침착한 소통력과 포천의 넓은 도농복합 관할을 지치지 않고 발로 뛸 수 있는 튼튼한 체력과 기동성 )</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ws-self-checklist">
+                <h4>◆ 셀프 체크리스트 점검 결과 ◆</h4>
+                <div className="check-grid">
+                  <div className="cg-item">
+                    <span className="cg-q">- 어필하고자 하는 것은 무엇이었는지 한줄 요약:</span>
+                    <span className="cg-a">"일이 꼭 필요한 만큼 단 하루도 결근 없이 묵묵히 뛸 가장 성실한 적임자"</span>
+                  </div>
+                  <div className="cg-item">
+                    <span className="cg-q">- 핵심적인 단어(키워드)가 명확한가?</span>
+                    <span className="cg-a">✅ <strong>[ 일의 절실함 / 생활력 / 성실성 / 기동성 ]</strong> 명확함</span>
+                  </div>
+                  <div className="cg-item">
+                    <span className="cg-q">- 키워드에 따른 구체적인 사례가 적절하게 적용되었는가?</span>
+                    <span className="cg-a">✅ <strong>[ 소통 경험 + 포천 관할 현장 체력 + 2인 1조 준수 ]</strong> 완벽 적용</span>
+                  </div>
+                  <div className="cg-item">
+                    <span className="cg-q">- 지루하거나 장황하게 느껴지지 않고 명확하고 간결한가?</span>
+                    <span className="cg-a">✅ <strong>군더더기 없는 3단 구조 (도입 15초 - 본론 30초 - 마무리 15초)</strong></span>
+                  </div>
+                  <div className="cg-item">
+                    <span className="cg-q">- 50초 이내인가?</span>
+                    <span className="cg-a">✅ <strong>소리 내어 읽었을 때 48~52초 최적 분량</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 💡 코다리 부장의 합격 전략 꿀팁 */}
+            <div className="strategy-secret-box">
+              <h4>💡 코다리 총괄부장의 면접 필승 전략: "왜 일이 필요함을 어필해야 하는가?"</h4>
+              <p>
+                국세청 실태확인원 면접관들이 가장 우려하는 것은 <strong>"채용해 놓았더니 일이 힘들거나 외근이 많다고 며칠 만에 중도 포기하고 그만두는 것"</strong>입니다.<br/>
+                따라서 <strong>"이 일이 제게 얼마나 소중하고 절실한지, 그렇기 때문에 어떤 현장에서도 결근 없이 묵묵히 2인 1조로 뛰어줄 사람"</strong>이라는 진정성을 보여주는 지원자가 무조건 면접관들의 1순위 합격 대상이 됩니다!
+              </p>
             </div>
           </div>
         </div>
