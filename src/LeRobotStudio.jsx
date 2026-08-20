@@ -12,6 +12,7 @@ import {
 const RL_DQN_STAGES = [
   {
     stage: '0단계',
+    shortTitle: '준비하기',
     title: '준비하기 (기초 요소 & 무대 세팅)',
     icon: '🌱',
     color: '#10b981',
@@ -81,6 +82,7 @@ const RL_DQN_STAGES = [
   },
   {
     stage: '1단계',
+    shortTitle: '결정하기',
     title: '결정하기 (판단·의사결정 & 정책 신경망)',
     icon: '🧠',
     color: '#0284c7',
@@ -150,6 +152,7 @@ const RL_DQN_STAGES = [
   },
   {
     stage: '2단계',
+    shortTitle: '결과 받기',
     title: '결과 받기 (피드백·보상 & 전이 패키지)',
     icon: '🎯',
     color: '#f59e0b',
@@ -207,6 +210,7 @@ const RL_DQN_STAGES = [
   },
   {
     stage: '3단계',
+    shortTitle: '실력 키우기',
     title: '실력 키우기 (오답노트 복습 & 신경망 가중치 최적화)',
     icon: '📚',
     color: '#8b5cf6',
@@ -276,6 +280,7 @@ const RL_DQN_STAGES = [
   },
   {
     stage: '4단계',
+    shortTitle: '무한 반복',
     title: '무한 반복하기 (수렴·달인 경지 & 실물 배포)',
     icon: '🔁',
     color: '#ec4899',
@@ -660,8 +665,11 @@ print("🎉 축하합니다! 대표님의 첫 피지컬 AI 정책 모델이 성�
                 >
                   <span className="st-icon">{st.icon}</span>
                   <div className="st-text-col">
-                    <span className="st-num" style={{ color: st.color }}>{st.stage} ({st.items.length}개)</span>
-                    <span className="st-name">{st.title}</span>
+                    <div className="st-badge-header">
+                      <span className="st-num" style={{ color: st.color }}>{st.stage}</span>
+                      <span className="st-cnt-tag">{st.items.length}개</span>
+                    </div>
+                    <span className="st-name">{st.shortTitle}</span>
                   </div>
                 </button>
               ))}
