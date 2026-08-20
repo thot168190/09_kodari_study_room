@@ -40,7 +40,7 @@ const CLEANSE_TEMPLATES = [
 ];
 
 export default function VoiceToNoteStudio() {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
 
   // 음성인식 상태 (Web Speech API + Whisper API 모드 지원)
   const [selectedTemplate, setSelectedTemplate] = useState(CLEANSE_TEMPLATES[0]);

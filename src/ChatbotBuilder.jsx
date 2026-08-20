@@ -3,7 +3,7 @@ import './ChatbotBuilder.css';
 import { Sparkles, Settings, MessageSquare, Copy, Check, Code, HelpCircle, Loader2 } from 'lucide-react';
 
 function ChatbotBuilder() {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
 
   // 1. 상태 관리
   const [knowledge, setKnowledge] = useState(
@@ -326,7 +326,13 @@ ${knowledge}
                 placeholder="지식 문서 안의 궁금한 점을 물어보세요..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing || e.isComposing) return;
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
                 disabled={loadingChat}
               />
               <button

@@ -84,7 +84,7 @@ const renderRichMarkdown = (text) => {
 };
 
 function App() {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
   const [showHubPortal, setShowHubPortal] = useState(false);
   const [showNicheSaaS, setShowNicheSaaS] = useState(false);
   const [showColorChartModal, setShowColorChartModal] = useState(false);
@@ -239,7 +239,7 @@ ${studyChat.slice(-5).map(m => `${m.sender === 'user' ? '대표님' : '코다리
 답변을 작성해 주세요:`;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -393,7 +393,7 @@ ${noteChatHistory.slice(-4).map(m => `${m.sender === 'user' ? '대표님' : '코
 답변을 작성해 주세요:`;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1426,7 +1426,13 @@ ${selectedNote.content}`
                                placeholder="이 노트에 대해 궁금한 점을 적어보세요..."
                                value={noteChatInput}
                                onChange={(e) => setNoteChatInput(e.target.value)}
-                               onKeyDown={(e) => { if (e.key === 'Enter') handleSendNoteChatMessage(); }}
+                               onKeyDown={(e) => { 
+                                 if (e.nativeEvent.isComposing || e.isComposing) return;
+                                 if (e.key === 'Enter') { 
+                                   e.preventDefault(); 
+                                   handleSendNoteChatMessage(); 
+                                 } 
+                               }}
                                disabled={loadingNoteChat}
                                style={{
                                  flex: 1,
@@ -1738,7 +1744,13 @@ ${selectedNote.content}`
                           placeholder="코다리부장에게 질문해 보세요... (엔터 전송)"
                           value={studyInput}
                           onChange={(e) => setStudyInput(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') handleSendStudyMessage(); }}
+                          onKeyDown={(e) => { 
+                            if (e.nativeEvent.isComposing || e.isComposing) return;
+                            if (e.key === 'Enter') { 
+                              e.preventDefault(); 
+                              handleSendStudyMessage(); 
+                            } 
+                          }}
                           disabled={loadingStudyChat}
                         />
                         <button 
@@ -1908,7 +1920,13 @@ ${selectedNote.content}`
                         placeholder="실패 사례에 대한 질문이나 BGM 프롬프트 자문을 요청하십시오..."
                         value={fableChatInput}
                         onChange={(e) => setFableChatInput(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleSendFableMessage(); }}
+                        onKeyDown={(e) => { 
+                          if (e.nativeEvent.isComposing || e.isComposing) return;
+                          if (e.key === 'Enter') { 
+                            e.preventDefault(); 
+                            handleSendFableMessage(); 
+                          } 
+                        }}
                         disabled={loadingFableChat}
                         style={{
                           flex: 1,

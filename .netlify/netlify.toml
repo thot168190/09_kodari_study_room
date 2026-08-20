@@ -1,5 +1,5 @@
 plugins = []
-functionsDirectory = "/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/netlify/functions"
+functionsDirectory = "/Users/mihyunlee/workspace/09_코다리_공부방/netlify/functions"
 functionsDirectoryOrigin = "config-v1"
 headers = []
 redirects = []
@@ -9,11 +9,11 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/dist"
+publish = "/Users/mihyunlee/workspace/09_코다리_공부방/dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "npm run build"
-functions = "/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/netlify/functions"
+functions = "/Users/mihyunlee/workspace/09_코다리_공부방/netlify/functions"
 
 [build.environment]
 

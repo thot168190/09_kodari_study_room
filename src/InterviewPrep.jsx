@@ -224,7 +224,7 @@ const INTERVIEW_QUESTIONS = [
 ];
 
 export default function InterviewPrep() {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
 
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'knowledge', 'guidebook', 'aiMock', 'speech', 'checklist'
   const [selectedQuestion, setSelectedQuestion] = useState(INTERVIEW_QUESTIONS[0]);

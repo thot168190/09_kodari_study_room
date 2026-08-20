@@ -107,7 +107,7 @@ for r in results:
         r['quadrant'] = 'GRAY'
 
 # Write to signal_dataset.csv
-csv_path = '/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/signal_dataset.csv'
+csv_path = '/Users/mihyunlee/workspace/09_코다리_공부방/signal_dataset.csv'
 with open(csv_path, 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(['ingredient', 'adverse_report_count', 'clinical_trial_count', 'review_count', 'quadrant'])

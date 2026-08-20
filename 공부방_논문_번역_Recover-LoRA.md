@@ -91,4 +91,4 @@ graph TD
 ---
 
 대표님, 공부방 서재에 깔끔하게 넣어두었습니다. 다음 지시를 내려주시면 즉각 대령하겠습니다! 충성!  
-*(공부방 위치: [공부방_논문_번역_Recover-LoRA.md](file:///Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/공부방_논문_번역_Recover-LoRA.md))*
+*(공부방 위치: [공부방_논문_번역_Recover-LoRA.md](file:///Users/mihyunlee/workspace/09_코다리_공부방/공부방_논문_번역_Recover-LoRA.md))*

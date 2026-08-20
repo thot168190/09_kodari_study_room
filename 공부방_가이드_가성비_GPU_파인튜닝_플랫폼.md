@@ -42,7 +42,7 @@
 
 ## 🛠️ 실전 적용 로드맵
 
-1. **데이터 준비**: 오늘 코다리 부장이 구워드린 [niche_data.json](file:///Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/niche_data.json)을 들고 갑니다.
+1. **데이터 준비**: 오늘 코다리 부장이 구워드린 [niche_data.json](file:///Users/mihyunlee/workspace/09_코다리_공부방/niche_data.json)을 들고 갑니다.
 2. **허깅페이스 접속**: [Hugging Face AutoTrain Space](https://huggingface.co/spaces/autotrain-projects/autotrain-advanced)에 접속합니다.
 3. **훈련 설정**: 
    - Task: `LLM SFT` (Causal LM)
@@ -53,4 +53,4 @@
 ---
 
 공부방 지식 서재에 소중히 보관해 두었습니다. 대표님, 파이팅입니다! 충성!  
-*(공부방 보관 경로: [공부방_가이드_가성비_GPU_파인튜닝_플랫폼.md](file:///Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/공부방_가이드_가성비_GPU_파인튜닝_플랫폼.md))*
+*(공부방 보관 경로: [공부방_가이드_가성비_GPU_파인튜닝_플랫폼.md](file:///Users/mihyunlee/workspace/09_코다리_공부방/공부방_가이드_가성비_GPU_파인튜닝_플랫폼.md))*

@@ -13,7 +13,7 @@ function MemeFactory() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [currentSpeechIndex, setCurrentSpeechIndex] = useState(-1);
 
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
 
   // 15초 밈 숏폼 생성
   const generateMeme = async () => {

@@ -538,7 +538,13 @@ JSON 포맷 (pure JSON):
               type="text" 
               value={chatInput} 
               onChange={(e) => setChatInput(e.target.value)} 
-              onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
+              onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing || e.isComposing) return;
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSendChat();
+                }
+              }}
               placeholder="대표님의 아이디어를 자유롭게 말씀해주십시오..."
             />
             <button onClick={handleSendChat} disabled={chatLoading}>

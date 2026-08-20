@@ -161,7 +161,13 @@ export default function NicheDiagnoser({ isSaaSMode, membership, onScanComplete 
           placeholder="아이디어를 선택하거나 직접 입력하세요..."
           value={ideaInput}
           onChange={(e) => setIdeaInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && runAnalysis()}
+          onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing || e.isComposing) return;
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              runAnalysis();
+            }
+          }}
         />
         <button className="btn-run-scan" onClick={() => runAnalysis()} disabled={isScanning}>
           <Brain size={18} />

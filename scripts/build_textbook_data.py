@@ -283,7 +283,7 @@ all_episodes = [
     }
 ]
 
-with open('/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/src/assets/textbook-data.json', 'w', encoding='utf-8') as f:
+with open('/Users/mihyunlee/workspace/09_코다리_공부방/src/assets/textbook-data.json', 'w', encoding='utf-8') as f:
     json.dump(all_episodes, f, ensure_ascii=False, indent=2)
 
 print('Successfully written', len(all_episodes), 'episodes to src/assets/textbook-data.json')

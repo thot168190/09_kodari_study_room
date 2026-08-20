@@ -1,8 +1,8 @@
 import csv
 import numpy as np
 
-csv_path = '/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/signal_dataset.csv'
-report_path = '/Users/mihyunlee/나는 1인기업 대표/코부장 프로젝트/09_코다리_공부방/검증리포트.md'
+csv_path = '/Users/mihyunlee/workspace/09_코다리_공부방/signal_dataset.csv'
+report_path = '/Users/mihyunlee/workspace/09_코다리_공부방/검증리포트.md'
 
 rows = []
 with open(csv_path, 'r', encoding='utf-8') as f:

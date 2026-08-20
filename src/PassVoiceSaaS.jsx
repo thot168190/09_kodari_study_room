@@ -108,7 +108,7 @@ const PRESET_JOB_CATEGORIES = [
 ];
 
 export default function PassVoiceSaaS() {
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA4OBWvECFgXrfI2fgukYqrgZ8ZIj1DeJU';
 
   // 상태 관리
   const [selectedJob, setSelectedJob] = useState(PRESET_JOB_CATEGORIES[0]);

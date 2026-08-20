@@ -211,7 +211,13 @@ export default function ScienceLabAI() {
             }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
+            onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing || e.isComposing) return;
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAnalyze();
+              }
+            }}
           />
           <button 
             className="btn-analyze"
