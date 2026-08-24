@@ -9,33 +9,59 @@ import {
   Check, ArrowRight, Share2, Copy, Edit3, Save, X, Undo2, Sparkle
 } from 'lucide-react';
 
-// 🎯 1분 자기소개 3대 맞춤형 텔레프롬프터 스크립트 (일의 절실함 & 성실성 극대화)
+// 🎯 1분 자기소개 맞춤형 텔레프롬프터 스크립트 (재취업 절실함 & 수납·상담 실전 내공 극대화)
 export const INTRO_SCRIPTS = {
+  easyTalk: {
+    id: 'easyTalk',
+    tag: '👑 대표님 1순위 만점 대본 (재취업 절실함 + 수납상담 내공)',
+    title: '재취업 절실함 & 수납상담 내공형 (최적 50초)',
+    target: '48초~52초',
+    desc: '현재 재취업 준비 중으로 일자리가 꼭 필요한 진정성과 절실함 + 수납·상담 현장에서 미납자를 설득해 완납시킨 실전 내공을 완벽하게 결합한 100점 대본입니다.',
+    keywords: ['현재 재취업 준비 중', '일의 소중함과 절실함', '수납과 상담 현장 경험', '얼굴 붉히지 않는 경청과 설득', '미납 상황 완납 해결', '단 하루도 결근 없는 성실성'],
+    steps: [
+      {
+        part: '도입 (15초)',
+        point: '현재 재취업 준비 중 + 일의 소중함 선언',
+        text: '안녕하십니까! 포천세무서 국세외수입 실태확인원에 지원한 이미현입니다. 저는 현재 재취업을 준비하고 있는 상황으로, 저에게 이번 일자리는 그 어느 때보다 소중하고 절실한 기회입니다. 일이 꼭 필요한 만큼 작은 일에도 감사하며 끝까지 책임을 다하겠습니다.'
+      },
+      {
+        part: '본론 (25초)',
+        point: '수납·상담 실전 필살기 + 포천 기동력',
+        text: '저는 그동안 수납과 상담이 일상인 현장에서 일해 왔습니다. 미납 상황에서도 얼굴 붉히지 않고 상대방의 이야기를 끝까지 경청하고 차분하게 설득하며 수납을 완료해 왔습니다. 이번 실태확인원 업무는 그간의 제 현장 경험을 가장 잘 살릴 수 있는 최적의 일입니다. 넓은 포천 관할 지역도 지치지 않고 씩씩하게 발로 뛰겠습니다.'
+      },
+      {
+        part: '마무리 (10초)',
+        point: '단 하루도 결근 없는 성실성과 안전 다짐',
+        text: '단 하루의 결근도 없이, 2인 1조 안전 수칙을 철저히 지키며 포천세무서의 가장 든든하고 믿음직한 실태확인원이 되겠습니다. 감사합니다!'
+      }
+    ],
+    fullText: '안녕하십니까! 포천세무서 국세외수입 실태확인원에 지원한 이미현입니다. 저는 현재 재취업을 준비하고 있는 상황으로, 저에게 이번 일자리는 그 어느 때보다 소중하고 절실한 기회입니다. 일이 꼭 필요한 만큼 작은 일에도 감사하며 끝까지 책임을 다하겠습니다. 저는 그동안 수납과 상담이 일상인 현장에서 일해 왔습니다. 미납 상황에서도 얼굴 붉히지 않고 상대방의 이야기를 끝까지 경청하고 차분하게 설득하며 수납을 완료해 왔습니다. 이번 실태확인원 업무는 그간의 제 현장 경험을 가장 잘 살릴 수 있는 최적의 일입니다. 넓은 포천 관할 지역도 지치지 않고 씩씩하게 발로 뛰겠습니다. 단 하루의 결근도 없이, 2인 1조 안전 수칙을 철저히 지키며 포천세무서의 가장 든든하고 믿음직한 실태확인원이 되겠습니다. 감사합니다!'
+  },
   needWork: {
     id: 'needWork',
-    tag: '⭐ 대표님 1순위 강력추천 (절실함 & 성실성 극대화)',
+    tag: '버전 2 (일의 절실함 & 성실성 강조형)',
     title: '일의 소중함과 간절함 부각형',
     target: '50초~55초',
-    desc: '일자리에 대한 진정성과 절실함, 단 하루의 결근도 없는 묵묵한 성실성을 강력 어필하는 가장 높은 평가를 받는 버전입니다.',
-    keywords: ['일의 소중함과 절실함', '단단한 생활력과 성실함', '모든 열정을 쏟을 소중한 기회', '단 하루의 결근 없이', '가장 듬직한 실태확인원'],
+    desc: '일자리에 대한 진정성과 절실함, 단 하루의 결근도 없는 묵묵한 성실성을 강력 어필하는 버전입니다.',
+    keywords: ['수납·상담 경험', '일의 소중함과 절실함', '얼굴 붉히지 않는 설득', '단 하루의 결근 없이', '가장 듬직한 실태확인원'],
     steps: [
       {
         part: '도입 (15초)',
         point: '일의 소중함과 강한 생활력 선언',
-        text: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다.'
+        text: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력을 가지고 있습니다.'
       },
       {
         part: '본론 (30초)',
-        point: '진정성 있는 소통 + 포천 현장 기동력',
-        text: '저에게 이번 실태확인원 직무는 단순한 일자리를 넘어, 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다.'
+        point: '수납·상담 경험 + 포천 현장 기동력',
+        text: '저는 수납과 상담이 일상인 현장에서 일하며 미납 상황에서도 얼굴 붉히지 않고 경청과 설득으로 수납을 완료해 온 풍부한 경험이 있습니다. 이번 실태확인원 직무는 이러한 저의 역량을 쏟아부을 수 있는 최적의 기회입니다. 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰며 자진 납부를 유도하겠습니다.'
       },
       {
         part: '마무리 (15초)',
         point: '결근 없는 성실성과 감사한 각오',
-        text: '일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!'
+        text: '일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직한 실태확인원이 되겠습니다. 감사합니다!'
       }
     ],
-    fullText: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다. 저에게 이번 실태확인원 직무는 단순한 일자리를 넘어, 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다. 일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!'
+    fullText: '안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력을 가지고 있습니다. 저는 수납과 상담이 일상인 현장에서 일하며 미납 상황에서도 얼굴 붉히지 않고 경청과 설득으로 수납을 완료해 온 풍부한 경험이 있습니다. 이번 실태확인원 직무는 이러한 저의 역량을 쏟아부을 수 있는 최적의 기회입니다. 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰며 자진 납부를 유도하겠습니다. 일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직한 실태확인원이 되겠습니다. 감사합니다!'
   },
   lifeExp: {
     id: 'lifeExp',
@@ -97,21 +123,22 @@ export const MASTER_QUESTIONS = [
     id: 1,
     category: '기본역량',
     categoryIcon: '🌟',
-    title: '1분 자기소개 (일의 소중함과 성실성)',
+    title: '1분 자기소개 (재취업 절실함 & 수납상담 내공형)',
     question: '1분 동안 지원자님을 가장 잘 나타내는 자기소개를 해 주십시오.',
-    intent: '지원자의 자신감, 일에 대한 절실함과 진정성, 묵묵한 성실성, 실태확인원 직무와의 적합성을 신속하게 파악하기 위함.',
-    bestAnswer: `안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다. 저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다. 저에게 이번 실태확인원 직무는 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다. 풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다. 또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다. 일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다. 포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!`,
+    intent: '지원자의 자신감, 일에 대한 절실함과 진정성, 수납/상담 실무 적합성, 결근 없는 성실성 종합 파악.',
+    bestAnswer: `안녕하십니까! 포천세무서 국세외수입 실태확인원에 지원한 이미현입니다. 저는 현재 재취업을 준비하고 있는 상황으로, 저에게 이번 일자리는 그 어느 때보다 소중하고 절실한 기회입니다. 일이 꼭 필요한 만큼 작은 일에도 감사하며 맡은 일에는 끝까지 책임을 다하겠습니다. 저는 그동안 수납과 상담이 일상인 현장에서 일해 왔습니다. 미납 상황에서도 얼굴 붉히지 않고 상대방의 이야기를 끝까지 경청하고 차분하게 설득하며 수납을 완료해 왔습니다. 이번 실태확인원 업무는 그간의 제 현장 경험을 가장 잘 살릴 수 있는 최적의 일입니다. 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다. 단 하루의 결근도 없이, 2인 1조 안전 수칙을 철저히 지키며 포천세무서의 가장 든든하고 믿음직한 실태확인원이 되겠습니다. 감사합니다!`,
     sentences: [
-      { text: "안녕하십니까! 국세청 국세외수입 체납관리단 실태확인원에 지원한 이미현입니다.", point: "도입 인사 & 명확한 수험자 소개" },
-      { text: "저는 일에 대한 소중함과 절실함을 누구보다 깊이 알고 있으며, 맡은 일에는 끝까지 책임을 다하는 단단한 생활력과 성실함을 가지고 있습니다.", point: "일의 절실함 & 성실성 핵심 가치 선언" },
-      { text: "저에게 이번 실태확인원 직무는 제 모든 열정과 성실함을 쏟아부을 너무나 간절하고 꼭 필요한 기회입니다.", point: "간절한 직무 동기 부여" },
-      { text: "풍부한 사회 경험을 통해 다져진 따뜻한 경청과 침착한 소통력으로 현장 체납자분들을 배려하며 자진 납부를 설득하겠습니다.", point: "소통력 & 자진 납부 유도 역량" },
-      { text: "또한 포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다.", point: "포천 관할 현장 체력 & 기동성" },
-      { text: "일이 꼭 필요한 만큼, 작은 업무 하나에도 진심으로 감사하며 단 하루의 결근도 없이 2인 1조 현장 안전 수칙을 철저히 준수하겠습니다.", point: "단 하루의 결근 없는 성실성 & 2인 1조 준수" },
-      { text: "포천세무서의 가장 믿음직하고 듬직한 실태확인원이 되겠습니다. 감사합니다!", point: "당찬 포부와 깍듯한 맺음말" }
+      { text: "안녕하십니까! 포천세무서 국세외수입 실태확인원에 지원한 이미현입니다.", point: "도입 인사 & 명확한 수험자 소개" },
+      { text: "저는 현재 재취업을 준비하고 있는 상황으로, 저에게 이번 일자리는 그 어느 때보다 소중하고 절실한 기회입니다.", point: "★진정성★ 재취업 준비 상황 & 일의 절실함 어필" },
+      { text: "일이 꼭 필요한 만큼 작은 일에도 감사하며 맡은 일에는 끝까지 책임을 다하겠습니다.", point: "감사하는 마음과 투철한 책임감" },
+      { text: "저는 그동안 수납과 상담이 일상인 현장에서 일해 왔습니다.", point: "★실무 경력★ 수납·상담 현장 경력 제시" },
+      { text: "미납 상황에서도 얼굴 붉히지 않고 상대방의 이야기를 끝까지 경청하고 차분하게 설득하며 수납을 완료해 왔습니다.", point: "★핵심 필살기★ 미납자 경청·설득 및 완납 노하우" },
+      { text: "이번 실태확인원 업무는 그간의 제 현장 경험을 가장 잘 살릴 수 있는 최적의 일입니다.", point: "직무 적합성과 즉시 투입 인재 증명" },
+      { text: "포천세무서 관할의 넓은 지역도 튼튼한 체력과 기동성으로 지치지 않고 묵묵히 발로 뛰겠습니다.", point: "포천 관할 현장 체력 & 기동성" },
+      { text: "단 하루의 결근도 없이, 2인 1조 안전 수칙을 철저히 지키며 포천세무서의 가장 든든하고 믿음직한 실태확인원이 되겠습니다. 감사합니다!", point: "결근 없는 완벽 근태 보증 & 2인 1조 준수 각오" }
     ],
-    keywords: ['일의 소중함과 절실함', '단단한 생활력', '단 하루의 결근 없이', '2인 1조 안전 수칙', '포천 현장 기동력'],
-    tips: '★최고 득점 포인트★ "이 일이 얼마나 소중하고 절실한지", "그렇기에 결근 없이 끝까지 묵묵히 일할 사람"임을 진정성 있는 눈빛과 또렷한 목소리로 전달하세요.'
+    keywords: ['현재 재취업 준비 중', '일의 소중함과 절실함', '수납과 상담 현장 경험', '얼굴 붉히지 않는 경청·설득', '미납 상황 완납 해결', '단 하루도 결근 없는 성실성'],
+    tips: '★최고 득점 포인트★ "현재 재취업 준비 중이라 일이 정말 절실하다"는 진정성과 "수납·상담 현장에서 미납자를 침착하게 설득해 완납시킨 실전 내공"이 합쳐진 가장 완벽한 답변입니다.'
   },
   {
     id: 2,
@@ -235,18 +262,18 @@ export const MASTER_QUESTIONS = [
     id: 9,
     category: '직무상식',
     categoryIcon: '🏛️',
-    title: '국세와 국세외수입의 차이점',
-    question: '국세와 국세외수입의 차이점을 간단히 설명해 보십시오.',
-    intent: 'NTRPOPCON 지식 기본기 확인.',
-    bestAnswer: `국세는 소득세, 부가가치세, 법인세처럼 국가가 재정 수요를 충당하기 위해 반대급부 없이 국민에게 부과하는 조세입니다. 반면, 국세외수입은 조세 이외에 국가의 행정 목적을 달성하기 위해 개별 법률에 따라 부과·징수하는 세입입니다. 행정 질서 유지를 위한 과태료, 법 의무 이행을 강제하는 이행강제금, 국유재산 무단 점유에 따른 변상금, 징벌적 배상금 등이 이에 해당합니다. 실태확인원은 이러한 국세외수입 체납자들의 실태를 확인하고 자진 납부를 유도하는 역할을 합니다.`,
+    title: '국세/지방세 및 국세외수입의 차이와 체납관리단의 역할',
+    question: '국세와 지방세, 그리고 국세외수입의 차이점과 체납관리단의 핵심 역할에 대해 설명해 보십시오.',
+    intent: '국세/지방세/국세외수입 4분법 구분 및 중앙행정기관 부과분 지식, 체납관리단의 자진납부 지원 역할 숙지 확인 (2026.08.14 최신 기준).',
+    bestAnswer: `국세는 소득세·부가가치세처럼 국가가 부과하는 세금이고, 지방세는 취득세·재산세처럼 지방자치단체가 부과하는 세금입니다. 국세외수입은 세금은 아니지만 국가(중앙행정기관)가 법령에 따라 부과·징수하는 조세 외의 금전 수입을 말합니다. 참고로 지자체가 부과하는 것은 지방세외수입으로 별도 구분됩니다. 따라서 국세외수입 체납관리단은 세금을 강제 징수하는 조직이 아니라, 국가기관이 부과한 과태료·변상금 등의 체납자 실태를 확인하고 납부 방법을 안내하여 '자진 납부를 지원'하는 공직 보조 역할을 수행합니다.`,
     sentences: [
-      { text: "국세는 소득세, 부가가치세, 법인세처럼 국가가 재정 수요를 충당하기 위해 반대급부 없이 국민에게 부과하는 조세입니다.", point: "국세(조세)의 정의" },
-      { text: "반면, 국세외수입은 조세 이외에 국가의 행정 목적을 달성하기 위해 개별 법률에 따라 부과·징수하는 세입입니다.", point: "국세외수입의 정의" },
-      { text: "행정 질서 유지를 위한 과태료, 법 의무 이행을 강제하는 이행강제금, 국유재산 무단 점유에 따른 변상금, 징벌적 배상금 등이 이에 해당합니다.", point: "주요 국세외수입 예시 (과태료, 변상금 등)" },
-      { text: "실태확인원은 이러한 국세외수입 체납자들의 실태를 확인하고 자진 납부를 유도하는 역할을 합니다.", point: "실태확인원의 역할 연결" }
+      { text: "국세는 소득세·부가가치세처럼 국가가 부과하는 세금이고, 지방세는 취득세·재산세처럼 지방자치단체가 부과하는 세금입니다.", point: "국세 vs 지방세 조세 구분" },
+      { text: "국세외수입은 세금은 아니지만 국가(중앙행정기관)가 법령에 따라 부과·징수하는 조세 외의 금전 수입을 말합니다.", point: "국세외수입의 정확한 정의 (중앙행정기관 부과)" },
+      { text: "참고로 지자체가 부과하는 것은 지방세외수입으로 별도 구분됩니다.", point: "지방세외수입과의 명확한 구별" },
+      { text: "따라서 국세외수입 체납관리단은 세금을 강제 징수하는 조직이 아니라, 국가기관이 부과한 과태료·변상금 등의 체납자 실태를 확인하고 납부 방법을 안내하여 '자진 납부를 지원'하는 공직 보조 역할을 수행합니다.", point: "체납관리단의 본질: 실태 확인 & 자진 납부 지원" }
     ],
-    keywords: ['조세 vs 비조세 공과금', '과태료·이행강제금·변상금', '행정 목적 달성', '자진 납부 유도'],
-    tips: '국세 = 조세(세금), 국세외수입 = 과태료, 이행강제금, 변상금 등 비조세 공과금!'
+    keywords: ['국세(국가 세금)', '지방세(지자체 세금)', '국세외수입(중앙행정기관 비조세 수입)', '실태 확인 및 자진 납부 지원'],
+    tips: '★고득점 공식★ "국세/지방세(세금) vs 국세외수입/지방세외수입(비조세)"의 4분법 구조와 "강제 징수가 아닌 실태 확인 및 자진 납부 지원"을 또렷하게 답변하세요.'
   },
   {
     id: 10,
@@ -349,18 +376,17 @@ export const MASTER_QUESTIONS = [
     id: 16,
     category: '경력역량',
     categoryIcon: '💼',
-    title: '과거 사회 경험의 직무 연계 강점',
+    title: '수납·상담 현장 경험의 직무 연계 강점',
     question: '지원자님의 과거 사회 경험이나 경력이 이번 실태확인원 직무를 수행하는 데 어떤 강점으로 작용하겠습니까?',
-    intent: '실제 삶의 경험에서 우러나온 현장 친화력과 문제 해결력 검증.',
-    bestAnswer: `다양한 사람들을 만나며 체득한 '풍부한 대화 경험과 침착한 상황 조율 능력'이 가장 큰 강점입니다. 저는 살아가며 억지나 불만을 제기하는 분들의 마음을 누그러뜨리고 합리적인 해결책을 찾아가는 과정을 수없이 경험했습니다. 이러한 소통력은 처음 만나는 체납자의 경계심을 허물고 실제 형편을 정확히 파악하여 납부로 이끄는 데 큰 힘이 될 것입니다. 또한 한번 맡은 일은 끝까지 책임지는 뚝심으로 포천세무서의 믿음직한 기둥이 되겠습니다.`,
+    intent: '실제 현장에서 다져진 대민 수납/상담 내공과 미납 상황 대처 능력 검증.',
+    bestAnswer: `저는 그동안 수납과 상담이 일상인 현장에서 일하며, 미납 상황에서도 얼굴 붉히지 않고 끝까지 경청하고 차분히 설득하여 수납을 완료해 온 풍부한 실무 경험이 있습니다. 돈과 관련된 민원은 감정이 격해지기 쉽다는 점을 잘 알기에, 상대방의 답답한 사정을 먼저 충분히 들어드리고 마음을 누그러뜨린 뒤 합리적인 납부 방안을 제시하는 저만의 소통 노하우를 가지고 있습니다. 이번 실태확인원 업무는 이러한 제 현장 경험을 가장 잘 살릴 수 있는 일이며, 포천세무서의 믿음직한 징수 행정 보조자로서 최고의 성과를 내겠습니다.`,
     sentences: [
-      { text: "다양한 사람들을 만나며 체득한 '풍부한 대화 경험과 침착한 상황 조율 능력'이 가장 큰 강점입니다.", point: "대화 경험과 상황 조율 능력 강조" },
-      { text: "저는 살아가며 억지나 불만을 제기하는 분들의 마음을 누그러뜨리고 합리적인 해결책을 찾아가는 과정을 수없이 경험했습니다.", point: "갈등 완화 및 문제 해결 경험" },
-      { text: "이러한 소통력은 처음 만나는 체납자의 경계심을 허물고 실제 형편을 정확히 파악하여 납부로 이끄는 데 큰 힘이 될 것입니다.", point: "체납자 경계심 해제 및 납부 유도" },
-      { text: "또한 한번 맡은 일은 끝까지 책임지는 뚝심으로 포천세무서의 믿음직한 기둥이 되겠습니다.", point: "책임감과 뚝심 다짐" }
+      { text: "저는 그동안 수납과 상담이 일상인 현장에서 일하며, 미납 상황에서도 얼굴 붉히지 않고 끝까지 경청하고 차분히 설득하여 수납을 완료해 온 풍부한 실무 경험이 있습니다.", point: "수납·상담 실전 경력 & 완납 성공 경험" },
+      { text: "돈과 관련된 민원은 감정이 격해지기 쉽다는 점을 잘 알기에, 상대방의 답답한 사정을 먼저 충분히 들어드리고 마음을 누그러뜨린 뒤 합리적인 납부 방안을 제시하는 저만의 소통 노하우를 가지고 있습니다.", point: "미납 민원 특성 이해 & 경청 기반 설득 노하우" },
+      { text: "이번 실태확인원 업무는 이러한 제 현장 경험을 가장 잘 살릴 수 있는 일이며, 포천세무서의 믿음직한 징수 행정 보조자로서 최고의 성과를 내겠습니다.", point: "직무 즉시 투입 자신감 & 성과 다짐" }
     ],
-    keywords: ['풍부한 대화 경험', '침착한 상황 조율', '체납자 경계심 해소', '책임지는 뚝심'],
-    tips: '거창한 이론보다 사람을 대하는 진솔한 연륜과 넉넉한 포용력을 어필하세요.'
+    keywords: ['수납과 상담 일상 현장', '얼굴 붉히지 않는 경청·설득', '미납 상황 완납 완료', '체납자 감정 완화 노하우'],
+    tips: '★합격 보증 답변★ "수납과 상담을 직접 해보며 미납자를 설득해 완납시킨 사람"은 교육 없이도 즉시 현장에 투입할 수 있는 최고의 인재로 평가받습니다!'
   },
   {
     id: 17,
@@ -515,7 +541,7 @@ export default function InterviewPrep() {
   const [activeTab, setActiveTab] = useState('masterRoom'); // 'masterRoom', 'dashboard', 'speech', 'knowledge', 'guidebook', 'checklist'
   const [selectedQuestion, setSelectedQuestion] = useState(MASTER_QUESTIONS[0]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [selectedIntroKey, setSelectedIntroKey] = useState('needWork');
+  const [selectedIntroKey, setSelectedIntroKey] = useState('easyTalk');
   
   // 💾 대표님 맞춤 대본 직접 수정 & 로컬 저장 상태
   const [customAnswers, setCustomAnswers] = useState(() => {
@@ -618,6 +644,68 @@ export default function InterviewPrep() {
     };
   }, []);
 
+  // 🎙️ 고품질 자연스러운 한국어 프리미엄 보이스 엔진
+  const [voiceList, setVoiceList] = useState([]);
+  const [selectedVoiceMode, setSelectedVoiceMode] = useState('announcer'); // 'announcer' (따뜻한 아나운서 여성), 'mentor' (신뢰감 멘토 남성), 'natural' (자연 표준)
+
+  // 🔊 시스템 및 브라우저 고품질 한국어 보이스 탐색
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const updateVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const koreanVoices = voices.filter(v => v.lang.includes('ko') || v.lang.includes('KO'));
+        setVoiceList(koreanVoices.length > 0 ? koreanVoices : voices);
+      };
+
+      updateVoices();
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, []);
+
+  // 🎯 고품질 발화 Utterance 생성기 (기계음 탈피 & 인간적인 호흡 튜닝)
+  const getNaturalUtterance = (text, mode = selectedVoiceMode, speed = playbackSpeed) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+
+    // 1. 고품질 한국어 보이스 우선 탐색 (Apple Yuna/Sora Enhanced, Google 한국어 등)
+    if (voiceList.length > 0) {
+      const koreanVoices = voiceList.filter(v => v.lang.includes('ko') || v.lang.includes('KO'));
+      
+      let matchedVoice = null;
+      if (mode === 'announcer') {
+        // 여성 고품질 우선 (Yuna Enhanced > Yuna > Sora > Seoyeon > Google 한국어)
+        matchedVoice = koreanVoices.find(v => v.name.includes('Yuna') || v.name.includes('유나') || v.name.includes('Sora') || v.name.includes('소라') || v.name.includes('Seoyeon') || v.name.includes('서연'))
+          || koreanVoices.find(v => v.name.toLowerCase().includes('female') || v.name.includes('Google'))
+          || koreanVoices[0];
+      } else if (mode === 'mentor') {
+        // 남성 고품질 우선 (Minsu > Minho > Male > Google)
+        matchedVoice = koreanVoices.find(v => v.name.includes('Minsu') || v.name.includes('민수') || v.name.includes('Minho') || v.name.includes('민호') || v.name.toLowerCase().includes('male'))
+          || koreanVoices[0];
+      } else {
+        // 자연 표준
+        matchedVoice = koreanVoices.find(v => v.name.includes('Enhanced') || v.name.includes('Google')) || koreanVoices[0];
+      }
+
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+    }
+
+    // 2. 인간적인 음높이(Pitch) & 말하기 속도(Rate) 미세 조율 (부드러운 아나운서 톤)
+    if (mode === 'announcer') {
+      utterance.pitch = 1.08; // 살짝 화사하고 또렷한 아나운서 톤
+      utterance.rate = speed * 0.95; // 기계처럼 서두르지 않는 안정된 발표 호흡
+    } else if (mode === 'mentor') {
+      utterance.pitch = 0.92; // 묵직하고 신뢰감 있는 남성 톤
+      utterance.rate = speed * 0.93;
+    } else {
+      utterance.pitch = 1.02;
+      utterance.rate = speed * 0.96;
+    }
+
+    return utterance;
+  };
+
   const stopTTSPlayback = () => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -628,7 +716,7 @@ export default function InterviewPrep() {
     currentLoopRef.current = 0;
   };
 
-  // 🗣️ 100점 모범 답변 전체 또는 반복 재생 (현재 맞춤 텍스트 반영)
+  // 🗣️ 100점 모범 답변 전체 또는 반복 재생 (자연 보이스 엔진 적용)
   const handlePlayTTS = (overrideText = null) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       alert('현재 브라우저에서 음성 합성(TTS) 기능을 지원하지 않습니다.');
@@ -658,10 +746,7 @@ export default function InterviewPrep() {
         return;
       }
 
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'ko-KR';
-      utterance.rate = playbackSpeed;
-      utterance.pitch = 1.0;
+      const utterance = getNaturalUtterance(textToSpeak, selectedVoiceMode, playbackSpeed);
 
       utterance.onend = () => {
         currentLoopRef.current -= 1;
@@ -695,10 +780,7 @@ export default function InterviewPrep() {
     setIsPlayingTTS(true);
     isPlayingRef.current = true;
 
-    const utterance = new SpeechSynthesisUtterance(sentenceText);
-    utterance.lang = 'ko-KR';
-    utterance.rate = playbackSpeed;
-    utterance.pitch = 1.0;
+    const utterance = getNaturalUtterance(sentenceText, selectedVoiceMode, playbackSpeed);
 
     utterance.onend = () => {
       setIsPlayingTTS(false);
@@ -901,10 +983,7 @@ export default function InterviewPrep() {
         setIsPlayingIntroTTS(false);
       } else {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ko-KR';
-        utterance.rate = playbackSpeed;
-        utterance.pitch = 1.0;
+        const utterance = getNaturalUtterance(text, selectedVoiceMode, playbackSpeed);
         utterance.onend = () => setIsPlayingIntroTTS(false);
         utterance.onerror = () => setIsPlayingIntroTTS(false);
         window.speechSynthesis.speak(utterance);
@@ -1135,6 +1214,41 @@ export default function InterviewPrep() {
                     {isPlayingTTS ? <Square className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
                     <span>{isPlayingTTS ? '낭독 정지' : isAnswerCustomized ? '내 맞춤 대본 음성 듣기' : '100점 답변 음성 듣기'}</span>
                   </button>
+
+                  {/* 🎙️ 목소리 톤 선택 */}
+                  <div className="voice-mode-group">
+                    <span className="lbl">목소리:</span>
+                    <button 
+                      className={`loop-btn ${selectedVoiceMode === 'announcer' ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedVoiceMode('announcer');
+                        if (isPlayingTTS) stopTTSPlayback();
+                      }}
+                      title="따뜻하고 또렷한 아나운서 여성 톤"
+                    >
+                      🌸 아나운서 여성음
+                    </button>
+                    <button 
+                      className={`loop-btn ${selectedVoiceMode === 'mentor' ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedVoiceMode('mentor');
+                        if (isPlayingTTS) stopTTSPlayback();
+                      }}
+                      title="묵직하고 신뢰감 있는 멘토 남성 톤"
+                    >
+                      👔 멘토 남성음
+                    </button>
+                    <button 
+                      className={`loop-btn ${selectedVoiceMode === 'natural' ? 'active' : ''}`}
+                      onClick={() => {
+                        setSelectedVoiceMode('natural');
+                        if (isPlayingTTS) stopTTSPlayback();
+                      }}
+                      title="자연스러운 표준 낭독 톤"
+                    >
+                      🎙️ 표준음
+                    </button>
+                  </div>
 
                   {/* 반복 모드 토글 */}
                   <div className="loop-mode-group">
@@ -1450,13 +1564,54 @@ export default function InterviewPrep() {
                   className={`t-btn tts ${isPlayingIntroTTS ? 'playing' : ''}`}
                   onClick={() => handlePlayIntroTTS(currentIntroText)}
                 >
-                  {isPlayingIntroTTS ? '⏹️ 낭독 정지' : '🔊 AI 보이스 낭독 듣기'}
+                  {isPlayingIntroTTS ? '⏹️ 낭독 정지' : `🔊 ${selectedVoiceMode === 'announcer' ? '🌸 아나운서 여성음' : selectedVoiceMode === 'mentor' ? '👔 멘토 남성음' : '🎙️ 표준음'} 듣기`}
                 </button>
                 <button 
                   className="t-btn copy"
                   onClick={() => handleCopyScript(currentIntroText)}
                 >
                   {copiedText ? '✅ 복사 완료!' : '📋 대본 복사'}
+                </button>
+              </div>
+
+              {/* 🎙️ 1분 자기소개 목소리 톤 선택 바 */}
+              <div className="intro-voice-row">
+                <span className="lbl">🎙️ 목소리 톤:</span>
+                <button 
+                  className={`intro-v-chip ${selectedVoiceMode === 'announcer' ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedVoiceMode('announcer');
+                    if (isPlayingIntroTTS) {
+                      window.speechSynthesis.cancel();
+                      setIsPlayingIntroTTS(false);
+                    }
+                  }}
+                >
+                  🌸 따뜻한 아나운서 여성음
+                </button>
+                <button 
+                  className={`intro-v-chip ${selectedVoiceMode === 'mentor' ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedVoiceMode('mentor');
+                    if (isPlayingIntroTTS) {
+                      window.speechSynthesis.cancel();
+                      setIsPlayingIntroTTS(false);
+                    }
+                  }}
+                >
+                  👔 신뢰감 멘토 남성음
+                </button>
+                <button 
+                  className={`intro-v-chip ${selectedVoiceMode === 'natural' ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedVoiceMode('natural');
+                    if (isPlayingIntroTTS) {
+                      window.speechSynthesis.cancel();
+                      setIsPlayingIntroTTS(false);
+                    }
+                  }}
+                >
+                  🎙️ 자연 표준음
                 </button>
               </div>
 
@@ -1774,106 +1929,253 @@ export default function InterviewPrep() {
         </div>
       )}
 
-      {/* 📚 TAB 5: 국세외수입 직무도감 (NTRPOPCON 기반) */}
+      {/* 📚 TAB 5: 국세외수입 직무도감 (2026.08.14 최신 정리본 기반) */}
       {activeTab === 'knowledge' && (
         <div className="tab-pane knowledge-pane">
           <div className="section-head">
-            <h2>📚 국세외수입 & 체납관리단 직무 도감</h2>
-            <p>공식 국세외수입포털(ntrpopcon.go.kr)과 국세청 직무 매뉴얼 핵심 요약</p>
+            <div className="head-badge-row">
+              <span className="room-badge">🌟 2026.08.14 최신 기준 반영</span>
+              <span className="room-badge green">🏛️ 국가기관 부과분 명확 구분</span>
+              <span className="room-badge gold">🎯 실전 꼬리질문 8선 완벽 탑재</span>
+            </div>
+            <h2>📚 국세외수입 & 체납관리단 핵심 직무 도감</h2>
+            <p>공식 국세외수입포털 및 2026.08.14 국세외수입 체납관리단 면접 준비 핵심 요약</p>
           </div>
 
           <div className="knowledge-cards-container">
-            {/* 1. 국세외수입이란? */}
+            {/* 1. 국세 / 지방세 / 국세외수입 / 지방세외수입 4분법 한눈에 기억하기 */}
             <div className="k-card featured">
-              <div className="k-badge">기본 개념 1</div>
-              <h3>국세외수입(National Non-Tax Revenue)이란?</h3>
+              <div className="k-badge">핵심 1 • 4분법 완벽 정리</div>
+              <h3>🏛️ 한눈에 기억하는 4대 세금 / 세외수입 분류 체계</h3>
               <p className="k-desc">
-                국가가 재정수입을 얻기 위해 부과하는 <strong>조세(국세: 소득세, 부가세 등) 이외의 모든 공법상 수입</strong>을 총칭합니다.
-                중앙관서별로 법률에 따라 행정 제재나 공공서비스 제공 대가로 징수합니다.
+                면접관이 가장 먼저 확인하는 기본 상식입니다. <strong>세금(국세·지방세)</strong>과 <strong>세외수입(국세외수입·지방세외수입)</strong>, 그리고 <strong>부과 주체(국가 vs 지자체)</strong>의 차이를 명확히 구분해야 합니다.
               </p>
+
               <div className="k-table-box">
                 <table>
                   <thead>
                     <tr>
                       <th>구분</th>
                       <th>국세 (조세)</th>
-                      <th>국세외수입 (세외수입)</th>
+                      <th>지방세 (조세)</th>
+                      <th className="highlight-col">국세외수입 (비조세) ⭐</th>
+                      <th>지방세외수입 (비조세)</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td><strong>법적 성격</strong></td>
-                      <td>조세법률주의에 따른 세금</td>
-                      <td>개별 행정법률에 근거한 비조세 공과금</td>
+                      <td><strong>부과 주체</strong></td>
+                      <td><strong>국가 (중앙행정기관)</strong></td>
+                      <td>지방자치단체 (시·군·구 등)</td>
+                      <td className="highlight-col"><strong>국가 (중앙행정기관)</strong></td>
+                      <td>지방자치단체 (시장·군수·구청장)</td>
                     </tr>
                     <tr>
-                      <td><strong>주요 항목</strong></td>
-                      <td>소득세, 부가가치세, 법인세, 상속세</td>
-                      <td>과태료, 이행강제금, 변상금, 가산금, 수수료, 위약금</td>
+                      <td><strong>법적 성격</strong></td>
+                      <td>조세 (세금)</td>
+                      <td>조세 (세금)</td>
+                      <td className="highlight-col"><strong>세금 아님 (개별 법률 근거)</strong></td>
+                      <td>세금 아님 (조례·법령 근거)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>대표 사례</strong></td>
+                      <td>소득세, 부가가치세, 법인세, 종부세, 상속세</td>
+                      <td>재산세, 취득세, 자동차세, 주민세</td>
+                      <td className="highlight-col">
+                        <strong>
+                          • 경찰청 무인단속 과태료<br/>
+                          • 환경부 환경개선부담금<br/>
+                          • 국유재산 무단점유 변상금<br/>
+                          • 공정위·금융위 과징금
+                        </strong>
+                      </td>
+                      <td>
+                        • 불법주정차 과태료<br/>
+                        • 불법건축물 이행강제금<br/>
+                        • 지자체 공영주차장 사용료
+                      </td>
                     </tr>
                     <tr>
                       <td><strong>부과 목적</strong></td>
-                      <td>국가 재정 조달 목적</td>
-                      <td>행정 의무 이행 확보, 질서 유지, 국유재산 보존 등</td>
+                      <td>국가 재정 수요 조달</td>
+                      <td>지자체 행정서비스 재원</td>
+                      <td className="highlight-col"><strong>행정 질서 유지, 제재, 손실보전</strong></td>
+                      <td>지역 행정질서 및 공공시설 관리</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* ⚠️ 면접관 함정 주의 배너 */}
+              <div className="k-warning-banner">
+                <strong>⚠️ 면접관의 단골 함정 질문 주의!</strong><br/>
+                "불법주정차 과태료나 불법건축물 이행강제금은 시장·군수·구청장이 부과하므로 <strong>'지방세외수입'</strong>입니다. 저희 국세청 체납관리단이 관리하는 것은 법무부·환경부·고용노동부·국가경찰 등 <strong>중앙행정기관이 부과한 '국세외수입'</strong>입니다!"
+              </div>
+            </div>
+
+            {/* 2. 체납관리단의 본질적 6대 주요 업무 */}
+            <div className="k-card">
+              <div className="k-badge">핵심 2 • 직무 본질</div>
+              <h3>🎯 국세외수입 체납관리단의 본질적 역할 & 6대 주요 업무</h3>
+              <p className="k-desc">
+                체납관리단은 세금을 강제로 징수하거나 압류하는 조직이 아닙니다. 체납자의 실태를 파악하고 맞춤형 정보를 제공하여 <strong>'자진 납부를 지원'</strong>하는 공직 보조 조직입니다.
+              </p>
+
+              <div className="role-tasks-grid">
+                <div className="task-pill">
+                  <span className="t-icon">📢</span>
+                  <div>
+                    <strong>1. 체납 사실 안내</strong>
+                    <p>체납 내역과 금액, 발생 사유를 정확하고 정중하게 고지</p>
+                  </div>
+                </div>
+                <div className="task-pill">
+                  <span className="t-icon">💳</span>
+                  <div>
+                    <strong>2. 납부 방법 설명</strong>
+                    <p>가상계좌, 인터넷 지로, 신용카드 등 납부 채널 상세 안내</p>
+                  </div>
+                </div>
+                <div className="task-pill">
+                  <span className="t-icon">🌿</span>
+                  <div>
+                    <strong>3. 분할납부 등 제도 안내</strong>
+                    <p>일시 납부가 곤란한 체납자에게 분납·징수유예 제도 연결</p>
+                  </div>
+                </div>
+                <div className="task-pill">
+                  <span className="t-icon">📍</span>
+                  <div>
+                    <strong>4. 주소 및 거주 여부 확인</strong>
+                    <p>실제 거주 여부, 사업장 운영 여부, 재산 은닉 정황 파악</p>
+                  </div>
+                </div>
+                <div className="task-pill">
+                  <span className="t-icon">👂</span>
+                  <div>
+                    <strong>5. 체납자 애로사항 청취</strong>
+                    <p>생계형 체납자의 고충을 경청하고 지자체 긴급 복지 연계 지원</p>
+                  </div>
+                </div>
+                <div className="task-pill">
+                  <span className="t-icon">💻</span>
+                  <div>
+                    <strong>6. 방문 결과 전산 입력 및 보고</strong>
+                    <p>모바일 단말기에 사진 및 현장 실태를 누락 없이 등록·보고</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="role-summary-box">
+                💡 <strong>면접 답변 100점 요약:</strong> "국세외수입 체납관리단은 강제 징수 조직이 아니라, 체납자의 형편을 경청하고 납부 방법을 안내하여 <strong>성실한 자진 납부를 유도하고 복지 사각지대를 연결하는 가교</strong>입니다."
+              </div>
+            </div>
+
+            {/* 3. 국세외수입 9대 세부 유형 & 체납관리단 빈출 우선순위 TOP 6 */}
+            <div className="k-card">
+              <div className="k-badge">핵심 3 • 세부 유형</div>
+              <h3>📊 국세외수입 9대 세부 유형 & 체납관리단 빈출 우선순위</h3>
+              <div className="k-table-box">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>빈출 우선순위</th>
+                      <th>종류</th>
+                      <th>법적 의미</th>
+                      <th>대표 사례 (국가기관 부과분)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span className="rank-star">★★★★★</span></td>
+                      <td><strong>과태료</strong></td>
+                      <td>법령 위반에 대한 행정질서벌 (형벌 아님)</td>
+                      <td>출입국관리법·개인정보보호법·식품위생법 위반 과태료, 국가경찰 무인단속 과태료</td>
+                    </tr>
+                    <tr>
+                      <td><span className="rank-star">★★★★☆</span></td>
+                      <td><strong>변상금</strong></td>
+                      <td>국가 재산 무단 사용에 대한 손실 보전</td>
+                      <td>국유지·국유재산 무단점유 변상금</td>
+                    </tr>
+                    <tr>
+                      <td><span className="rank-star">★★★☆☆</span></td>
+                      <td><strong>부담금</strong></td>
+                      <td>공익사업 비용 충당을 위한 부과금</td>
+                      <td>개발부담금, 환경개선부담금, 농지보전부담금</td>
+                    </tr>
+                    <tr>
+                      <td><span className="rank-star">★★★☆☆</span></td>
+                      <td><strong>과징금</strong></td>
+                      <td>영업정지 등에 갈음하는 경제적 제재</td>
+                      <td>공정거래법, 금융위원회, 의료법 위반 과징금</td>
+                    </tr>
+                    <tr>
+                      <td><span className="rank-star">★★☆☆☆</span></td>
+                      <td><strong>사용료</strong></td>
+                      <td>국가 시설·재산 이용 대가</td>
+                      <td>국유재산 사용료, 국가시설 대여료</td>
+                    </tr>
+                    <tr>
+                      <td><span className="rank-star">★★☆☆☆</span></td>
+                      <td><strong>환수금</strong></td>
+                      <td>부정 수급이나 목적 외 사용 금액 회수</td>
+                      <td>국고 보조금 환수금, 부당이득 환수금</td>
+                    </tr>
+                    <tr>
+                      <td><span>기타</span></td>
+                      <td><strong>수수료 / 배상금 / 잡수입</strong></td>
+                      <td>행정서비스 비용, 국가 손해배상, 연체이자</td>
+                      <td>여권·인허가 수수료, 국가재산 손해배상금, 지연이자</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            {/* 2. 주요 국세외수입 4대 항목 */}
-            <div className="k-card">
-              <div className="k-badge">핵심 용어</div>
-              <h3>체납관리단이 주로 접하는 4대 세외수입</h3>
-              <div className="term-grid">
-                <div className="term-item">
-                  <div className="term-name">1. 과태료</div>
-                  <p>행정법상 의무 위반에 대한 금전적 징벌 (예: 도로교통법 위반, 건축법 위반 과태료 등)</p>
+            {/* 4. 면접관이 무조건 던지는 실전 예상 꼬리질문 8선 특화 카드 */}
+            <div className="k-card featured">
+              <div className="k-badge">실전 대비 • 족보 8선</div>
+              <h3>🎯 면접관이 무조건 던지는 실전 꼬리질문 8선 & 합격 모범 대응</h3>
+              <div className="followup-qa-grid">
+                <div className="f-qa-item">
+                  <div className="f-q">Q1. 체납자가 "나는 납부할 돈이 없다"고 하면?</div>
+                  <div className="f-a">👉 공감과 경청 후, 일시 납부 대신 분할납부나 징수유예 등 합법적 완화 제도를 안내하고, 주민센터 긴급 복지 지원 연계를 세무서에 보고합니다.</div>
                 </div>
-                <div className="term-item">
-                  <div className="term-name">2. 이행강제금</div>
-                  <p>위반 상태를 시정할 때까지 반복 부과하여 의무 이행을 강제하는 금전벌 (예: 불법건축물)</p>
-                </div>
-                <div className="term-item">
-                  <div className="term-name">3. 변상금</div>
-                  <p>국유재산을 허가 없이 무단 점유·사용한 자에게 징수하는 부당이득 반환금</p>
-                </div>
-                <div className="term-item">
-                  <div className="term-name">4. 가산금 / 연체료</div>
-                  <p>납부기한 내 미납 시 법정 이율에 따라 추가 부과되는 지연이자 성격의 금액</p>
-                </div>
-              </div>
-            </div>
 
-            {/* 3. 실태확인원의 핵심 5대 임무 */}
-            <div className="k-card">
-              <div className="k-badge">직무 매뉴얼</div>
-              <h3>실태확인원 현장 업무 5단계 프로세스</h3>
-              <div className="process-steps">
-                <div className="p-step">
-                  <span className="p-num">1</span>
-                  <strong>사전 정보 숙지</strong>
-                  <p>체납 내역, 주소지, 특이사항 및 안전 점검</p>
+                <div className="f-qa-item">
+                  <div className="f-q">Q2. 체납자가 화를 내거나 욕설·폭언을 한다면?</div>
+                  <div className="f-a">👉 감정 맞대응을 피하고 경청하여 진정시킨 뒤 방문 목적을 설명합니다. 신변 위협 시 2인 1조 수칙에 따라 즉시 철수 후 상부에 보고합니다.</div>
                 </div>
-                <div className="p-step">
-                  <span className="p-num">2</span>
-                  <strong>2인 1조 현장방문</strong>
-                  <p>실거주지 및 사업장 확인, 거주/영업 여부 파악</p>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q3. 방문했는데 체납자가 부재중이라면?</div>
+                  <div className="f-a">👉 강제 개방 없이 정식 '방문 안내문'을 안전하게 부착하고, 현장 정황을 촬영·기록하여 전산 시스템에 등록 후 재방문을 계획합니다.</div>
                 </div>
-                <div className="p-step">
-                  <span className="p-num">3</span>
-                  <strong>맞춤형 대화 소통</strong>
-                  <p>형편 청취, 분납 및 복지 연계 안내 (강제압류 불가)</p>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q4. 주소지에 실제 거주하지 않는다면?</div>
+                  <div className="f-a">👉 이웃의 무리한 사생활 탐문은 지양하고, 미거주 실태를 있는 그대로 조사표에 기재하여 세무서 담당자에게 실태 보고서를 인계합니다.</div>
                 </div>
-                <div className="p-step">
-                  <span className="p-num">4</span>
-                  <strong>현장 실태 전산 기록</strong>
-                  <p>모바일 단말기에 사진 및 조사 내용 꼼꼼히 등록</p>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q5. "왜 내가 이것을 내야 하느냐"고 항의한다면?</div>
+                  <div className="f-a">👉 부과된 법률 근거와 사유를 차분히 설명하고, 성실 납부자와의 형평성 및 불이익 방지를 위한 납부 필요성을 정중하게 설득합니다.</div>
                 </div>
-                <div className="p-step">
-                  <span className="p-num">5</span>
-                  <strong>결과 보고 및 종결</strong>
-                  <p>세무서 담당 주무관에게 실태 보고서 인계</p>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q6. 개인정보를 어떻게 보호하겠습니까?</div>
+                  <div className="f-a">👉 업무 목적 외 열람·유출을 절대 금지하며, 모바일 단말기 잠금 및 현장 서류 관리를 철저히 하고 비밀유지 서약을 엄수합니다.</div>
+                </div>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q7. 현장 방문 시 가장 중요하게 생각하는 것은?</div>
+                  <div className="f-a">👉 2인 1조 현장 안전 수칙 준수와 체납자에 대한 정중한 경청 태도, 그리고 누락 없는 꼼꼼한 실태 기록입니다.</div>
+                </div>
+
+                <div className="f-qa-item">
+                  <div className="f-q">Q8. 체납관리단 업무에서 가장 중요한 역량은?</div>
+                  <div className="f-a">👉 사람의 마음을 여는 '따뜻한 경청 소통력'과 궂은 날씨에도 결근 없이 발로 뛰는 '단단한 성실성'입니다.</div>
                 </div>
               </div>
             </div>

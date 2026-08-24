@@ -2042,6 +2042,175 @@
   line-height: 1.5;
 }
 
+/* 🌟 2026.08.14 국세외수입 직무도감 특화 스타일 */
+.highlight-col {
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+  font-weight: 700;
+  border-left: 2px solid #86efac;
+  border-right: 2px solid #86efac;
+}
+
+.k-warning-banner {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 14px;
+  color: #9a3412;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.role-tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.task-pill {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: all 0.15s ease;
+}
+
+.task-pill:hover {
+  background: #f0fdf4;
+  border-color: #86efac;
+  transform: translateY(-1px);
+}
+
+.t-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.task-pill strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.task-pill p {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.role-summary-box {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #065f46;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.rank-star {
+  color: #f59e0b;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.followup-qa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.f-qa-item {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.f-q {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.f-a {
+  font-size: 0.85rem;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 10px 12px;
+  border-radius: 8px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+/* 🎙️ 목소리 톤 선택 바 스타일 */
+.voice-mode-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.voice-mode-group .lbl {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-right: 2px;
+}
+
+.intro-voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.intro-voice-row .lbl {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.intro-v-chip {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.intro-v-chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.intro-v-chip.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: #34d399;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+}
+
 /* ========================================================
    📱 모바일 퍼스트 감리 (390px 대응)
    ======================================================== */
