@@ -3,12 +3,13 @@ import './OxAlphaStudio.css';
 import { 
   Sparkles, Send, Paperclip, ChevronDown, ChevronUp, 
   Copy, Check, Plus, MessageSquare, Settings, Key, 
-  PanelLeft, Shield, ArrowUp, RefreshCw, AlertCircle, Trash2, StopCircle
+  PanelLeft, Shield, ArrowUp, RefreshCw, AlertCircle, Trash2, 
+  StopCircle, Download, Sliders, ExternalLink, Code2, Terminal
 } from 'lucide-react';
 
 const CLAUDE_PRESETS = [
   {
-    title: '1M 오픈소스 구조 분해 및 보일러플레이트',
+    title: '⚡️ 1M 오픈소스 구조 분해 및 보일러플레이트',
     desc: '대용량 깃허브 코드/기술 문서를 분석하여 1인 기업용 핵심 코드 추출',
     prompt: `당신은 1인 AI 비즈니스 소프트웨어 아키텍트입니다.
 아래 제공된 대용량 오픈소스/라이브러리 구조를 분석하고, 1인 창업자가 바로 복사해서 서비스에 적용할 수 있는 핵심 보일러플레이트 코드와 API 연동 로드맵을 작성해주세요.
@@ -17,7 +18,7 @@ const CLAUDE_PRESETS = [
 `
   },
   {
-    title: '2년 뒤 상용 니치 SaaS 가설 검증',
+    title: '💼 2년 뒤 상용 니치 SaaS 가설 검증',
     desc: '거대 기업과 격차를 벌리는 바늘구멍 틈새 비즈니스 모델 도출',
     prompt: `[미션: 니치 & 벡터 거리 극대화]
 기존 거대 AI 기업들이 건드리지 않는 좁고 뾰족한 '바늘구멍 틈새(Niche)' 비즈니스 아이템 3가지를 도출해주세요.
@@ -28,7 +29,7 @@ const CLAUDE_PRESETS = [
 을 구체적으로 기획해주세요.`
   },
   {
-    title: '롱폼 ➔ 숏폼 30개 대본 원샷 양산',
+    title: '🎬 롱폼 ➔ 숏폼 30개 대본 원샷 양산',
     desc: '긴 강의/영상 텍스트에서 바이럴 릴스/쇼츠 대본 대량 추출',
     prompt: `[미션: 숏폼 바이럴 마케팅 공장]
 아래 제공된 긴 텍스트/영상 스크립트를 분석하여, 유튜브 쇼츠 및 인스타 릴스에 최적화된 30초 숏폼 대본 5개를 작성해주세요.
@@ -39,17 +40,101 @@ const CLAUDE_PRESETS = [
 포맷으로 구성해주세요.`
   },
   {
-    title: '피지컬 AI & LeRobot 로보틱스 파이프라인',
+    title: '🦾 피지컬 AI & LeRobot 로보틱스 파이프라인',
     desc: 'HuggingFace LeRobot 기반 로봇 조종 및 데이터 수집 파이썬 코드',
     prompt: `[미션: 피지컬 AI LeRobot 실전 코드]
 HuggingFace LeRobot을 활용하여 로봇 암 조종 및 텔레오퍼레이션(원격 조작) 데이터를 기록하고 학습 데이터셋으로 변환하는 실전 파이썬 스크립트와 워크플로우를 단계별로 작성해주세요.`
   }
 ];
 
+// 코드 블록 복사 지원 컴포넌트
+function CodeBlock({ language, code }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="claude-codeblock">
+      <div className="claude-codeblock-header">
+        <span className="claude-codeblock-lang">{language || 'code'}</span>
+        <button className="claude-codeblock-copy" onClick={handleCopy}>
+          {copied ? <Check size={12} style={{ color: '#4ade80' }} /> : <Copy size={12} />}
+          <span>{copied ? '복사됨' : '코드 복사'}</span>
+        </button>
+      </div>
+      <pre className="claude-codeblock-pre">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+// 리치 마크다운 렌더러
+function ClaudeMarkdownRenderer({ text }) {
+  if (!text) return null;
+
+  // Code block splitting (```lang ... ```)
+  const parts = text.split(/(```[\s\S]*?```)/g);
+
+  return (
+    <div className="claude-markdown-root">
+      {parts.map((part, index) => {
+        if (part.startsWith('```') && part.endsWith('```')) {
+          const firstLineEnd = part.indexOf('\n');
+          const language = part.slice(3, firstLineEnd).trim();
+          const code = part.slice(firstLineEnd + 1, -3);
+          return <CodeBlock key={index} language={language} code={code} />;
+        }
+
+        // 일반 텍스트 라인별 파싱
+        const lines = part.split('\n');
+        return (
+          <div key={index}>
+            {lines.map((line, lIdx) => {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('# ')) {
+                return <h1 key={lIdx} className="claude-md-h1">{trimmed.replace('# ', '')}</h1>;
+              }
+              if (trimmed.startsWith('## ')) {
+                return <h2 key={lIdx} className="claude-md-h2">{trimmed.replace('## ', '')}</h2>;
+              }
+              if (trimmed.startsWith('### ')) {
+                return <h3 key={lIdx} className="claude-md-h3">{trimmed.replace('### ', '')}</h3>;
+              }
+              if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                return <li key={lIdx} className="claude-md-li">{trimmed.slice(2)}</li>;
+              }
+              if (/^\d+\.\s/.test(trimmed)) {
+                return <div key={lIdx} className="claude-md-num-item">{trimmed}</div>;
+              }
+              if (trimmed.startsWith('> ')) {
+                return <blockquote key={lIdx} className="claude-md-quote">{trimmed.slice(2)}</blockquote>;
+              }
+              if (!trimmed) {
+                return <div key={lIdx} style={{ height: '8px' }} />;
+              }
+              return <p key={lIdx} className="claude-md-p">{line}</p>;
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function OxAlphaStudio() {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('openrouter_api_key') || '');
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [tempApiKey, setTempApiKey] = useState(apiKey);
+  
+  // Model Parameters
+  const [selectedModel, setSelectedModel] = useState('stealth/ox-alpha');
+  const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens, setMaxTokens] = useState(4096);
   
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -75,7 +160,6 @@ export default function OxAlphaStudio() {
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Auto-scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -84,12 +168,10 @@ export default function OxAlphaStudio() {
     scrollToBottom();
   }, [messages, loading]);
 
-  // Save sessions to localStorage
   useEffect(() => {
     localStorage.setItem('oxalpha_sessions', JSON.stringify(sessions));
   }, [sessions]);
 
-  // Handle Textarea height adjustment
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -165,7 +247,19 @@ export default function OxAlphaStudio() {
     }
   };
 
-  // 실시간 스트리밍 전송 로직 (SSE Streaming)
+  const handleExportChat = () => {
+    if (messages.length === 0) return;
+    const exportContent = messages.map(m => `### [${m.role === 'user' ? '사용자' : 'Ox Alpha'}]\n${m.content}\n\n`).join('---\n\n');
+    const blob = new Blob([exportContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `OxAlpha_Chat_${new Date().toISOString().slice(0, 10)}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // 실시간 스트리밍 SSE
   const handleSendMessage = async () => {
     if (!input.trim() || loading) return;
 
@@ -181,7 +275,6 @@ export default function OxAlphaStudio() {
     setLoading(true);
     setError('');
 
-    // 스트리밍을 받을 임시 어시스턴트 메시지 추가
     const assistantIndex = newMessages.length;
     const initialAssistantMsg = { role: 'assistant', content: '', reasoning: '' };
     setMessages([...newMessages, initialAssistantMsg]);
@@ -208,8 +301,10 @@ export default function OxAlphaStudio() {
         },
         signal: abortController.signal,
         body: JSON.stringify({
-          model: 'stealth/ox-alpha',
+          model: selectedModel,
           stream: true,
+          temperature: parseFloat(temperature),
+          max_tokens: parseInt(maxTokens, 10),
           messages: apiMessages
         })
       });
@@ -254,7 +349,6 @@ export default function OxAlphaStudio() {
                 streamedContent += delta.content;
               }
 
-              // <think> 태그 파싱
               let displayContent = streamedContent;
               let displayReasoning = streamedReasoning;
 
@@ -266,7 +360,6 @@ export default function OxAlphaStudio() {
                     displayContent = streamedContent.replace(/<think>[\s\S]*?<\/think>/, '').trim();
                   }
                 } else {
-                  // 아직 think 태그가 안 닫힌 경우
                   displayReasoning = streamedContent.replace('<think>', '').trim();
                   displayContent = '';
                 }
@@ -283,13 +376,13 @@ export default function OxAlphaStudio() {
               });
 
             } catch (e) {
-              // JSON 파싱 무시
+              // ignore JSON stream chunks
             }
           }
         }
       }
 
-      // 최종 메시지 상태 확정 및 세션 저장
+      // Final session save
       setMessages(prev => {
         const finalMessages = [...prev];
         let sId = currentSessionId;
@@ -306,7 +399,7 @@ export default function OxAlphaStudio() {
 
     } catch (err) {
       if (err.name === 'AbortError') {
-        console.log('User stopped generation');
+        console.log('Generation stopped by user');
       } else {
         console.error(err);
         setError(err.message);
@@ -336,6 +429,11 @@ export default function OxAlphaStudio() {
 
   return (
     <div className="claude-layout">
+      {/* 📱 모바일 오버레이 배경 */}
+      {mobileSidebarOpen && (
+        <div className="claude-sidebar-backdrop" onClick={() => setMobileSidebarOpen(false)} />
+      )}
+
       {/* 📂 클로드 좌측 사이드바 */}
       <aside className={`claude-sidebar ${!sidebarOpen ? 'collapsed' : ''} ${mobileSidebarOpen ? 'open' : ''}`}>
         <button className="claude-new-chat-btn" onClick={handleStartNewChat}>
@@ -343,10 +441,10 @@ export default function OxAlphaStudio() {
           <span>새 대화 시작</span>
         </button>
 
-        <div className="claude-sidebar-section-title">최근 대화 목록</div>
+        <div className="claude-sidebar-section-title">최근 대화 기록</div>
         <div className="claude-history-list">
           {sessions.length === 0 ? (
-            <div style={{ padding: '16px 8px', fontSize: '12px', color: 'var(--claude-text-dim)', textAlign: 'center' }}>
+            <div style={{ padding: '20px 8px', fontSize: '12px', color: 'var(--claude-text-dim)', textAlign: 'center' }}>
               기록된 대화가 없습니다.
             </div>
           ) : (
@@ -369,15 +467,22 @@ export default function OxAlphaStudio() {
         </div>
 
         <div className="claude-sidebar-footer">
+          {messages.length > 0 && (
+            <button className="claude-export-btn" onClick={handleExportChat}>
+              <Download size={13} />
+              <span>대화 마크다운 저장</span>
+            </button>
+          )}
+
           <div className="claude-user-profile" onClick={() => setShowSettingsModal(true)} style={{ cursor: 'pointer' }}>
             <div className="claude-avatar-badge">K</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600, color: 'var(--claude-text-main)' }}>대표님 (코다리 Hub)</div>
-              <div style={{ fontSize: '11px', color: apiKey ? '#4ade80' : '#f59e0b' }}>
-                {apiKey ? 'OpenRouter 연결됨 (Free)' : 'API 키 등록 필요'}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, color: 'var(--claude-text-main)', fontSize: '13px' }}>대표님 (코다리 Hub)</div>
+              <div style={{ fontSize: '11px', color: apiKey ? '#4ade80' : '#f59e0b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {apiKey ? 'OpenRouter 연결 완료 (Free)' : 'API 키 등록 필요'}
               </div>
             </div>
-            <Settings size={14} />
+            <Settings size={14} style={{ flexShrink: 0 }} />
           </div>
         </div>
       </aside>
@@ -396,11 +501,12 @@ export default function OxAlphaStudio() {
                   setSidebarOpen(!sidebarOpen);
                 }
               }}
+              title="사이드바 토글"
             >
               <PanelLeft size={18} />
             </button>
             <div className="claude-model-selector" onClick={() => setShowSettingsModal(true)}>
-              <span>Ox Alpha (1M Context)</span>
+              <span>{selectedModel === 'stealth/ox-alpha' ? 'Ox Alpha (1M Context)' : selectedModel}</span>
               <span className="claude-model-badge">STEALTH</span>
               <ChevronDown size={14} style={{ color: 'var(--claude-text-dim)' }} />
             </div>
@@ -408,7 +514,7 @@ export default function OxAlphaStudio() {
 
           <div className="claude-key-status" onClick={() => setShowSettingsModal(true)}>
             <Key size={13} style={{ color: apiKey ? '#4ade80' : '#f59e0b' }} />
-            <span>{apiKey ? 'API 키 활성 (무료 스트리밍)' : '키 설정하기'}</span>
+            <span>{apiKey ? 'API 키 활성 (스트리밍)' : '키 설정하기'}</span>
           </div>
         </header>
 
@@ -465,9 +571,16 @@ export default function OxAlphaStudio() {
                     )}
 
                     <div className="claude-markdown">
-                      {msg.content || (loading && idx === messages.length - 1 ? (
-                        <span style={{ color: 'var(--claude-text-muted)' }}>생각 중...</span>
-                      ) : null)}
+                      {msg.content ? (
+                        <ClaudeMarkdownRenderer text={msg.content} />
+                      ) : (
+                        loading && idx === messages.length - 1 ? (
+                          <span style={{ color: 'var(--claude-text-muted)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <RefreshCw size={13} className="spin-icon" />
+                            Ox Alpha가 실시간으로 생각하며 작성 중입니다...
+                          </span>
+                        ) : null
+                      )}
                     </div>
 
                     {msg.role === 'assistant' && msg.content && (
@@ -481,7 +594,7 @@ export default function OxAlphaStudio() {
                           ) : (
                             <>
                               <Copy size={13} />
-                              <span>복사</span>
+                              <span>전체 복사</span>
                             </>
                           )}
                         </button>
@@ -553,41 +666,99 @@ export default function OxAlphaStudio() {
           </div>
 
           <div className="claude-disclaimer">
-            Ox Alpha (Stealth Model) • 1M Context Window • 실시간 스트리밍 연동
+            Ox Alpha (Stealth Model) • 1,048,576 Token Context • 실시간 스트리밍 연동
           </div>
         </div>
       </main>
 
-      {/* ⚙️ API 키 설정 모달 */}
+      {/* ⚙️ API 키 & 모델 파라미터 설정 모달 */}
       {showSettingsModal && (
         <div className="claude-modal-overlay" onClick={() => setShowSettingsModal(false)}>
           <div className="claude-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="claude-modal-title">OpenRouter API 설정</h3>
-            <p style={{ fontSize: '12px', color: 'var(--claude-text-muted)', lineHeight: 1.5, margin: 0 }}>
-              발급받으신 OpenRouter API 키(<code>sk-or-v1-...</code>)를 입력하시면 브라우저에 안전하게 저장되며 즉시 무료로 Ox Alpha 모델을 실시간 스트리밍으로 사용하실 수 있습니다.
+            <h3 className="claude-modal-title">엔진 & API 파라미터 설정</h3>
+            <p style={{ fontSize: '12px', color: 'var(--claude-text-muted)', lineHeight: 1.5, margin: '0 0 16px 0' }}>
+              발급받으신 OpenRouter API 키(<code>sk-or-v1-...</code>)를 등록하시면 브라우저에 안전하게 저장됩니다.
             </p>
 
-            <input
-              type="password"
-              className="claude-modal-input"
-              placeholder="sk-or-v1-..."
-              value={tempApiKey}
-              onChange={(e) => setTempApiKey(e.target.value)}
-            />
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--claude-text-main)' }}>OpenRouter API 키</label>
+              <input
+                type="password"
+                className="claude-modal-input"
+                placeholder="sk-or-v1-..."
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+              />
+            </div>
+
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--claude-text-main)' }}>모델 선택</label>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className={`claude-model-chip ${selectedModel === 'stealth/ox-alpha' ? 'active' : ''}`}
+                  onClick={() => setSelectedModel('stealth/ox-alpha')}
+                >
+                  🛸 stealth/ox-alpha (Free 1M)
+                </button>
+                <button
+                  type="button"
+                  className={`claude-model-chip ${selectedModel === 'anthropic/claude-3.7-sonnet' ? 'active' : ''}`}
+                  onClick={() => setSelectedModel('anthropic/claude-3.7-sonnet')}
+                >
+                  🌟 claude-3.7-sonnet
+                </button>
+                <button
+                  type="button"
+                  className={`claude-model-chip ${selectedModel === 'deepseek/deepseek-r1' ? 'active' : ''}`}
+                  onClick={() => setSelectedModel('deepseek/deepseek-r1')}
+                >
+                  🧠 deepseek-r1
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+              <div>
+                <label style={{ fontSize: '11px', color: 'var(--claude-text-muted)' }}>Temperature ({temperature})</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                  style={{ width: '100%', accentColor: 'var(--claude-terracotta)' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', color: 'var(--claude-text-muted)' }}>Max Tokens ({maxTokens})</label>
+                <input
+                  type="number"
+                  min="512"
+                  max="32768"
+                  step="512"
+                  value={maxTokens}
+                  onChange={(e) => setMaxTokens(e.target.value)}
+                  className="claude-modal-input"
+                  style={{ margin: '4px 0 0 0', padding: '6px 10px' }}
+                />
+              </div>
+            </div>
 
             <div className="claude-modal-btns">
               <button 
                 className="claude-tool-pill" 
                 onClick={() => setShowSettingsModal(false)}
               >
-                취소
+                닫기
               </button>
               <button 
                 className="claude-tool-pill" 
                 style={{ backgroundColor: 'var(--claude-terracotta)', color: 'white', borderColor: 'var(--claude-terracotta)' }}
                 onClick={handleSaveKey}
               >
-                저장 및 연결
+                저장 및 적용
               </button>
             </div>
           </div>
