@@ -27,6 +27,7 @@ import PassVoiceSaaS from './PassVoiceSaaS';
 import VoiceToNoteStudio from './VoiceToNoteStudio';
 import CheolmanVoiceStudio from './CheolmanVoiceStudio';
 import LeRobotStudio from './LeRobotStudio';
+import OxAlphaStudio from './OxAlphaStudio';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -97,7 +98,7 @@ function App() {
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'interviewprep', 'lerobot'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'interviewprep', 'lerobot', 'oxalpha'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
@@ -906,6 +907,7 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
+            <button onClick={() => setActiveTab('oxalpha')} className="quick-tool-btn niche" style={{ background: '#262522', color: '#da7756', borderColor: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button onClick={() => setActiveTab('lerobot')} className="quick-tool-btn niche" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#c4b5fd', fontWeight: 900 }}>🦾 LeRobot 놀이터</button>
             <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
             <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
@@ -922,6 +924,7 @@ ${selectedNote.content}`
           {/* 1. 🧠 AI 공부 */}
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
+            <button className={`pillar-pill ${activeTab === 'oxalpha' ? 'active' : ''}`} onClick={() => setActiveTab('oxalpha')} style={{ color: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button className={`pillar-pill ${activeTab === 'lerobot' ? 'active' : ''}`} onClick={() => setActiveTab('lerobot')} style={{ color: '#c084fc', fontWeight: 800 }}>🦾 LeRobot 놀이터</button>
             <button className={`pillar-pill ${activeTab === 'interviewprep' ? 'active' : ''}`} onClick={() => setActiveTab('interviewprep')} style={{ color: '#fde047', fontWeight: 800 }}>🏛️ 국세청 면접TF</button>
             <button className={`pillar-pill ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>📺 같이 수업듣기</button>
@@ -2043,6 +2046,9 @@ ${selectedNote.content}`
               )}
               {activeTab === 'lerobot' && (
                 <LeRobotStudio />
+              )}
+              {activeTab === 'oxalpha' && (
+                <OxAlphaStudio />
               )}
             </div>
           </>
