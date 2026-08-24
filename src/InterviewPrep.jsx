@@ -631,18 +631,76 @@ export default function InterviewPrep() {
   const audioChunksRef = useRef([]);
   const recordingTimerRef = useRef(null);
 
-  // 📋 복사 알림
-  const [copiedText, setCopiedText] = useState(false);
+  // 🎙️ NotebookLM급 초고음질 신경망 스튜디오 오디오 (비용 0원 프리미엄 음원)
+  const studioAudioRef = useRef(null);
+  const [isPlayingStudioAudio, setIsPlayingStudioAudio] = useState(false);
+  const [currentPlayingAudioKey, setCurrentPlayingAudioKey] = useState(null);
 
-  // ⏹️ 컴포넌트 언마운트나 질문 변경 시 오디오 정지
-  useEffect(() => {
-    return () => {
-      stopTTSPlayback();
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-        mediaRecorderRef.current.stop();
+  const getAudioUrl = (relPath) => {
+    const base = import.meta.env.BASE_URL || '/';
+    const cleanBase = base.endsWith('/') ? base : base + '/';
+    const cleanPath = relPath.startsWith('/') ? relPath.slice(1) : relPath;
+    return cleanBase + cleanPath;
+  };
+
+  const STUDIO_AUDIOS = {
+    intro_sunhi: getAudioUrl('audio/intro_sunhi_50s.mp3'),
+    intro_injoon: getAudioUrl('audio/intro_injoon_50s.mp3'),
+    q1: getAudioUrl('audio/intro_sunhi_50s.mp3'),
+    q3: getAudioUrl('audio/q3_sunhi.mp3'),
+    q4: getAudioUrl('audio/q4_sunhi.mp3'),
+    q9: getAudioUrl('audio/q9_sunhi.mp3'),
+  };
+
+  const handlePlayStudioAudio = (audioKey) => {
+    const url = STUDIO_AUDIOS[audioKey];
+    if (!url) return;
+
+    stopTTSPlayback();
+
+    if (isPlayingStudioAudio && currentPlayingAudioKey === audioKey) {
+      if (studioAudioRef.current) {
+        studioAudioRef.current.pause();
+        studioAudioRef.current.currentTime = 0;
       }
+      setIsPlayingStudioAudio(false);
+      setCurrentPlayingAudioKey(null);
+      return;
+    }
+
+    if (studioAudioRef.current) {
+      studioAudioRef.current.pause();
+    }
+
+    const audio = new Audio(url);
+    audio.playbackRate = playbackSpeed;
+    studioAudioRef.current = audio;
+    setCurrentPlayingAudioKey(audioKey);
+    setIsPlayingStudioAudio(true);
+
+    audio.onended = () => {
+      setIsPlayingStudioAudio(false);
+      setCurrentPlayingAudioKey(null);
     };
-  }, []);
+
+    audio.onerror = (e) => {
+      console.warn('스튜디오 오디오 로드 에러:', e);
+      setIsPlayingStudioAudio(false);
+      setCurrentPlayingAudioKey(null);
+    };
+
+    audio.play().catch(err => console.warn('오디오 재생 차단:', err));
+  };
+
+  const stopAllAudios = () => {
+    stopTTSPlayback();
+    if (studioAudioRef.current) {
+      studioAudioRef.current.pause();
+      studioAudioRef.current.currentTime = 0;
+    }
+    setIsPlayingStudioAudio(false);
+    setCurrentPlayingAudioKey(null);
+  };
 
   // 🎙️ 고품질 자연스러운 한국어 프리미엄 보이스 엔진
   const [voiceList, setVoiceList] = useState([]);
@@ -1215,6 +1273,18 @@ export default function InterviewPrep() {
                     <span>{isPlayingTTS ? '낭독 정지' : isAnswerCustomized ? '내 맞춤 대본 음성 듣기' : '100점 답변 음성 듣기'}</span>
                   </button>
 
+                  {/* 🌟 NotebookLM급 고음질 신경망 성우 음원 (1, 3, 4, 9번 질문 지원) */}
+                  {STUDIO_AUDIOS[`q${selectedQuestion.id}`] && (
+                    <button 
+                      className={`main-play-btn studio-btn ${isPlayingStudioAudio && currentPlayingAudioKey === `q${selectedQuestion.id}` ? 'playing' : ''}`}
+                      onClick={() => handlePlayStudioAudio(`q${selectedQuestion.id}`)}
+                      title="비용 0원 마이크로소프트 신경망 아나운서 초고음질 음원"
+                    >
+                      <Sparkles className="w-5 h-5 text-amber-300" />
+                      <span>{isPlayingStudioAudio && currentPlayingAudioKey === `q${selectedQuestion.id}` ? '아나운서 음원 정지' : '✨ 아나운서 고음질 MP3'}</span>
+                    </button>
+                  )}
+
                   {/* 🎙️ 목소리 톤 선택 */}
                   <div className="voice-mode-group">
                     <span className="lbl">목소리:</span>
@@ -1560,11 +1630,22 @@ export default function InterviewPrep() {
                 <button className="t-btn reset" onClick={resetSpeechTimer}>
                   🔄 리셋
                 </button>
+                
+                {/* 🌟 NotebookLM급 프리미엄 스튜디오 음원 (비용 0원) */}
+                <button 
+                  className={`t-btn premium-audio-btn ${isPlayingStudioAudio && currentPlayingAudioKey === 'intro_sunhi' ? 'playing' : ''}`}
+                  onClick={() => handlePlayStudioAudio('intro_sunhi')}
+                  title="마이크로소프트 신경망 선희 아나운서 초고음질 음원 (비용 0원)"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  {isPlayingStudioAudio && currentPlayingAudioKey === 'intro_sunhi' ? '⏹️ 아나운서 음원 정지' : '🎙️ ✨ 아나운서 실전 음원 듣기'}
+                </button>
+                
                 <button 
                   className={`t-btn tts ${isPlayingIntroTTS ? 'playing' : ''}`}
                   onClick={() => handlePlayIntroTTS(currentIntroText)}
                 >
-                  {isPlayingIntroTTS ? '⏹️ 낭독 정지' : `🔊 ${selectedVoiceMode === 'announcer' ? '🌸 아나운서 여성음' : selectedVoiceMode === 'mentor' ? '👔 멘토 남성음' : '🎙️ 표준음'} 듣기`}
+                  {isPlayingIntroTTS ? '⏹️ 낭독 정지' : `🔊 브라우저 TTS 낭독`}
                 </button>
                 <button 
                   className="t-btn copy"
