@@ -631,6 +631,9 @@ export default function InterviewPrep() {
   const audioChunksRef = useRef([]);
   const recordingTimerRef = useRef(null);
 
+  // 📋 복사 알림 상태
+  const [copiedText, setCopiedText] = useState(false);
+
   // 🎙️ NotebookLM급 초고음질 신경망 스튜디오 오디오 (비용 0원 프리미엄 음원)
   const studioAudioRef = useRef(null);
   const [isPlayingStudioAudio, setIsPlayingStudioAudio] = useState(false);
