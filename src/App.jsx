@@ -22,12 +22,12 @@ import KodariLab from './KodariLab';
 import ScienceLabAI from './ScienceLabAI';
 import AIBlogWriter from './AIBlogWriter';
 import AITamagotchi from './AITamagotchi';
-import InterviewPrep from './InterviewPrep';
 import PassVoiceSaaS from './PassVoiceSaaS';
 import VoiceToNoteStudio from './VoiceToNoteStudio';
 import CheolmanVoiceStudio from './CheolmanVoiceStudio';
 import LeRobotStudio from './LeRobotStudio';
 import OxAlphaStudio from './OxAlphaStudio';
+import Motion3DStudio from './Motion3DStudio';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -98,7 +98,7 @@ function App() {
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'interviewprep', 'lerobot', 'oxalpha'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'lerobot', 'oxalpha', 'motion3d'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
@@ -912,7 +912,7 @@ ${selectedNote.content}`
             <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
             <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
             <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
-            <button onClick={() => setActiveTab('interviewprep')} className="quick-tool-btn interview">🏛️ 국세청 면접TF</button>
+            <button onClick={() => setActiveTab('motion3d')} className="quick-tool-btn niche" style={{ background: '#064e3b', color: '#34d399', borderColor: '#059669', fontWeight: 900 }}>🏌️‍♂️ 3D 모션스튜디오</button>
             <button onClick={() => setShowNicheSaaS(true)} className="quick-tool-btn niche">🎯 틈새진단기</button>
             <button onClick={() => setShowHubPortal(true)} className="quick-tool-btn hub">🌐 채널포털</button>
             <button onClick={() => setIsAddingNote(true)} className="quick-tool-btn add">➕ 노트추가</button>
@@ -925,8 +925,8 @@ ${selectedNote.content}`
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
             <button className={`pillar-pill ${activeTab === 'oxalpha' ? 'active' : ''}`} onClick={() => setActiveTab('oxalpha')} style={{ color: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
+            <button className={`pillar-pill ${activeTab === 'motion3d' ? 'active' : ''}`} onClick={() => setActiveTab('motion3d')} style={{ color: '#34d399', fontWeight: 900 }}>🏌️‍♂️ 3D 모션스튜디오</button>
             <button className={`pillar-pill ${activeTab === 'lerobot' ? 'active' : ''}`} onClick={() => setActiveTab('lerobot')} style={{ color: '#c084fc', fontWeight: 800 }}>🦾 LeRobot 놀이터</button>
-            <button className={`pillar-pill ${activeTab === 'interviewprep' ? 'active' : ''}`} onClick={() => setActiveTab('interviewprep')} style={{ color: '#fde047', fontWeight: 800 }}>🏛️ 국세청 면접TF</button>
             <button className={`pillar-pill ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>📺 같이 수업듣기</button>
             <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
             <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
@@ -2035,9 +2035,6 @@ ${selectedNote.content}`
               {activeTab === 'aitamagotchi' && (
                 <AITamagotchi />
               )}
-              {activeTab === 'interviewprep' && (
-                <InterviewPrep />
-              )}
               {activeTab === 'passvoicesaas' && (
                 <PassVoiceSaaS />
               )}
@@ -2049,6 +2046,9 @@ ${selectedNote.content}`
               )}
               {activeTab === 'oxalpha' && (
                 <OxAlphaStudio />
+              )}
+              {activeTab === 'motion3d' && (
+                <Motion3DStudio />
               )}
             </div>
           </>
