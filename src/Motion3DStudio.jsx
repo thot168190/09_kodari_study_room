@@ -103,7 +103,7 @@ export default function Motion3DStudio() {
   const [currentFileName, setCurrentFileName] = useState('');
   const [hasCustomModel, setHasCustomModel] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [currentTheme, setCurrentTheme] = useState('golf'); // 'golf', 'stage', 'darksea', 'studio'
+  const [currentTheme, setCurrentTheme] = useState('stage'); // 🕺 기본을 화려한 네온 스테이지로!
   const [isVerticalMode, setIsVerticalMode] = useState(false);
   const [modelInfo, setModelInfo] = useState({ bones: 0, meshes: 0, duration: 0 });
 
@@ -154,23 +154,75 @@ export default function Motion3DStudio() {
     controls.target.set(0, 80, 0);
     controlsRef.current = controls;
 
-    // Lights
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+    // Lights (화사하고 밝은 3점 조명 셋업!)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8); // 전체적으로 밝게!
+    scene.add(ambientLight);
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x64748b, 1.5);
     hemiLight.position.set(0, 200, 0);
     scene.add(hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(100, 200, 100);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    scene.add(dirLight);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight1.position.set(120, 200, 150);
+    dirLight1.castShadow = true;
+    scene.add(dirLight1);
 
-    // Grid Floor
-    const grid = new THREE.GridHelper(400, 40, 0x3b82f6, 0x1e293b);
-    grid.position.y = 0;
-    scene.add(grid);
-    gridHelperRef.current = grid;
+    // 반대편 보조광 (그림자 어둡지 않게)
+    const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 1.2);
+    dirLight2.position.set(-120, 100, -100);
+    scene.add(dirLight2);
+
+    // 하이라이트 림라이트
+    const rimLight = new THREE.PointLight(0xfbbf24, 2.0, 300);
+    rimLight.position.set(0, 150, -120);
+    scene.add(rimLight);
+
+    // Grid Floor & Stage Platform (원형 3D 스테이지 무대 바닥 생성!)
+    const stageGroup = new THREE.Group();
+    stageGroup.name = 'stage_platform';
+
+    // 1. 세련된 메인 원형 무대 바닥
+    const stageGeo = new THREE.CylinderGeometry(140, 140, 4, 64);
+    const stageMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.8,
+      roughness: 0.2,
+    });
+    const stageMesh = new THREE.Mesh(stageGeo, stageMat);
+    stageMesh.position.y = -2;
+    stageMesh.receiveShadow = true;
+    stageGroup.add(stageMesh);
+
+    // 2. 바깥쪽 네온 링 림 라이트
+    const ringGeo = new THREE.RingGeometry(138, 142, 64);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = -Math.PI / 2;
+    ringMesh.position.y = 0.1;
+    stageGroup.add(ringMesh);
+
+    scene.add(stageGroup);
+
+    // 3. 반짝이는 3D 앰비언트 파티클 시스템 (콘서트 스파클!)
+    const particleCount = 120;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      particlePositions[i] = (Math.random() - 0.5) * 400;
+      particlePositions[i + 1] = Math.random() * 200;
+      particlePositions[i + 2] = (Math.random() - 0.5) * 400;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xfbbf24,
+      size: 3,
+      transparent: true,
+      opacity: 0.7,
+      blending: THREE.AdditiveBlending
+    });
+    const particleSystem = new THREE.Points(particleGeo, particleMat);
+    particleSystem.name = 'particles';
+    scene.add(particleSystem);
 
     // 기본 시뮬레이션용 더미 캐릭터 생성
     createProceduralDummyCharacter(scene);
@@ -217,21 +269,49 @@ export default function Motion3DStudio() {
     };
   }, []);
 
-  // 배경 테마 업데이트
+  // 배경 테마 업데이트 (스테이지 바닥 및 네온 링 동적 반응!)
   const updateSceneBackground = (scene, theme) => {
     if (!scene) return;
-    if (theme === 'golf') {
-      scene.background = new THREE.Color(0x064e3b); // 싱그러운 골프장 딥그린
-      scene.fog = new THREE.FogExp2(0x064e3b, 0.002);
-    } else if (theme === 'stage') {
-      scene.background = new THREE.Color(0x18181b); // 힙한 무대 다크
-      scene.fog = new THREE.FogExp2(0x18181b, 0.003);
+
+    const stagePlatform = scene.getObjectByName('stage_platform');
+    const particles = scene.getObjectByName('particles');
+
+    if (theme === 'stage') {
+      // 🕺 힙한 클럽/콘서트 네온 무대
+      scene.background = new THREE.Color(0x0a0a0f);
+      scene.fog = new THREE.FogExp2(0x0a0a0f, 0.003);
+      if (stagePlatform) {
+        stagePlatform.children[0].material.color.setHex(0x18181b); // 블랙 무대
+        stagePlatform.children[1].material.color.setHex(0xec4899); // 핫핑크 네온 링
+      }
+      if (particles) particles.material.color.setHex(0xf43f5e);
+    } else if (theme === 'golf') {
+      // ⛳️ 싱그러운 명품 골프장 필드
+      scene.background = new THREE.Color(0x0f3b2f); // 화사한 골프장 그린
+      scene.fog = new THREE.FogExp2(0x0f3b2f, 0.002);
+      if (stagePlatform) {
+        stagePlatform.children[0].material.color.setHex(0x14532d); // 잔디 그린 무대
+        stagePlatform.children[1].material.color.setHex(0xfef08a); // 옐로우 링
+      }
+      if (particles) particles.material.color.setHex(0x86efac);
     } else if (theme === 'darksea') {
-      scene.background = new THREE.Color(0x020617); // 깊은 심해 네이비
-      scene.fog = new THREE.FogExp2(0x020617, 0.004);
+      // 🌊 몽환적인 심해 아쿠아 스테이지
+      scene.background = new THREE.Color(0x021329); // 깊은 아쿠아 블루
+      scene.fog = new THREE.FogExp2(0x021329, 0.003);
+      if (stagePlatform) {
+        stagePlatform.children[0].material.color.setHex(0x075985); // 딥블루 무대
+        stagePlatform.children[1].material.color.setHex(0x38bdf8); // 시안 네온 링
+      }
+      if (particles) particles.material.color.setHex(0x38bdf8);
     } else {
-      scene.background = new THREE.Color(0x0f172a); // 스튜디오
-      scene.fog = new THREE.FogExp2(0x0f172a, 0.002);
+      // 🎥 세련된 모던 화이트/실버 쇼룸
+      scene.background = new THREE.Color(0x1e293b); // 슬레이트 스튜디오
+      scene.fog = new THREE.FogExp2(0x1e293b, 0.002);
+      if (stagePlatform) {
+        stagePlatform.children[0].material.color.setHex(0x334155); // 메탈릭 실버 무대
+        stagePlatform.children[1].material.color.setHex(0xe2e8f0); // 화이트 링
+      }
+      if (particles) particles.material.color.setHex(0xffffff);
     }
   };
 
@@ -372,8 +452,20 @@ export default function Motion3DStudio() {
               meshCount++;
               child.castShadow = true;
               child.receiveShadow = true;
+              
               if (child.material) {
-                child.material.side = THREE.DoubleSide;
+                // 배열 재질 지원
+                const mats = Array.isArray(child.material) ? child.material : [child.material];
+                mats.forEach((mat) => {
+                  mat.side = THREE.DoubleSide;
+                  // 재질이 너무 어둡지 않도록 화사하게 부스팅
+                  if (mat.color && (mat.color.r === 0 && mat.color.g === 0 && mat.color.b === 0)) {
+                    mat.color.setHex(0xf43f5e); // 기본 화사한 코랄
+                  }
+                  if (mat.roughness !== undefined) mat.roughness = 0.35;
+                  if (mat.metalness !== undefined) mat.metalness = 0.25;
+                  mat.needsUpdate = true;
+                });
               }
             }
             if (child.isBone) {
@@ -446,6 +538,26 @@ export default function Motion3DStudio() {
         playProceduralSound('cheer');
       }, 400);
     }
+  };
+
+  // 모델 컬러 스킨 변경 함수
+  const changeModelColor = (hexColor) => {
+    const target = currentModelRef.current || dummyModelRef.current;
+    if (!target) return;
+
+    target.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        mats.forEach((mat) => {
+          if (mat.color) {
+            mat.color.setHex(hexColor);
+          }
+          if (mat.roughness !== undefined) mat.roughness = 0.25;
+          if (mat.metalness !== undefined) mat.metalness = 0.35;
+          mat.needsUpdate = true;
+        });
+      }
+    });
   };
 
   // 펀치 타격 버튼
@@ -554,6 +666,41 @@ export default function Motion3DStudio() {
 
         {/* 우측 컨트롤 패널 */}
         <div className="studio-sidebar">
+          {/* 캐릭터 컬러 스킨 커스텀 */}
+          <div className="sidebar-card">
+            <h3>✨ 캐릭터 컬러 스킨</h3>
+            <div className="theme-grid">
+              <button 
+                className="theme-btn" 
+                style={{ color: '#f43f5e', borderColor: '#f43f5e' }}
+                onClick={() => changeModelColor(0xf43f5e)}
+              >
+                💖 코랄 핑크
+              </button>
+              <button 
+                className="theme-btn" 
+                style={{ color: '#38bdf8', borderColor: '#38bdf8' }}
+                onClick={() => changeModelColor(0x38bdf8)}
+              >
+                🩵 사이버 블루
+              </button>
+              <button 
+                className="theme-btn" 
+                style={{ color: '#fbbf24', borderColor: '#fbbf24' }}
+                onClick={() => changeModelColor(0xfbbf24)}
+              >
+                🏆 챔피언 골드
+              </button>
+              <button 
+                className="theme-btn" 
+                style={{ color: '#10b981', borderColor: '#10b981' }}
+                onClick={() => changeModelColor(0x10b981)}
+              >
+                🟢 에메랄드
+              </button>
+            </div>
+          </div>
+
           {/* 테마 배경 선택 */}
           <div className="sidebar-card">
             <h3>🎨 3D 스테이지 배경</h3>

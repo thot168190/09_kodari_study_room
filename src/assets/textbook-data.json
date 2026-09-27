@@ -1,5 +1,42 @@
 [
   {
+    "id": "ep20",
+    "episode": "8/31 LIVE",
+    "date": "2026-08-31",
+    "title": "피지컬 AI & Sim2Real 강화학습 — 뚱이(Microduck) 로봇과 마찰모델(BAM)",
+    "desc": "가상 세계(MuJoCo)에서 훈련된 두뇌가 실제 로봇에서 오차 없이 작동하는 Sim2Real 기술과 PPO 강화학습, 아카이브 2410.08650 확장 마찰 모델(BAM) 완벽 해부.",
+    "url": "https://jaijung.notion.site/8-31-3cdb0dd763238022a812edc30a647072",
+    "videoUrl": "https://www.youtube.com/watch?v=szW7N_7B3tU",
+    "keywords": [
+      "피지컬 AI",
+      "Microduck",
+      "뚱이",
+      "Sim2Real",
+      "PPO",
+      "BAM 마찰모델",
+      "MuJoCo"
+    ],
+    "summary": "800g 소형 이족보행 로봇 뚱이(Microduck)를 4,096개 병렬 환경에서 PPO 강화학습으로 훈련시키고, 모터 기어의 마찰력과 백래시(유격)를 시뮬레이터에 모델링(BAM)하여 실물 로봇에서도 100% 넘어지지 않고 보행·낙법·트릭을 수행하는 피지컬 AI 완전정복 교재입니다.",
+    "curriculum": [
+      {
+        "step": "1단계 · Sim2Real & BAM 액추에이터",
+        "detail": "서보모터 기어 유격(±1.5°)과 비선형 마찰력을 MuJoCo에 모델링하여 가상과 현실 오차 제거"
+      },
+      {
+        "step": "2단계 · 61차원 공통 관측 & PPO 강화학습",
+        "detail": "48개 고유수용성 감각 + 속도/자세 명령을 묶어 보행, 기립, 앞구르기, 공차기 정책 실시간 스위칭"
+      },
+      {
+        "step": "3단계 · ONNX 두뇌 추출 및 뚱이 3D 시뮬레이션",
+        "detail": "훈련된 체크포인트를 .onnx로 변환하여 3D 뷰어에서 키보드로 직접 조종 및 검증"
+      },
+      {
+        "step": "4단계 · 로보티즈 XL330 모터 실물 제작 (BOM)",
+        "detail": "3D 프린터 출력 프레임에 다이나믹셀 XL330 모터 14개와 U2D2, 라즈베리파이 결합 제작"
+      }
+    ]
+  },
+  {
     "id": "ep18",
     "episode": "EP.18",
     "date": "2026-07-28",

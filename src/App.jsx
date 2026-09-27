@@ -28,6 +28,8 @@ import CheolmanVoiceStudio from './CheolmanVoiceStudio';
 import LeRobotStudio from './LeRobotStudio';
 import OxAlphaStudio from './OxAlphaStudio';
 import Motion3DStudio from './Motion3DStudio';
+import JarvisStudio from './JarvisStudio';
+import StudyBookStudio from './StudyBookStudio';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -93,12 +95,12 @@ function App() {
   const [showTravelStandalone, setShowTravelStandalone] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('oxalpha'); // 🛸 Ox Alpha (클로드UI) 기본 활성화!
+  const [activeTab, setActiveTab] = useState('studybook'); // 📚 대표님 학습책·워크북 스튜디오 기본 탑재!
   const [activeTabGroup, setActiveTabGroup] = useState('study');
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'lerobot', 'oxalpha', 'motion3d'].includes(activeTab)) {
+    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'lerobot', 'oxalpha', 'motion3d', 'jarvis', 'studybook'].includes(activeTab)) {
       setActiveTabGroup('study');
     } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
       setActiveTabGroup('practice');
@@ -135,12 +137,12 @@ function App() {
   const [newNoteContent, setNewNoteContent] = useState('');
 
   // 🎥 같이 수업 듣기 상태
-  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=1p0Dqqu9hJI');
-  const [embedId, setEmbedId] = useState('1p0Dqqu9hJI');
+  const [youtubeUrl, setYoutubeUrl] = useState('https://www.youtube.com/watch?v=D1Qa5iYADmQ');
+  const [embedId, setEmbedId] = useState('D1Qa5iYADmQ');
   const [studyChat, setStudyChat] = useState([
     {
       sender: 'kodari',
-      text: '대표님, 충성! 에이전트 총괄부장 코다리입니다. 오늘 함께 들으실 🔴 [모닝AI] 토니 딘 복습편 (하루 만에 만들어 7일에 3천만 원) 영상이 준비되었습니다! 영상 시청 도중 질문이나 아이디어가 떠오르시면 언제든지 지시해 주십시오!'
+      text: '대표님, 충성! 에이전트 총괄부장 코다리입니다. 오늘 함께 들으실 🔴 [강화학습 완전 기초 | DQN 벽돌깨기, AI가 스스로 배우는 순간] 강의가 준비되었습니다! 딥마인드의 전설적인 DQN 벽돌깨기 알고리즘과 에이전트 보상 함수를 함께 들으시면서, 궁금한 점이나 비즈니스 연결 아이디어가 떠오르시면 언제든지 질문해 주십시오! 실시간으로 요약하고 보좌하겠습니다!'
     }
   ]);
   const [studyInput, setStudyInput] = useState('');
@@ -894,6 +896,7 @@ ${selectedNote.content}`
                   if (found) {
                     setSelectedNote(found);
                     setIsAddingNote(false);
+                    setActiveTab('content'); // 📖 노트 선택 시 즉시 본문&브리핑으로 화면 전환!
                   }
                 }}
               >
@@ -907,6 +910,8 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
+            <button onClick={() => setActiveTab('studybook')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #18181b, #27272a)', color: '#fbbf24', borderColor: '#f59e0b', fontWeight: 900, boxShadow: '0 0 12px rgba(245, 158, 11, 0.4)' }}>📚 학습책·워크북 스튜디오</button>
+            <button onClick={() => setActiveTab('jarvis')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #0284c7, #38bdf8)', color: '#ffffff', borderColor: '#38bdf8', fontWeight: 900, boxShadow: '0 0 12px rgba(56, 189, 248, 0.4)' }}>🤖 나만의 자비스 (Hui 9B)</button>
             <button onClick={() => setActiveTab('oxalpha')} className="quick-tool-btn niche" style={{ background: '#262522', color: '#da7756', borderColor: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button onClick={() => setActiveTab('lerobot')} className="quick-tool-btn niche" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#c4b5fd', fontWeight: 900 }}>🦾 LeRobot 놀이터</button>
             <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
@@ -924,6 +929,8 @@ ${selectedNote.content}`
           {/* 1. 🧠 AI 공부 */}
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
+            <button className={`pillar-pill ${activeTab === 'studybook' ? 'active' : ''}`} onClick={() => setActiveTab('studybook')} style={{ color: '#d97706', fontWeight: 900, background: activeTab === 'studybook' ? '#fef3c7' : '#fffbeb', borderColor: '#f59e0b' }}>📚 학습책·워크북 스튜디오</button>
+            <button className={`pillar-pill ${activeTab === 'jarvis' ? 'active' : ''}`} onClick={() => setActiveTab('jarvis')} style={{ color: '#38bdf8', fontWeight: 900, background: activeTab === 'jarvis' ? 'rgba(56, 189, 248, 0.25)' : 'rgba(56, 189, 248, 0.1)', borderColor: '#38bdf8' }}>🤖 자비스 (Hui 9B)</button>
             <button className={`pillar-pill ${activeTab === 'oxalpha' ? 'active' : ''}`} onClick={() => setActiveTab('oxalpha')} style={{ color: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button className={`pillar-pill ${activeTab === 'motion3d' ? 'active' : ''}`} onClick={() => setActiveTab('motion3d')} style={{ color: '#34d399', fontWeight: 900 }}>🏌️‍♂️ 3D 모션스튜디오</button>
             <button className={`pillar-pill ${activeTab === 'lerobot' ? 'active' : ''}`} onClick={() => setActiveTab('lerobot')} style={{ color: '#c084fc', fontWeight: 800 }}>🦾 LeRobot 놀이터</button>
@@ -1330,6 +1337,14 @@ ${selectedNote.content}`
                 💾 저장하고 공부방 등록
               </button>
             </div>
+          </div>
+        ) : activeTab === 'studybook' ? (
+          <div className="studybook-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <StudyBookStudio />
+          </div>
+        ) : activeTab === 'jarvis' ? (
+          <div className="jarvis-fullscreen-mount" style={{ width: '100%', padding: '8px 14px', boxSizing: 'border-box' }}>
+            <JarvisStudio />
           </div>
         ) : selectedNote ? (
           <>
@@ -2051,6 +2066,7 @@ ${selectedNote.content}`
                 <Motion3DStudio />
               )}
             </div>
+
           </>
         ) : (
           <div className="empty-state">
