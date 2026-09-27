@@ -30,6 +30,7 @@ import OxAlphaStudio from './OxAlphaStudio';
 import Motion3DStudio from './Motion3DStudio';
 import JarvisStudio from './JarvisStudio';
 import StudyBookStudio from './StudyBookStudio';
+import SmallMusicFinder from './SmallMusicFinder';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -95,8 +96,10 @@ function App() {
   const [showTravelStandalone, setShowTravelStandalone] = useState(false);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [activeTab, setActiveTab] = useState('studybook'); // 📚 대표님 학습책·워크북 스튜디오 기본 탑재!
-  const [activeTabGroup, setActiveTabGroup] = useState('study');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'studybook';
+  });
 
   // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
   useEffect(() => {
@@ -914,6 +917,7 @@ ${selectedNote.content}`
             <button onClick={() => setActiveTab('jarvis')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #0284c7, #38bdf8)', color: '#ffffff', borderColor: '#38bdf8', fontWeight: 900, boxShadow: '0 0 12px rgba(56, 189, 248, 0.4)' }}>🤖 나만의 자비스 (Hui 9B)</button>
             <button onClick={() => setActiveTab('oxalpha')} className="quick-tool-btn niche" style={{ background: '#262522', color: '#da7756', borderColor: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button onClick={() => setActiveTab('lerobot')} className="quick-tool-btn niche" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#c4b5fd', fontWeight: 900 }}>🦾 LeRobot 놀이터</button>
+            <button onClick={() => setActiveTab('musicfinder')} className="quick-tool-btn niche" style={{ background: '#312e81', color: '#c7d2fe', borderColor: '#818cf8', fontWeight: 900 }}>🎵 꿀통 음악 발굴기</button>
             <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
             <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
             <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
@@ -942,6 +946,7 @@ ${selectedNote.content}`
           {/* 2. 📚 잉크워드 */}
           <div className="pillar-group">
             <span className="pillar-tag">📚 잉크워드</span>
+            <button className={`pillar-pill ${activeTab === 'musicfinder' ? 'active' : ''}`} onClick={() => setActiveTab('musicfinder')} style={{ color: '#818cf8', fontWeight: 900, background: activeTab === 'musicfinder' ? '#312e81' : '#f5f3ff', borderColor: '#818cf8' }}>🎵 꿀통 음악 발굴기 (철이 v2)</button>
             <button className={`pillar-pill ${activeTab === 'cheolmanvoice' ? 'active' : ''}`} onClick={() => setActiveTab('cheolmanvoice')} style={{ color: '#60a5fa', fontWeight: 800 }}>🎙️ 철만이 보이스</button>
             <button className={`pillar-pill ${activeTab === 'scenehub' ? 'active' : ''}`} onClick={() => setActiveTab('scenehub')}>🎬 제작허브</button>
             <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
@@ -2000,6 +2005,10 @@ ${selectedNote.content}`
 
               {activeTab === 'nichediagnoser' && (
                 <NicheDiagnoser />
+              )}
+
+              {activeTab === 'musicfinder' && (
+                <SmallMusicFinder />
               )}
 
               {activeTab === 'cheolmanvoice' && (
