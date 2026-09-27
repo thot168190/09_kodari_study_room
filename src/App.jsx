@@ -98,7 +98,7 @@ function App() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('tab') || 'studybook';
+    return params.get('tab') || 'musicfinder';
   });
 
   
@@ -903,11 +903,11 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
-            <button onClick={() => setActiveTab('studybook')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #18181b, #27272a)', color: '#fbbf24', borderColor: '#f59e0b', fontWeight: 900, boxShadow: '0 0 12px rgba(245, 158, 11, 0.4)' }}>📚 학습책·워크북 스튜디오</button>
-            <button onClick={() => setActiveTab('jarvis')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #0284c7, #38bdf8)', color: '#ffffff', borderColor: '#38bdf8', fontWeight: 900, boxShadow: '0 0 12px rgba(56, 189, 248, 0.4)' }}>🤖 나만의 자비스 (Hui 9B)</button>
+            <button onClick={() => setActiveTab('musicfinder')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #4338ca, #6366f1)', color: '#ffffff', borderColor: '#a5b4fc', fontWeight: 900, boxShadow: '0 0 16px rgba(99, 102, 241, 0.6)' }}>🔥 꿀통 음악 채널 발굴기</button>
+            <button onClick={() => setActiveTab('studybook')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #18181b, #27272a)', color: '#fbbf24', borderColor: '#f59e0b', fontWeight: 900 }}>📚 학습책·워크북 스튜디오</button>
+            <button onClick={() => setActiveTab('jarvis')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #0284c7, #38bdf8)', color: '#ffffff', borderColor: '#38bdf8', fontWeight: 900 }}>🤖 나만의 자비스 (Hui 9B)</button>
             <button onClick={() => setActiveTab('oxalpha')} className="quick-tool-btn niche" style={{ background: '#262522', color: '#da7756', borderColor: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
             <button onClick={() => setActiveTab('lerobot')} className="quick-tool-btn niche" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#c4b5fd', fontWeight: 900 }}>🦾 LeRobot 놀이터</button>
-            <button onClick={() => setActiveTab('musicfinder')} className="quick-tool-btn niche" style={{ background: '#312e81', color: '#c7d2fe', borderColor: '#818cf8', fontWeight: 900 }}>🎵 꿀통 음악 발굴기</button>
             <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
             <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
             <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
@@ -920,6 +920,12 @@ ${selectedNote.content}`
 
         {/* ROW 2: 대표님의 4대 명확한 대분류 탭 (정돈된 4 Pillar Row) */}
         <div className="header-row-2">
+          {/* 0. 🔥 현재 집중 도구 (꿀통 음악 발굴기) */}
+          <div className="pillar-group" style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: '#818cf8' }}>
+            <span className="pillar-tag" style={{ background: '#4338ca', color: '#fff' }}>🔥 핵심 발굴기</span>
+            <button className={`pillar-pill ${activeTab === 'musicfinder' ? 'active' : ''}`} onClick={() => setActiveTab('musicfinder')} style={{ color: activeTab === 'musicfinder' ? '#ffffff' : '#4338ca', fontWeight: 900, background: activeTab === 'musicfinder' ? '#4f46e5' : '#e0e7ff', borderColor: '#6366f1' }}>🎵 꿀통 음악 채널 발굴기 (철이 v2)</button>
+          </div>
+
           {/* 1. 🧠 AI 공부 */}
           <div className="pillar-group">
             <span className="pillar-tag">🧠 AI 공부</span>
@@ -936,7 +942,6 @@ ${selectedNote.content}`
           {/* 2. 📚 잉크워드 */}
           <div className="pillar-group">
             <span className="pillar-tag">📚 잉크워드</span>
-            <button className={`pillar-pill ${activeTab === 'musicfinder' ? 'active' : ''}`} onClick={() => setActiveTab('musicfinder')} style={{ color: '#818cf8', fontWeight: 900, background: activeTab === 'musicfinder' ? '#312e81' : '#f5f3ff', borderColor: '#818cf8' }}>🎵 꿀통 음악 발굴기 (철이 v2)</button>
             <button className={`pillar-pill ${activeTab === 'cheolmanvoice' ? 'active' : ''}`} onClick={() => setActiveTab('cheolmanvoice')} style={{ color: '#60a5fa', fontWeight: 800 }}>🎙️ 철만이 보이스</button>
             <button className={`pillar-pill ${activeTab === 'scenehub' ? 'active' : ''}`} onClick={() => setActiveTab('scenehub')}>🎬 제작허브</button>
             <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
