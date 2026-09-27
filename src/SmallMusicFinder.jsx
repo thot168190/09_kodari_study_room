@@ -21,6 +21,7 @@ export default function SmallMusicFinder() {
   const [apiKey, setApiKey] = useState(() => envKey || localStorage.getItem('YOUTUBE_API_KEY') || '');
   const [maxVideos, setMaxVideos] = useState(15);
   const [minSubs, setMinSubs] = useState(0); // 실제 하꼬 채널부터 대형까지 투명 필터
+  const [createdAfter, setCreatedAfter] = useState(''); // 채널 개설일 필터
   const [selectedKeywords, setSelectedKeywords] = useState(DEFAULT_KEYWORDS);
   const [newKeyword, setNewKeyword] = useState('');
   const [channels, setChannels] = useState(() => VERIFIED_CHANNELS);
