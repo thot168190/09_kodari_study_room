@@ -1,8 +1,8 @@
 /* ==========================================================================
    개인용 학습책·워크북 제작 스튜디오 (StudyBookStudio.css)
-   - 모바일 퍼스트 (390px) 완벽 대응
-   - 스타일 A(개념설명형 - 깜짝라이브 기준), B(교재형), C(실습형)
-   - PDF 인쇄 최적화 (@media print)
+   - 대표님 최우선: [링크 / 음성 / PDF / 글] 즉각 투입 히어로 UI
+   - 390px 모바일 완벽 대응 (화면 켜자마자 입력창이 최상단에 노출)
+   - 실제 브라우저 오디오 재생기 & PDF/URL 인터랙션
    ========================================================================== */
 
 :root {
@@ -28,10 +28,9 @@
   --sb-shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
 }
 
-/* 전체 컨테이너 */
 .studybook-studio {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 16px;
   background-color: #f7f6f2;
@@ -41,17 +40,17 @@
   min-height: 100vh;
 }
 
-/* 상단 헤더 */
+/* 상단 메인 헤더 */
 .sb-header {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 18px 20px;
   background: #ffffff;
   border-radius: var(--sb-radius-lg);
   border: 1px solid var(--sb-border-subtle);
   box-shadow: var(--sb-shadow-sm);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 @media (min-width: 768px) {
@@ -69,7 +68,7 @@
 }
 
 .sb-logo-badge {
-  background: var(--sb-ink-black);
+  background: #111111;
   color: #fff;
   padding: 6px 12px;
   border-radius: 6px;
@@ -80,14 +79,14 @@
 
 .sb-header-title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 21px;
+  font-weight: 900;
   color: var(--sb-ink-black);
 }
 
 .sb-header-subtitle {
-  margin: 2px 0 0 0;
-  font-size: 12px;
+  margin: 3px 0 0 0;
+  font-size: 13px;
   color: var(--sb-ink-muted);
 }
 
@@ -98,30 +97,96 @@
   flex-wrap: wrap;
 }
 
-/* JEV 토글 버튼 */
-.sb-jev-pill {
+/* ==========================================================================
+   🚀 최우선 배치: [자료 즉각 투입 히어로 드롭존]
+   대표님이 링크나 음성을 1초 만에 바로 넣을 수 있는 최상단 메인 영역
+   ========================================================================== */
+.sb-hero-dropzone-card {
+  background: #ffffff;
+  border-radius: var(--sb-radius-lg);
+  border: 2px solid #0284c7;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.12);
+  margin-bottom: 24px;
+}
+
+.sb-dropzone-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .sb-dropzone-tabs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.sb-tab-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 12px;
+  border-radius: var(--sb-radius-md);
+  border: 1px solid var(--sb-border-subtle);
+  background: #f8fafc;
+  font-size: 14px;
   font-weight: 700;
+  color: var(--sb-ink-gray);
   cursor: pointer;
-  border: 1px solid transparent;
   transition: all 0.2s ease;
 }
 
-.sb-jev-pill.active {
-  background: #fef3c7;
-  color: #b45309;
-  border-color: #f59e0b;
+.sb-tab-btn:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: var(--sb-primary);
 }
 
-.sb-jev-pill.inactive {
-  background: #f3f4f6;
-  color: #6b7280;
-  border-color: #d1d5db;
+.sb-tab-btn.active {
+  background: var(--sb-primary);
+  color: #ffffff;
+  border-color: var(--sb-primary);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.sb-tab-content-box {
+  background: #faf8f5;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--sb-radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 파일 업로드 드롭존 */
+.sb-file-drop-area {
+  border: 2px dashed #93c5fd;
+  background: #eff6ff;
+  border-radius: var(--sb-radius-md);
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sb-file-drop-area:hover {
+  background: #dbeafe;
+  border-color: #3b82f6;
+}
+
+/* 오디오 플레이어 커스텀 */
+.sb-audio-player-card {
+  background: #ffffff;
+  border: 1px solid var(--sb-border-subtle);
+  border-radius: var(--sb-radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* 스텝 진행 바 (1~8단계) */
@@ -192,24 +257,18 @@
   font-weight: 800;
 }
 
-/* 메인 작업 영역 레이아웃 */
+/* 메인 뷰어 및 사이드바 */
 .sb-workspace {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
 @media (min-width: 1024px) {
   .sb-workspace {
-    grid-template-columns: 360px 1fr;
+    display: grid;
+    grid-template-columns: 340px 1fr;
   }
-}
-
-/* 사이드 패널 (프로젝트 및 소스 목록) */
-.sb-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .sb-card {
@@ -230,7 +289,7 @@
   color: var(--sb-ink-black);
 }
 
-/* 자료 카드 목록 */
+/* 수집 자료 리스트 */
 .sb-source-list {
   display: flex;
   flex-direction: column;
@@ -245,12 +304,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  transition: all 0.2s;
-}
-
-.sb-source-card:hover {
-  border-color: var(--sb-border-strong);
-  box-shadow: var(--sb-shadow-sm);
 }
 
 .sb-source-badge-row {
@@ -293,31 +346,11 @@
   white-space: nowrap;
 }
 
-.sb-source-alert {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: #fff7ed;
-  color: #c2410c;
-  font-weight: 600;
-}
-
-/* 메인 콘텐츠 패널 */
-.sb-main-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 /* 폼 요소들 */
 .sb-form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
 }
 
 .sb-label {
@@ -328,7 +361,7 @@
 
 .sb-input, .sb-textarea, .sb-select {
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-radius: var(--sb-radius-sm);
   border: 1px solid var(--sb-border-subtle);
   background: #ffffff;
@@ -336,7 +369,6 @@
   color: var(--sb-ink-black);
   box-sizing: border-box;
   font-family: inherit;
-  transition: border-color 0.2s;
 }
 
 .sb-input:focus, .sb-textarea:focus, .sb-select:focus {
@@ -350,7 +382,7 @@
   min-height: 100px;
 }
 
-/* 버튼류 */
+/* 버튼 */
 .sb-btn {
   display: inline-flex;
   align-items: center;
@@ -398,7 +430,12 @@
   font-size: 12px;
 }
 
-/* 스타일 선택 바 (A / B / C / D / E) */
+.sb-btn-lg {
+  padding: 14px 24px;
+  font-size: 15px;
+}
+
+/* 스타일 선택 바 (A / B / C) */
 .sb-style-tabs {
   display: flex;
   gap: 8px;
@@ -452,7 +489,7 @@
 }
 
 /* ==========================================================================
-   전자책 뷰어 & 렌더링 프레임워크 (A4 비율 / 반응형)
+   전자책 뷰어 (A4 비율 / 반응형)
    ========================================================================== */
 .sb-book-preview-container {
   display: flex;
@@ -465,11 +502,10 @@
   min-height: 600px;
 }
 
-/* 개별 A4 책 페이지 */
 .sb-page-sheet {
   width: 100%;
-  max-width: 595px; /* A4 width */
-  min-height: 842px; /* A4 height */
+  max-width: 595px; /* A4 */
+  min-height: 842px;
   box-sizing: border-box;
   background: #ffffff;
   box-shadow: var(--sb-shadow-lg);
@@ -483,12 +519,12 @@
 
 @media (max-width: 480px) {
   .sb-page-sheet {
-    padding: 30px 20px;
+    padding: 28px 18px;
     min-height: auto;
   }
 }
 
-/* --- 스타일 A (개념 설명형: 깜짝라이브_챕터3.pdf 원형) --- */
+/* 스타일 A (개념 설명형: 깜짝라이브 기준) */
 .sb-theme-a {
   background-color: #faf9f5 !important;
   color: #111111;
@@ -581,7 +617,6 @@
   margin: 12px 0;
 }
 
-/* 스타일 A 전용 데이터 표 */
 .sb-theme-a .sb-table {
   width: 100%;
   border-collapse: collapse;
@@ -605,7 +640,6 @@
   color: #333333;
 }
 
-/* 푸터 (스타일 A) */
 .sb-theme-a .sb-page-footer {
   display: flex;
   justify-content: space-between;
@@ -619,69 +653,18 @@
   letter-spacing: 0.5px;
 }
 
-/* --- 스타일 B (교재형: Visme Academic) --- */
+/* 스타일 B (교재형) */
 .sb-theme-b {
   background-color: #ffffff !important;
   color: #0f172a;
   border-top: 8px solid #2563eb;
 }
 
-.sb-theme-b .sb-page-pill-badge {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 800;
-  margin-bottom: 16px;
-}
-
-.sb-theme-b .sb-page-h1 {
-  font-size: 24px;
-  font-weight: 800;
-  color: #1e3a8a;
-  margin-bottom: 12px;
-}
-
-.sb-theme-b .sb-academic-box {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
-  background: #f8fafc;
-}
-
-.sb-theme-b .sb-academic-box-title {
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #2563eb;
-  margin-bottom: 6px;
-}
-
-.sb-theme-b .sb-page-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 12px;
-  font-size: 11px;
-  color: #64748b;
-}
-
-/* --- 스타일 C (실습형: Online Workbook) --- */
+/* 스타일 C (실습형) */
 .sb-theme-c {
   background-color: #ffffff !important;
   color: #1e293b;
   border-left: 8px solid #059669;
-}
-
-.sb-theme-c .sb-page-h1 {
-  font-size: 22px;
-  font-weight: 800;
-  color: #065f46;
-  margin-bottom: 10px;
 }
 
 .sb-theme-c .sb-workbook-card {
@@ -698,134 +681,7 @@
   margin: 10px 0;
 }
 
-.sb-theme-c .sb-page-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 12px;
-  font-size: 11px;
-  color: #059669;
-}
-
-/* 출처 태그 뱃지 */
-.sb-cite-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  margin-left: 6px;
-  cursor: pointer;
-  vertical-align: middle;
-  transition: all 0.15s;
-}
-
-.sb-cite-badge:hover {
-  background: #dbeafe;
-}
-
-.sb-cite-badge.missing {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fca5a5;
-}
-
-.sb-ai-badge {
-  display: inline-block;
-  padding: 2px 6px;
-  background: #fef3c7;
-  color: #b45309;
-  border: 1px solid #fde68a;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  margin-left: 6px;
-}
-
-/* 이미지 설계표 전용 테이블 */
-.sb-matrix-table-wrapper {
-  overflow-x: auto;
-  border: 1px solid var(--sb-border-subtle);
-  border-radius: var(--sb-radius-md);
-  margin: 16px 0;
-}
-
-.sb-matrix-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  min-width: 720px;
-}
-
-.sb-matrix-table th {
-  background: #f4f3ef;
-  padding: 10px 12px;
-  font-weight: 700;
-  border-bottom: 1px solid var(--sb-border-subtle);
-  text-align: left;
-}
-
-.sb-matrix-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--sb-border-subtle);
-  vertical-align: top;
-}
-
-.sb-status-pill {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.sb-status-pill.approved { background: #dcfce7; color: #15803d; }
-.sb-status-pill.request { background: #fef3c7; color: #b45309; }
-.sb-status-pill.check { background: #fee2e2; color: #b91c1c; }
-
-/* JEV 실험실 대시보드 */
-.sb-jev-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.sb-jev-stat-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--sb-radius-md);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.sb-jev-stat-label {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.sb-jev-stat-value {
-  font-size: 20px;
-  font-weight: 900;
-  color: #0f172a;
-}
-
-.sb-jev-stat-diff {
-  font-size: 12px;
-  font-weight: 700;
-  color: #16a34a;
-}
-
-/* 법적 고지 배너 */
+/* 법적 배너 */
 .sb-legal-notice {
   background: #fffbeb;
   border: 1px solid #fef3c7;
@@ -835,103 +691,67 @@
   font-size: 13px;
   line-height: 1.5;
   color: #92400e;
-  margin: 20px 0;
+  margin: 16px 0;
 }
 
-.sb-legal-notice strong {
-  color: #78350f;
-}
-
-/* 모바일 390px 최적화 미디어 쿼리 */
+/* 모바일 390px 전용 미디어 쿼리 */
 @media (max-width: 480px) {
   .studybook-studio {
-    padding: 10px;
+    padding: 8px;
   }
-  
   .sb-header {
     padding: 12px 14px;
   }
-
   .sb-header-title {
     font-size: 17px;
   }
-
-  .sb-step-item {
+  .sb-hero-dropzone-card {
+    padding: 16px;
+  }
+  .sb-tab-btn {
+    padding: 10px 6px;
     font-size: 12px;
-    padding: 6px 10px;
   }
-
-  .sb-card {
-    padding: 14px;
-  }
-
-  .sb-style-tab {
-    min-width: 120px;
-    padding: 10px;
-  }
-
-  .sb-book-preview-container {
-    padding: 12px 6px;
-  }
-
-  .sb-theme-a .sb-page-h1 {
-    font-size: 21px;
-  }
-
   .sb-btn {
     padding: 8px 14px;
     font-size: 12px;
   }
+  .sb-page-sheet {
+    padding: 20px 14px;
+  }
+  .sb-theme-a .sb-page-h1 {
+    font-size: 20px;
+  }
 }
 
-/* ==========================================================================
-   인쇄 및 PDF 내보내기 최적화 (@media print)
-   ========================================================================== */
+/* 인쇄용 최적화 */
 @media print {
-  body {
-    background: #ffffff !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
   .sb-header,
+  .sb-hero-dropzone-card,
   .sb-step-bar-container,
   .sb-sidebar,
   .sb-controls,
-  .sb-nav-btns,
   .quick-toolbar,
   .header,
   .pillar-selector {
     display: none !important;
   }
-
   .studybook-studio,
-  .sb-workspace,
-  .sb-main-panel {
+  .sb-workspace {
     display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
-    background: #ffffff !important;
   }
-
   .sb-book-preview-container {
     background: transparent !important;
     padding: 0 !important;
-    gap: 0 !important;
   }
-
   .sb-page-sheet {
     page-break-after: always !important;
     break-after: page !important;
     box-shadow: none !important;
     border: none !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    height: 100% !important;
     min-height: 297mm !important;
     padding: 20mm !important;
-    margin: 0 !important;
   }
 }

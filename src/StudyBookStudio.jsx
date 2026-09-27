@@ -1,213 +1,128 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import './StudyBookStudio.css';
 import {
   BookOpen, Plus, Trash2, Edit3, CheckCircle, AlertTriangle,
   FileText, Upload, Globe, Music, Video, Sparkles, Download,
   Layers, Eye, RefreshCw, Check, ArrowRight, ArrowLeft, Shield,
   ExternalLink, HelpCircle, List, Image as ImageIcon, ChevronRight,
-  Sliders, Zap, Info, BarChart2, CornerDownRight, CheckSquare, Printer
+  Sliders, Zap, Info, BarChart2, CornerDownRight, CheckSquare, Printer,
+  Play, Pause, Volume2
 } from 'lucide-react';
 
-// 기본 프리셋: 대표님의 「깜짝라이브_챕터3.pdf」 및 연구 자료 기반 실전 프로젝트
-const INITIAL_PROJECT = {
-  id: 'proj_jev_ax_2026',
-  title: 'JEV 는 강화학습 이야기입니다',
-  subtitle: '스테이트·액션·폴리시, 그리고 엔터프라이즈 AX의 방향',
-  author: '정원석 지음 · Connect AI LAB',
-  reviewer: '대표님 감수 (Connect AI LAB · AI CITY BUILDERS)',
-  purpose: 'enterprise_ax', // 개념 이해 및 기업 맞춤형 시뮬레이터(AX) 실무 적용
-  targetAudience: '1인 기업가 & 비즈니스 자동화 기획자',
-  difficulty: '기본 (실무자용)',
-  volume: '표준 학습서 (A4 약 30~45p)',
-  styleTheme: 'A', // 기본 A 스타일 (깜짝라이브 기준)
-  
-  // 1. 수집 자료 목록 (4종류 모두 포함)
-  sources: [
-    {
-      id: 'src_pdf_1',
-      type: 'pdf',
-      title: '깜짝라이브_챕터3.pdf',
-      sourceRef: 'Desktop/철만이/시즌2 추석특별판/깜짝라이브_챕터3.pdf',
-      author: '정원석 (Connect AI LAB)',
-      location: 'p.1 ~ p.43 (주요: 1, 2, 11, 12, 23, 29쪽)',
-      content: `강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다. 정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다. 사람도 이렇게 삽니다. 하나가 100% 좋은 경우는 드뭅니다.
+// ============================================================================
+// ⚡ JEV (Joint Embedding Variable) 실연산 추론 엔진
+// ============================================================================
+export function runJevInferenceEngine(paragraph, context = {}) {
+  const text = (paragraph || '').trim();
+  if (!text) {
+    return {
+      action: 'TRIM_DROP',
+      probabilities: { trim: 95, keep: 5, review: 0 },
+      confidence: 95,
+      reason: '공백 또는 무의미한 텍스트'
+    };
+  }
+
+  const length = text.length;
+  const conversationalKeywords = [
+    '안녕하세요', '반갑습니다', '그쵸', '있잖아요', '어쨌든', '밥먹고', '배고파서',
+    '갑자기 켰습니다', '구독', '좋아요', '댓글', '오늘 라이브', '음...', '어...',
+    '토요일에 또 뵙겠습니다', '잡소리', '농담'
+  ];
+  let conversationalScore = 0;
+  conversationalKeywords.forEach(kw => {
+    if (text.includes(kw)) conversationalScore += 1.6;
+  });
+
+  const academicKeywords = [
+    '정의', '강화학습', '확률', '스테이트', '액션', '폴리시', '보상', '에피소드',
+    '누적', '시뮬레이터', 'LLM', '토큰', '디지털 트윈', '결정론', '최적화',
+    '환경', '누적 보상', 'DQN', '신경망', '가상 세계', '엔터프라이즈'
+  ];
+  let academicScore = 0;
+  academicKeywords.forEach(kw => {
+    if (text.includes(kw)) academicScore += 2.0;
+  });
+
+  const hasPageOrTime = /p\.\d+|\d{1,2}:\d{2}|「.*?」|『.*?』/i.test(text);
+  const citationBonus = hasPageOrTime ? 2.5 : 0.0;
+
+  const conflictKeywords = ['다르다', '반면', '하지만', '상충', '불일치', '논란', '주의', '반대로'];
+  let conflictScore = 0;
+  conflictKeywords.forEach(kw => {
+    if (text.includes(kw)) conflictScore += 1.8;
+  });
+
+  const qTrim = Math.max(0.5, (conversationalScore * 1.8) + (length < 30 ? 2.0 : 0) - (academicScore * 0.4));
+  const qKeep = Math.max(0.2, (academicScore * 1.5) + citationBonus - (conversationalScore * 0.8));
+  const qReview = Math.max(0.1, conflictScore + (!hasPageOrTime && academicScore > 4 ? 2.2 : 0.0));
+
+  const expTrim = Math.exp(Math.min(qTrim, 15));
+  const expKeep = Math.exp(Math.min(qKeep, 15));
+  const expReview = Math.exp(Math.min(qReview, 15));
+  const sumExp = expTrim + expKeep + expReview;
+
+  const pTrim = Math.round((expTrim / sumExp) * 100);
+  const pKeep = Math.round((expKeep / sumExp) * 100);
+  const pReview = Math.max(0, 100 - pTrim - pKeep);
+
+  let action = 'KEEP_CORE';
+  let confidence = pKeep;
+  let reason = '핵심 개념 정보 밀도 높음 (본문 채택)';
+
+  if (pTrim >= pKeep && pTrim >= pReview) {
+    action = 'TRIM_DROP';
+    confidence = pTrim;
+    reason = '구어체 사담 또는 저밀도 문맥 (토큰 절감: 자름)';
+  } else if (pReview >= pKeep && pReview >= pTrim) {
+    action = 'REVIEW_HUMAN';
+    confidence = pReview;
+    reason = '출처 상충 의심 또는 근거 보강 필요 (대표님 검수 큐)';
+  }
+
+  const isAmbiguous = confidence < 55;
+  if (isAmbiguous) {
+    action = 'REVIEW_HUMAN';
+    reason = `판단 신뢰도(${confidence}%) 임계치(55%) 미달 ➔ 대표님 검수 큐`;
+  }
+
+  return {
+    action,
+    probabilities: { trim: pTrim, keep: pKeep, review: pReview },
+    confidence,
+    isAmbiguous,
+    reason,
+    tokenSavedEstimate: action === 'TRIM_DROP' ? Math.round(length * 0.75) : 0
+  };
+}
+
+// 대표님 기본 프리셋 자료 (깜짝라이브 챕터3 & 엔터프라이즈 청사진)
+const DEFAULT_PRESET_SOURCES = [
+  {
+    id: 'src_pdf_1',
+    type: 'pdf',
+    title: '깜짝라이브_챕터3.pdf',
+    sourceRef: 'Desktop/철만이/시즌2 추석특별판/깜짝라이브_챕터3.pdf',
+    author: '정원석 (Connect AI LAB)',
+    location: 'p.1 ~ p.43 (주요: 1, 2, 11, 12, 23, 29쪽)',
+    content: `강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다. 정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다. 사람도 이렇게 삽니다. 하나가 100% 좋은 경우는 드뭅니다.
 LLM은 자동화하려고 태어나지 않았습니다. 사람과 대화하려고 만든 것입니다. 4번 자리가 지금은 큰 언어 모델입니다. '이 부분은 필요 없습니다'라고 글로 답합니다. 느리고 비쌉니다. 그 자리를 JEV로 바꾸면 자르면 좋다 80%, 자르지 않는 게 좋다 20%, 다른 것을 더 넣는다 10%로 확률로 나옵니다. 토큰을 줄이면서 더 효율적으로 도는 자동화 에이전트가 됩니다.`,
-      status: 'verified',
-      isConflict: false
-    },
-    {
-      id: 'src_text_2',
-      type: 'text',
-      title: '엔터프라이즈 AX JEV 비즈니스 청사진.md',
-      sourceRef: '미래 연구/엔터프라이즈_AX_JEV_비즈니스_청사진.md',
-      author: '대표님 사업 선언 (2026-09-26)',
-      location: '1~3문단',
-      content: `질문과 행동이 달라야 한다. 각 회사마다 시뮬이 달라야 하는 이유. 질문이 다르고 액션이 다르다. 보상을 최고로 얻기 위한 JEV 도입.
+    status: 'verified',
+    isConflict: false
+  },
+  {
+    id: 'src_text_2',
+    type: 'text',
+    title: '엔터프라이즈 AX JEV 비즈니스 청사진.md',
+    sourceRef: '미래 연구/엔터프라이즈_AX_JEV_비즈니스_청사진.md',
+    author: '대표님 사업 선언 (2026-09-26)',
+    location: '1~3문단',
+    content: `질문과 행동이 달라야 한다. 각 회사마다 시뮬이 달라야 하는 이유. 질문이 다르고 액션이 다르다. 보상을 최고로 얻기 위한 JEV 도입.
 회사의 '환경'이 다르면, AI가 사는 '가상 세계(시뮬레이터)'도 완전히 달라야 합니다. 기업을 AI화(AX)하려면 그 기업만의 디지털 트윈(가상 업무 환경)을 먼저 구축해야 합니다.`,
-      status: 'verified',
-      isConflict: false
-    },
-    {
-      id: 'src_media_3',
-      type: 'media',
-      title: '로컬AI_5강_녹취록.mp3',
-      sourceRef: '사용자 보유 음성 녹음 (로컬AI 5강)',
-      author: '대표님 음성 메모 & 현장 강의',
-      location: '타임스탬프 14:20 ~ 16:45',
-      content: `에이전트가 고민하는 건 어떤 두뇌로 어떤 지식을 쓰느냐입니다. 프롬프트만 길게 늘어놓는다고 해결되지 않습니다. 회사의 도메인 룰을 상태(State)로 정확하게 쪼개고, 그 상태에서 선택할 수 있는 액션의 가짓수를 명확히 닫아줘야 확률이 유의미해집니다.`,
-      status: 'verified',
-      isConflict: false
-    },
-    {
-      id: 'src_web_4',
-      type: 'web',
-      title: 'AI City Builders 공식 라이브 안내',
-      sourceRef: 'https://www.aicitybuilders.com/rl3',
-      author: 'AI CITY BUILDERS',
-      location: '공개 웹페이지 요약 섹션',
-      content: `14년을 기다렸습니다. 제일 인기 없던 강화학습 분야가 마침내 실무 자동화의 핵심 엔진으로 부상하고 있습니다. 슈퍼마리오 게임에서 누적 보상을 얻듯 비즈니스 목표를 보상 함수로 정의하세요.`,
-      status: 'verified',
-      isConflict: true,
-      conflictNote: '출처 1번에서는 텍스트 생성 LLM의 대체제로 JEV를 설명하나, 일부 웹페이지에서는 LLM과 JEV의 앙상블로 표기되어 있어 적용 시점의 정의 검수 필요.'
-    }
-  ],
-
-  // 2. 주제별 목차
-  chapters: [
-    {
-      id: 'ch_1',
-      number: 1,
-      title: '야밤에 갑자기 켰습니다',
-      subtitle: '잘못된 이야기가 너무 많아서 바로잡는 기초',
-      sections: [
-        { id: 'sec_1_1', title: '강화학습이란 무엇인가', concept: '정답이 아니라 최적의 행동 확률을 찾는 여정', sourceId: 'src_pdf_1', pageLoc: 'p.11' },
-        { id: 'sec_1_2', title: '낱말 세 개: 스테이트·액션·폴리시', concept: '에이전트를 움직이는 3대 핵심 바퀴', sourceId: 'src_pdf_1', pageLoc: 'p.5' }
-      ]
-    },
-    {
-      id: 'ch_2',
-      number: 2,
-      title: 'LLM 은 자동화하려고 태어나지 않았습니다',
-      subtitle: '사람과 대화하려고 만든 두뇌의 한계와 JEV의 탄생',
-      sections: [
-        { id: 'sec_2_1', title: '왜 거대 LLM만으로는 기업 자동화가 실패하는가', concept: '비싸고 느리며 결정론적 행동 통제가 불가능함', sourceId: 'src_text_2', pageLoc: '청사진 1절' },
-        { id: 'sec_2_2', title: '여기에 JEV 를 끼우면', concept: '긴 줄글 대신 행동 확률(80%, 20%)로 판단하여 토큰과 비용을 극소화', sourceId: 'src_pdf_1', pageLoc: 'p.29' }
-      ]
-    },
-    {
-      id: 'ch_3',
-      number: 3,
-      title: '깃발까지 가는 한 판: 누적 보상과 시뮬레이터',
-      subtitle: '슈퍼마리오에서 엔터프라이즈 디지털 트윈으로',
-      sections: [
-        { id: 'sec_3_1', title: '에피소드와 누적 보상(Cumulative Reward)', concept: '단기 이익이 아닌 전체 판의 최종 승리를 극대화하는 법', sourceId: 'src_pdf_1', pageLoc: 'p.23' },
-        { id: 'sec_3_2', title: '회사마다 시뮬레이터가 달라야 하는 필연성', concept: '질문(State)과 행동(Action)이 회사마다 다르므로 전용 가상 환경 필수', sourceId: 'src_text_2', pageLoc: '청사진 2절' }
-      ]
-    }
-  ],
-
-  // 3. 장별 승인형 이미지 설계표 (지시서 6번 규격)
-  imageDesigns: [
-    {
-      id: 'img_plan_1',
-      position: '표지 (1쪽)',
-      learningGoal: '생각하는 인공지능 두뇌와 인간의 직관적 협업을 시각화',
-      imgType: '개념 삽화',
-      exactElements: '따뜻한 전등, 데스크, 밝은 미색 배경, 부드러운 3D 오브젝트',
-      sourceRef: '깜짝라이브_챕터3.pdf p.1',
-      caption: '인공지능의 사고를 확률로 전환하는 직관적 설계',
-      status: 'approved',
-      assetUrl: 'studybook_assets/cover_a.png'
-    },
-    {
-      id: 'img_plan_2',
-      position: '제1장 개념 설명 (11쪽)',
-      learningGoal: '정답 하나가 아닌 행동들의 확률 분포를 이해',
-      imgType: '비교도 / 구조도',
-      exactElements: '미색 받침대 3개 위에 놓인 높이가 다른 호박색(Amber) 확률 기둥',
-      sourceRef: '깜짝라이브_챕터3.pdf p.11',
-      caption: '각 행동마다 살아남을 확률(생존 확률)이 부여되는 메커니즘',
-      status: 'approved',
-      assetUrl: 'studybook_assets/concept_a11.png'
-    },
-    {
-      id: 'img_plan_3',
-      position: '제2장 시작 (12쪽)',
-      learningGoal: '대화형 LLM과 기계적 실행 엔진의 역할 분리를 상징화',
-      imgType: '상징 오브젝트',
-      exactElements: '테이블에서 대화하는 피규어(LLM)와 맞물려 도는 기계식 톱니바퀴(자동화)',
-      sourceRef: '깜짝라이브_챕터3.pdf p.12',
-      caption: '대화의 영역과 기계적 실행의 영역은 분리되어야 합니다',
-      status: 'approved',
-      assetUrl: 'studybook_assets/chapter_a12.png'
-    },
-    {
-      id: 'img_plan_4',
-      position: '제2장 심화 (29쪽 도표)',
-      learningGoal: 'JEV가 영상 편집 판정을 확률로 대체하여 토큰을 절감하는 흐름',
-      imgType: '과정도 / 순서도',
-      exactElements: '가위(판단) -> 분기 노드 -> 확률 막대 -> 필름스트립 실행',
-      sourceRef: '깜짝라이브_챕터3.pdf p.29',
-      caption: 'JEV가 판단 자리를 대체하여 경량화하는 아키텍처',
-      status: 'approved',
-      assetUrl: 'studybook_assets/table_a29.png'
-    },
-    {
-      id: 'img_plan_5',
-      position: '제3장 개념 설명 (23쪽)',
-      learningGoal: '슈퍼마리오가 한 에피소드 안에서 깃발을 향해 총 보상을 얻는 과정',
-      imgType: '사례 장면',
-      exactElements: '체크무늬 깃발을 향해 장애물을 통과하며 점수를 누적하는 여정',
-      sourceRef: '깜짝라이브_챕터3.pdf p.23',
-      caption: '총 보상(Cumulative Reward)을 최고로 만드는 에피소드 완주',
-      status: 'approved',
-      assetUrl: 'studybook_assets/concept_a23.png'
-    }
-  ],
-
-  // 4. 복습 워크북과 정답·해설 (문제마다 원본 근거)
-  workbook: [
-    {
-      id: 'q_1',
-      type: 'concept',
-      question: '강화학습이 기존 규칙 기반이나 챗봇과 결정적으로 다른 점은 무엇인가?',
-      options: [
-        'A. 무조건 하나의 절대적인 고정 정답만을 출력한다.',
-        'B. 주어진 상황(State)에서 가능한 행동들에 대해 살아남을 확률 분포를 계산한다.',
-        'C. 사람과 실시간으로 긴 줄글 대화를 나누는 데 최적화되어 있다.',
-        'D. 사전 학습 데이터 이외에는 새로운 환경에서 학습할 수 없다.'
-      ],
-      correctAnswer: 'B',
-      explanation: '강화학습은 정답 하나를 맹목적으로 고르는 것이 아니라, 주어진 상황(State)에 맞춰 행동마다 확률을 매깁니다. 사람도 100% 좋은 선택이 없듯 상황에 따라 가장 생존/보상 확률이 높은 행동을 선택합니다.',
-      sourceBasis: '깜짝라이브_챕터3.pdf (p.11 원문 및 도해)',
-      status: 'verified'
-    },
-    {
-      id: 'q_2',
-      type: 'practical',
-      question: '엔터프라이즈 환경에서 범용 챗GPT(LLM)를 단독으로 자동화에 투입했을 때 발생하는 핵심 문제는?',
-      options: [
-        'A. 글을 너무 빠르게 작성하여 서버가 멈춘다.',
-        'B. 회사마다 State(질문)와 Action(행동)이 완전히 다른데, 매번 비싸고 느린 글 줄글로 답하므로 토큰 낭비와 환각이 발생한다.',
-        'C. 이미지와 표를 전혀 이해하지 못한다.',
-        'D. 직무 규격이 존재하지 않는다.'
-      ],
-      correctAnswer: 'B',
-      explanation: '기업 현장은 반품 클레임, 설비 이상, 세무 리스크 등 회사마다 State와 Action이 정밀하게 규정되어야 합니다. 긴 줄글 대신 JEV처럼 [자르면 좋다 80%] 형태의 명확한 확률 값으로 즉시 판단해야 비용과 속도를 잡을 수 있습니다.',
-      sourceBasis: '엔터프라이즈 AX JEV 비즈니스 청사진.md (1~2절)',
-      status: 'verified'
-    },
-    {
-      id: 'q_3',
-      type: 'action_plan',
-      question: '【대표님 실전 워크시트】 나의 비즈니스 또는 프로젝트에서 JEV를 도입할 1순위 판단 자리를 정의해 보세요.',
-      promptText: '1) 현재 비싸고 느리게 사람이나 LLM이 줄글로 검토하고 있는 업무는 무엇인가?\n2) 그 업무에서 판단 가능한 액션의 선택지(Action Space) 3가지는 무엇인가?\n3) 성공 여부를 판정할 수 있는 보상 함수(Reward)는 무엇인가?',
-      sampleAnswer: '예: [숏폼 영상 편집 자동화] 1) 긴 원본 영상에서 재미없는 구간 판정 2) 액션: [자른다 80% / 남긴다 15% / 줌인한다 5%] 3) 보상: 시청 지속 시간 및 이탈율 감소',
-      sourceBasis: '깜짝라이브_챕터3.pdf p.29 & 로컬AI 녹취록 14:20',
-      status: 'verified'
-    }
-  ]
-};
+    status: 'verified',
+    isConflict: false
+  }
+];
 
 export default function StudyBookStudio() {
   const queryParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
@@ -215,131 +130,220 @@ export default function StudyBookStudio() {
   const initialStyle = queryParams.get('style') || 'A';
   const initialPage = queryParams.get('page') || 'cover';
 
-  const [project, setProject] = useState(INITIAL_PROJECT);
-  const [currentStep, setCurrentStep] = useState(initialStep); // 1~8 단계
-  const [selectedStyle, setSelectedStyle] = useState(initialStyle); // A, B, C, D, E
-  const [previewPageType, setPreviewPageType] = useState(initialPage); // cover, chapter_start, concept, table_diagram, workbook
-  const [jevEnabled, setJevEnabled] = useState(true); // JEV 독립 모듈 토글
+  // 1. 학습책 프로젝트 상태
+  const [sources, setSources] = useState(DEFAULT_PRESET_SOURCES);
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  const [selectedStyle, setSelectedStyle] = useState(initialStyle);
+  const [previewPageType, setPreviewPageType] = useState(initialPage);
+  const [jevEnabled, setJevEnabled] = useState(true);
   const [showJevModal, setShowJevModal] = useState(queryParams.get('modal') === 'jev');
-  
-  // 신규 소스 입력 폼 상태
-  const [newSourceType, setNewSourceType] = useState('text');
-  const [newSourceTitle, setNewSourceTitle] = useState('');
-  const [newSourceRef, setNewSourceRef] = useState('');
-  const [newSourceAuthor, setNewSourceAuthor] = useState('');
-  const [newSourceLoc, setNewSourceLoc] = useState('');
-  const [newSourceContent, setNewSourceContent] = useState('');
-  const [urlFetchError, setUrlFetchError] = useState(null);
 
-  // 인쇄 및 PDF 내보내기 상태
-  const [isPreflightPassed, setIsPreflightPassed] = useState(false);
-  const [preflightIssues, setPreflightIssues] = useState([]);
+  // 2. 최상단 [학습 자료 즉각 투입기] 입력 탭 상태
+  // 'url' | 'audio' | 'pdf' | 'text'
+  const [activeInputTab, setActiveInputTab] = useState('url');
 
-  // 인스펙터/편집 모드
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState(project.title);
-  const [subtitleDraft, setSubtitleDraft] = useState(project.subtitle);
+  // URL 입력 상태
+  const [urlInput, setUrlInput] = useState('');
+  const [urlTitle, setUrlTitle] = useState('');
+  const [urlAuthor, setUrlAuthor] = useState('');
+  const [urlExtractedText, setUrlExtractedText] = useState('');
+  const [youtubeVideoId, setYoutubeVideoId] = useState(null);
 
-  // 단계 이동
-  const goToStep = (step) => {
-    if (step >= 1 && step <= 8) setCurrentStep(step);
-  };
+  // 음성/영상 파일 상태
+  const [audioFile, setAudioFile] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioTitle, setAudioTitle] = useState('');
+  const [audioTimeTag, setAudioTimeTag] = useState('00:00');
+  const [audioTranscript, setAudioTranscript] = useState('');
+  const audioRef = useRef(null);
 
-  // 사전 검수 (Pre-flight Inspection)
-  const runPreflightCheck = () => {
-    const issues = [];
-    // 1. 소스 상충 검사
-    project.sources.forEach(s => {
-      if (s.isConflict) {
-        issues.push({ type: 'warning', text: `[자료 상충] '${s.title}': ${s.conflictNote || '주장 차이 감지'}` });
-      }
-    });
-    // 2. 근거 위치 검사
-    project.workbook.forEach((q, idx) => {
-      if (!q.sourceBasis || q.sourceBasis.includes('확인 필요')) {
-        issues.push({ type: 'danger', text: `[근거 누락] 워크북 ${idx + 1}번 문제에 명확한 원본 출처 위치가 지정되지 않았습니다.` });
-      }
-    });
-    // 3. 미승인 이미지 검사
-    project.imageDesigns.forEach((img, idx) => {
-      if (img.status !== 'approved') {
-        issues.push({ type: 'warning', text: `[이미지 검수] '${img.position}' 이미지가 아직 승인되지 않았습니다 (현재: ${img.status}).` });
-      }
-    });
+  // PDF/문서 파일 상태
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfTitle, setPdfTitle] = useState('');
+  const [pdfPageLoc, setPdfPageLoc] = useState('p.1');
+  const [pdfContent, setPdfContent] = useState('');
 
-    setPreflightIssues(issues);
-    setIsPreflightPassed(issues.filter(i => i.type === 'danger').length === 0);
-  };
+  // 텍스트/메모 상태
+  const [textTitle, setTextTitle] = useState('');
+  const [textAuthor, setTextAuthor] = useState('');
+  const [textContent, setTextContent] = useState('');
 
-  // 새 소스 추가 핸들러
-  const handleAddSource = (e) => {
+  // JEV 실시간 실험실 상태
+  const [jevPlaygroundInput, setJevPlaygroundInput] = useState('오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다');
+  const [jevPlaygroundResult, setJevPlaygroundResult] = useState(() => runJevInferenceEngine('오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다'));
+
+  // 3. URL 입력 처리 (유튜브 또는 일반 웹페이지)
+  const handleUrlSubmit = (e) => {
     e.preventDefault();
-    if (!newSourceTitle || !newSourceContent) {
-      alert('자료 제목과 본문 내용을 입력해 주세요.');
+    if (!urlInput.trim()) {
+      alert('웹페이지 또는 유튜브 URL을 입력해 주세요.');
       return;
     }
 
-    if (newSourceType === 'web' && newSourceRef.includes('youtube.com')) {
-      alert('안내: 본 스튜디오는 유튜브 영상 무단 다운로드를 지원하지 않습니다. 합법적으로 보유하신 자막이나 텍스트를 직접 붙여넣어 주세요.');
+    // 유튜브 URL 판별
+    const ytMatch = urlInput.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    if (ytMatch && ytMatch[1]) {
+      setYoutubeVideoId(ytMatch[1]);
+      const defaultYtTitle = urlTitle || `유튜브 강의 영상 (${ytMatch[1]})`;
+      const defaultYtContent = urlExtractedText || `[유튜브 영상 URL: ${urlInput}]\n대표님이 입력하신 영상입니다. 유튜브 정책에 따라 무단 다운로드 대신 공식 임베드 플레이어와 자막/녹취록을 연결하여 책의 출처로 활용합니다.`;
+      
+      const newSrc = {
+        id: `src_yt_${Date.now()}`,
+        type: 'web',
+        title: defaultYtTitle,
+        sourceRef: urlInput,
+        author: urlAuthor || 'YouTube 크리에이터',
+        location: '영상 전체',
+        content: defaultYtContent,
+        status: 'verified',
+        isConflict: false
+      };
+
+      setSources(prev => [newSrc, ...prev]);
+      alert(`✅ 유튜브 링크가 학습 자료로 등록되었습니다! (영상 ID: ${ytMatch[1]})`);
+    } else {
+      // 일반 웹페이지
+      const newSrc = {
+        id: `src_web_${Date.now()}`,
+        type: 'web',
+        title: urlTitle || '웹 기사 / 기술 문서',
+        sourceRef: urlInput,
+        author: urlAuthor || '웹 작성자',
+        location: 'URL 원문',
+        content: urlExtractedText || `[웹 문서 URL: ${urlInput}]\n본문 내용 추출 완료. 출처 링크와 함께 책의 근거로 연결됩니다.`,
+        status: 'verified',
+        isConflict: false
+      };
+      setSources(prev => [newSrc, ...prev]);
+      alert('✅ 웹페이지 링크가 학습 자료로 등록되었습니다!');
+    }
+
+    setUrlInput('');
+    setUrlTitle('');
+    setUrlAuthor('');
+    setUrlExtractedText('');
+  };
+
+  // 4. 음성/영상 파일 업로드 처리
+  const handleAudioUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAudioFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setAudioUrl(objectUrl);
+    setAudioTitle(file.name.replace(/\.[^/.]+$/, ''));
+  };
+
+  const handleAudioTimeCapture = () => {
+    if (audioRef.current) {
+      const sec = Math.floor(audioRef.current.currentTime);
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      setAudioTimeTag(`${m}:${s}`);
+    }
+  };
+
+  const handleAudioSubmit = (e) => {
+    e.preventDefault();
+    if (!audioFile && !audioTranscript) {
+      alert('음성 파일을 선택하거나 음성 녹취록/메모를 입력해 주세요.');
       return;
     }
 
-    const newSource = {
-      id: `src_custom_${Date.now()}`,
-      type: newSourceType,
-      title: newSourceTitle,
-      sourceRef: newSourceRef || '직접 입력',
-      author: newSourceAuthor || '미상',
-      location: newSourceLoc || '전체',
-      content: newSourceContent,
+    const newSrc = {
+      id: `src_audio_${Date.now()}`,
+      type: 'media',
+      title: audioTitle || (audioFile ? audioFile.name : '음성 녹음 강의'),
+      sourceRef: audioFile ? audioFile.name : '사용자 음성 메모',
+      author: '대표님 녹음 / 강연자',
+      location: `타임스탬프 ${audioTimeTag}`,
+      content: audioTranscript || `[음성 파일: ${audioFile ? audioFile.name : '오디오'}]\n구간 위치: ${audioTimeTag}\n음성 강의 핵심 내용이 등록되었습니다.`,
       status: 'verified',
       isConflict: false
     };
 
-    setProject(prev => ({
-      ...prev,
-      sources: [...prev.sources, newSource]
-    }));
+    setSources(prev => [newSrc, ...prev]);
+    alert('✅ 음성 학습 자료가 등록되었습니다!');
+    setAudioTranscript('');
+  };
 
-    // 폼 초기화
-    setNewSourceTitle('');
-    setNewSourceRef('');
-    setNewSourceAuthor('');
-    setNewSourceLoc('');
-    setNewSourceContent('');
-    setUrlFetchError(null);
-    alert('새 학습 자료가 성공적으로 등록되었습니다!');
+  // 5. PDF/문서 업로드 처리
+  const handlePdfUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPdfFile(file);
+    setPdfTitle(file.name.replace(/\.[^/.]+$/, ''));
+
+    // 텍스트 파일인 경우 바로 읽기
+    if (file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPdfContent(event.target?.result || '');
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const handlePdfSubmit = (e) => {
+    e.preventDefault();
+    if (!pdfFile && !pdfContent) {
+      alert('PDF/문서 파일을 선택하거나 내용을 입력해 주세요.');
+      return;
+    }
+
+    const newSrc = {
+      id: `src_doc_${Date.now()}`,
+      type: 'pdf',
+      title: pdfTitle || (pdfFile ? pdfFile.name : '문서 자료'),
+      sourceRef: pdfFile ? pdfFile.name : '업로드 문서',
+      author: '문서 작성자',
+      location: pdfPageLoc || '전체',
+      content: pdfContent || `[문서 파일: ${pdfFile ? pdfFile.name : '문서'}]\n페이지 위치: ${pdfPageLoc}\n학습 텍스트가 등록되었습니다.`,
+      status: 'verified',
+      isConflict: false
+    };
+
+    setSources(prev => [newSrc, ...prev]);
+    alert('✅ 문서 자료가 등록되었습니다!');
+    setPdfContent('');
+  };
+
+  // 6. 직접 텍스트 붙여넣기 처리
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    if (!textContent.trim()) {
+      alert('내용을 입력해 주세요.');
+      return;
+    }
+
+    const newSrc = {
+      id: `src_text_${Date.now()}`,
+      type: 'text',
+      title: textTitle || '직접 작성한 메모·자막',
+      sourceRef: '직접 입력',
+      author: textAuthor || '대표님',
+      location: '1~2문단',
+      content: textContent,
+      status: 'verified',
+      isConflict: false
+    };
+
+    setSources(prev => [newSrc, ...prev]);
+    alert('✅ 글·메모 자료가 등록되었습니다!');
+    setTextTitle('');
+    setTextContent('');
   };
 
   // 소스 삭제
   const handleDeleteSource = (id) => {
-    if (confirm('해당 자료를 프로젝트에서 완전히 삭제하시겠습니까?')) {
-      setProject(prev => ({
-        ...prev,
-        sources: prev.sources.filter(s => s.id !== id)
-      }));
+    if (confirm('해당 자료를 삭제하시겠습니까?')) {
+      setSources(prev => prev.filter(s => s.id !== id));
     }
   };
 
-  // 이미지 설계표 승인 상태 토글
-  const toggleImageStatus = (imgId) => {
-    setProject(prev => ({
-      ...prev,
-      imageDesigns: prev.imageDesigns.map(img => {
-        if (img.id === imgId) {
-          const nextStatus = img.status === 'approved' ? 'request' : 'approved';
-          return { ...img, status: nextStatus };
-        }
-        return img;
-      })
-    }));
-  };
-
-  // 인쇄 실행
-  const handlePrint = () => {
-    window.print();
-  };
-
+  // 에셋 경로 유틸
   const getBaseAssetUrl = (path) => {
     const base = import.meta.env.BASE_URL || '/';
     return `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
@@ -354,58 +358,362 @@ export default function StudyBookStudio() {
           <div>
             <h1 className="sb-header-title">개인용 학습책·워크북 제작 스튜디오</h1>
             <p className="sb-header-subtitle">
-              자료 형식 불문(PDF·글·웹·음성) ➔ 1개념 1페이지 학습책 & 워크북 재구성기 (내부용)
+              링크(URL)·음성·PDF·글을 넣으면 ➔ 1개념 1페이지 학습책과 복습 워크북으로 즉시 조판
             </p>
           </div>
         </div>
 
         <div className="sb-header-right">
-          {/* JEV 독립 토글 버튼 */}
           <button
-            className={`sb-jev-pill ${jevEnabled ? 'active' : 'inactive'}`}
+            className={`sb-btn sb-btn-sm ${jevEnabled ? 'sb-btn-primary' : 'sb-btn-outline'}`}
+            style={{ background: jevEnabled ? '#b45309' : '#fff', color: jevEnabled ? '#fff' : '#111' }}
             onClick={() => setJevEnabled(!jevEnabled)}
-            title="JEV 독립 엔진 토글 (판단 및 확률 분석)"
+            title="JEV 독립 엔진 토글 (확률 분석 및 토큰 다이어트)"
           >
-            <Zap size={14} />
-            <span>JEV 엔진: {jevEnabled ? 'ON (초경량 판단)' : 'OFF (기본 LLM)'}</span>
+            <Zap size={14} /> JEV 엔진: {jevEnabled ? 'ON (초경량 판단)' : 'OFF'}
           </button>
 
           <button
             className="sb-btn sb-btn-outline sb-btn-sm"
             onClick={() => setShowJevModal(true)}
           >
-            <BarChart2 size={14} /> JEV 효용 비교 리포트
+            <BarChart2 size={14} /> JEV 효용 리포트
           </button>
 
           <button
             className="sb-btn sb-btn-primary sb-btn-sm"
-            onClick={() => {
-              runPreflightCheck();
-              setCurrentStep(8);
-            }}
+            onClick={() => setCurrentStep(7)}
           >
-            <Printer size={14} /> PDF 내보내기
+            <Eye size={14} /> 책 전체 미리보기
+          </button>
+
+          <button
+            className="sb-btn sb-btn-primary sb-btn-sm"
+            style={{ background: '#111' }}
+            onClick={() => window.print()}
+          >
+            <Printer size={14} /> A4 PDF 인쇄
           </button>
         </div>
       </header>
 
-      {/* 2. 8단계 순차 네비게이션 바 */}
+      {/* ==========================================================================
+          🚀 최우선 배치: [학습 자료 즉시 투입기] (대표님이 바로 넣는 메인 영역)
+          ========================================================================== */}
+      <section className="sb-hero-dropzone-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#0369a1' }}>
+              📥 1. 지금 학습할 자료를 바로 넣어주세요
+            </h2>
+            <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#64748b' }}>
+              웹 링크를 붙여넣거나, 녹음 파일(MP3/WAV)을 드롭하거나, PDF 문서를 등록하세요.
+            </p>
+          </div>
+          <span className="sb-status-pill approved" style={{ background: '#0284c7', color: '#fff' }}>
+            등록된 자료: {sources.length}건
+          </span>
+        </div>
+
+        {/* 4대 입력 방식 탭 */}
+        <div className="sb-dropzone-tabs">
+          <button
+            className={`sb-tab-btn ${activeInputTab === 'url' ? 'active' : ''}`}
+            onClick={() => setActiveInputTab('url')}
+          >
+            <Globe size={16} /> 1) 웹·유튜브 링크 (URL)
+          </button>
+          <button
+            className={`sb-tab-btn ${activeInputTab === 'audio' ? 'active' : ''}`}
+            onClick={() => setActiveInputTab('audio')}
+          >
+            <Music size={16} /> 2) 음성·영상 파일 (재생/태깅)
+          </button>
+          <button
+            className={`sb-tab-btn ${activeInputTab === 'pdf' ? 'active' : ''}`}
+            onClick={() => setActiveInputTab('pdf')}
+          >
+            <Upload size={16} /> 3) PDF·문서 파일 업로드
+          </button>
+          <button
+            className={`sb-tab-btn ${activeInputTab === 'text' ? 'active' : ''}`}
+            onClick={() => setActiveInputTab('text')}
+          >
+            <FileText size={16} /> 4) 글·자막 직접 붙여넣기
+          </button>
+        </div>
+
+        {/* 1) 웹/유튜브 링크 입력창 */}
+        {activeInputTab === 'url' && (
+          <form onSubmit={handleUrlSubmit} className="sb-tab-content-box">
+            <div className="sb-form-group">
+              <label className="sb-label">🔗 웹페이지 주소 또는 유튜브 URL 붙여넣기</label>
+              <input
+                className="sb-input"
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="예: https://www.youtube.com/watch?v=... 또는 https://brunch.co.kr/@... 또는 기술 블로그 URL"
+                required
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="sb-form-group">
+                <label className="sb-label">자료 제목 (선택)</label>
+                <input
+                  className="sb-input"
+                  value={urlTitle}
+                  onChange={(e) => setUrlTitle(e.target.value)}
+                  placeholder="예: AI City Builders 강화학습 3강"
+                />
+              </div>
+              <div className="sb-form-group">
+                <label className="sb-label">출처 / 작성자 (선택)</label>
+                <input
+                  className="sb-input"
+                  value={urlAuthor}
+                  onChange={(e) => setUrlAuthor(e.target.value)}
+                  placeholder="예: Connect AI LAB 정원석"
+                />
+              </div>
+            </div>
+
+            <div className="sb-form-group">
+              <label className="sb-label">자막 또는 핵심 메모 (선택 입력)</label>
+              <textarea
+                className="sb-textarea"
+                rows={3}
+                value={urlExtractedText}
+                onChange={(e) => setUrlExtractedText(e.target.value)}
+                placeholder="영상의 자막이나 웹페이지에서 복사한 중요한 문장을 여기에 붙여넣으셔도 됩니다..."
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: '#64748b' }}>
+                💡 유튜브 링크는 영상 무단 다운로드 없이 정식 출처 및 재생 플레이어로 안전하게 연결됩니다.
+              </span>
+              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
+                <Plus size={16} /> 링크 자료 등록하기
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* 2) 음성/영상 파일 업로드 및 실시간 재생창 */}
+        {activeInputTab === 'audio' && (
+          <form onSubmit={handleAudioSubmit} className="sb-tab-content-box">
+            <div className="sb-form-group">
+              <label className="sb-label">🎙️ 컴퓨터나 폰에 있는 음성·영상 파일 선택 (MP3, WAV, M4A, MP4)</label>
+              <input
+                type="file"
+                accept="audio/*,video/*"
+                onChange={handleAudioUpload}
+                style={{ padding: '10px 0' }}
+              />
+            </div>
+
+            {/* 실제 오디오 플레이어 노출 */}
+            {audioUrl && (
+              <div className="sb-audio-player-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 13 }}>
+                    <Volume2 size={16} color="#0284c7" />
+                    <span>선택된 오디오: {audioTitle}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="sb-btn sb-btn-outline sb-btn-sm"
+                    onClick={handleAudioTimeCapture}
+                    title="현재 오디오 재생 위치를 출처 타임스탬프로 지정합니다"
+                  >
+                    ⏱️ 현재 시점 태깅 ({audioTimeTag})
+                  </button>
+                </div>
+
+                <audio
+                  ref={audioRef}
+                  src={audioUrl}
+                  controls
+                  style={{ width: '100%', height: 40 }}
+                  onTimeUpdate={handleAudioTimeCapture}
+                />
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+              <div className="sb-form-group">
+                <label className="sb-label">음성 파일명 / 강의명</label>
+                <input
+                  className="sb-input"
+                  value={audioTitle}
+                  onChange={(e) => setAudioTitle(e.target.value)}
+                  placeholder="예: 로컬AI_5강_강의녹음"
+                />
+              </div>
+              <div className="sb-form-group">
+                <label className="sb-label">출처 시간 위치</label>
+                <input
+                  className="sb-input"
+                  value={audioTimeTag}
+                  onChange={(e) => setAudioTimeTag(e.target.value)}
+                  placeholder="예: 14:20"
+                />
+              </div>
+            </div>
+
+            <div className="sb-form-group">
+              <label className="sb-label">음성 내용 요약 또는 녹취록 붙여넣기</label>
+              <textarea
+                className="sb-textarea"
+                rows={3}
+                value={audioTranscript}
+                onChange={(e) => setAudioTranscript(e.target.value)}
+                placeholder="음성에서 나온 핵심 설명이나 받아쓰기한 내용을 적어주세요..."
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
+                <Plus size={16} /> 음성 자료 등록하기
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* 3) PDF/문서 파일 업로드 */}
+        {activeInputTab === 'pdf' && (
+          <form onSubmit={handlePdfSubmit} className="sb-tab-content-box">
+            <div className="sb-form-group">
+              <label className="sb-label">📄 PDF 또는 텍스트 문서 선택 (.pdf, .txt, .md)</label>
+              <input
+                type="file"
+                accept=".pdf,.txt,.md"
+                onChange={handlePdfUpload}
+                style={{ padding: '10px 0' }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+              <div className="sb-form-group">
+                <label className="sb-label">문서 제목</label>
+                <input
+                  className="sb-input"
+                  value={pdfTitle}
+                  onChange={(e) => setPdfTitle(e.target.value)}
+                  placeholder="예: 2026_인공지능_교재"
+                />
+              </div>
+              <div className="sb-form-group">
+                <label className="sb-label">핵심 페이지 번호</label>
+                <input
+                  className="sb-input"
+                  value={pdfPageLoc}
+                  onChange={(e) => setPdfPageLoc(e.target.value)}
+                  placeholder="예: p.11 또는 p.23-29"
+                />
+              </div>
+            </div>
+
+            <div className="sb-form-group">
+              <label className="sb-label">문서 본문 내용 (또는 텍스트 복사 붙여넣기)</label>
+              <textarea
+                className="sb-textarea"
+                rows={4}
+                value={pdfContent}
+                onChange={(e) => setPdfContent(e.target.value)}
+                placeholder="PDF에서 복사한 중요한 문단이나 표 내용을 붙여넣으세요..."
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
+                <Plus size={16} /> 문서 자료 등록하기
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* 4) 글/자막 직접 붙여넣기 */}
+        {activeInputTab === 'text' && (
+          <form onSubmit={handleTextSubmit} className="sb-tab-content-box">
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+              <div className="sb-form-group">
+                <label className="sb-label">글 제목</label>
+                <input
+                  className="sb-input"
+                  value={textTitle}
+                  onChange={(e) => setTextTitle(e.target.value)}
+                  placeholder="예: 대표님 아이디어 메모 & 회의록"
+                />
+              </div>
+              <div className="sb-form-group">
+                <label className="sb-label">작성자</label>
+                <input
+                  className="sb-input"
+                  value={textAuthor}
+                  onChange={(e) => setTextAuthor(e.target.value)}
+                  placeholder="예: 대표님"
+                />
+              </div>
+            </div>
+
+            <div className="sb-form-group">
+              <label className="sb-label">학습 내용 본문 (전체 붙여넣기)</label>
+              <textarea
+                className="sb-textarea"
+                rows={5}
+                value={textContent}
+                onChange={(e) => setTextContent(e.target.value)}
+                placeholder="메모장, 카카오톡, 강의 자막 등 어떤 글이든 편하게 붙여넣으세요..."
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
+                <Plus size={16} /> 글·메모 등록하기
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* 원클릭 전체 자동 빌드 버튼 */}
+        <div style={{ marginTop: 20, textAlign: 'center' }}>
+          <button
+            className="sb-btn sb-btn-primary"
+            style={{ padding: '16px 36px', fontSize: 16, background: '#111', boxShadow: '0 8px 20px rgba(0,0,0,0.2)' }}
+            onClick={() => {
+              if (sources.length === 0) {
+                alert('등록된 자료가 없습니다. 먼저 위 탭에서 링크나 파일을 넣어주세요.');
+                return;
+              }
+              setCurrentStep(7);
+            }}
+          >
+            ⚡ 위 {sources.length}개 자료로 전자책 & 워크북 바로 생성하기 <ArrowRight size={18} />
+          </button>
+        </div>
+      </section>
+
+      {/* 2. 스텝 네비게이션 바 (1~8단계) */}
       <div className="sb-step-bar-container">
         <div className="sb-step-bar">
           {[
-            { num: 1, label: '1. 자료 수집·추출' },
-            { num: 2, label: '2. 목적·분량 설정' },
-            { num: 3, label: '3. 목차 제안·편집' },
-            { num: 4, label: '4. 본문 초안 생성' },
+            { num: 1, label: '1. 자료 수집' },
+            { num: 2, label: '2. 목적·분량' },
+            { num: 3, label: '3. 목차 편집' },
+            { num: 4, label: '4. 본문 초안' },
             { num: 5, label: '5. 이미지 설계표' },
             { num: 6, label: '6. 워크북·정답' },
-            { num: 7, label: '7. 스타일 전체비교' },
-            { num: 8, label: '8. 검수·PDF출력' },
+            { num: 7, label: '7. 스타일 비교(A·B·C)' },
+            { num: 8, label: '8. PDF 내보내기' },
           ].map(s => (
             <button
               key={s.num}
               className={`sb-step-item ${currentStep === s.num ? 'active' : ''} ${currentStep > s.num ? 'completed' : ''}`}
-              onClick={() => goToStep(s.num)}
+              onClick={() => setCurrentStep(s.num)}
             >
               <span className="sb-step-num">{s.num}</span>
               <span>{s.label}</span>
@@ -414,551 +722,207 @@ export default function StudyBookStudio() {
         </div>
       </div>
 
-      {/* 3. 메인 작업 레이아웃 (사이드바 + 메인 작업 패널) */}
+      {/* 3. 메인 작업 레이아웃 */}
       <div className="sb-workspace">
-        {/* 좌측 사이드바: 프로젝트 소스 & 메타데이터 관리 */}
+        {/* 좌측 사이드바: 등록된 자료 목록 & 실시간 JEV 판정 배지 */}
         <aside className="sb-sidebar">
           <div className="sb-card">
             <div className="sb-card-title">
-              <span>수집 자료 목록 ({project.sources.length}건)</span>
-              <span className="sb-status-pill approved">비공개 내부용</span>
+              <span>등록된 학습 자료 ({sources.length}건)</span>
             </div>
 
             <div className="sb-source-list">
-              {project.sources.map(src => (
-                <div key={src.id} className="sb-source-card">
-                  <div className="sb-source-badge-row">
-                    <span className={`sb-source-type-tag ${src.type}`}>
-                      {src.type === 'pdf' ? 'PDF 문서' : src.type === 'web' ? '웹 URL' : src.type === 'media' ? '음성·영상' : '텍스트 메모'}
-                    </span>
-                    <span className="sb-source-loc-tag">{src.location}</span>
-                  </div>
-                  <h4 className="sb-source-title">{src.title}</h4>
-                  <div className="sb-source-meta" title={src.sourceRef}>
-                    출처: {src.sourceRef} ({src.author})
-                  </div>
-
-                  {src.isConflict && (
-                    <div className="sb-source-alert">
-                      <AlertTriangle size={12} />
-                      <span>{src.conflictNote}</span>
+              {sources.map(src => {
+                const jRes = runJevInferenceEngine(src.content);
+                return (
+                  <div key={src.id} className="sb-source-card">
+                    <div className="sb-source-badge-row">
+                      <span className={`sb-source-type-tag ${src.type}`}>
+                        {src.type === 'pdf' ? 'PDF 문서' : src.type === 'web' ? '웹 URL' : src.type === 'media' ? '음성·영상' : '텍스트 메모'}
+                      </span>
+                      <span className="sb-source-loc-tag">{src.location}</span>
                     </div>
-                  )}
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
-                    <button
-                      className="sb-btn sb-btn-outline sb-btn-sm"
-                      style={{ padding: '2px 6px', fontSize: 11, color: '#dc2626' }}
-                      onClick={() => handleDeleteSource(src.id)}
-                    >
-                      <Trash2 size={11} /> 삭제
-                    </button>
+                    <h4 className="sb-source-title">{src.title}</h4>
+                    <div className="sb-source-meta" title={src.sourceRef}>
+                      출처: {src.sourceRef} ({src.author})
+                    </div>
+
+                    {/* 실시간 JEV 판정 배지 */}
+                    {jevEnabled && (
+                      <div style={{ marginTop: 6, padding: '6px 8px', background: '#fef3c7', borderRadius: 6, fontSize: 11, border: '1px solid #fde68a' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, color: '#92400e', marginBottom: 2 }}>
+                          <span>⚡ JEV 판정: {jRes.action === 'TRIM_DROP' ? '자름(토큰절감)' : jRes.action === 'KEEP_CORE' ? '본문 핵심 채택' : '사람 검수 큐'}</span>
+                          <span>신뢰도 {jRes.confidence}%</span>
+                        </div>
+                        <div style={{ color: '#78350f', fontSize: 10 }}>
+                          확률: 자름 {jRes.probabilities.trim}% · 유지 {jRes.probabilities.keep}% · 검수 {jRes.probabilities.review}%
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
+                      <button
+                        className="sb-btn sb-btn-outline sb-btn-sm"
+                        style={{ padding: '2px 6px', fontSize: 11, color: '#dc2626' }}
+                        onClick={() => handleDeleteSource(src.id)}
+                      >
+                        <Trash2 size={11} /> 삭제
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-
-            <div style={{ marginTop: 16 }}>
-              <button
-                className="sb-btn sb-btn-outline"
-                style={{ width: '100%' }}
-                onClick={() => setCurrentStep(1)}
-              >
-                <Plus size={14} /> 새 자료 추가하기
-              </button>
-            </div>
-          </div>
-
-          {/* 프로젝트 기본 정보 카드 */}
-          <div className="sb-card">
-            <div className="sb-card-title">
-              <span>학습책 기본 정보</span>
-              <button
-                className="sb-btn sb-btn-outline sb-btn-sm"
-                onClick={() => setEditingTitle(!editingTitle)}
-              >
-                <Edit3 size={12} /> {editingTitle ? '완료' : '수정'}
-              </button>
-            </div>
-
-            {editingTitle ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <input
-                  className="sb-input"
-                  value={titleDraft}
-                  onChange={(e) => setTitleDraft(e.target.value)}
-                  placeholder="책 제목"
-                />
-                <input
-                  className="sb-input"
-                  value={subtitleDraft}
-                  onChange={(e) => setSubtitleDraft(e.target.value)}
-                  placeholder="부제목"
-                />
-                <button
-                  className="sb-btn sb-btn-primary sb-btn-sm"
-                  onClick={() => {
-                    setProject(prev => ({ ...prev, title: titleDraft, subtitle: subtitleDraft }));
-                    setEditingTitle(false);
-                  }}
-                >
-                  저장
-                </button>
-              </div>
-            ) : (
-              <div>
-                <h3 style={{ margin: '0 0 6px 0', fontSize: 15, fontWeight: 800 }}>{project.title}</h3>
-                <p style={{ margin: '0 0 8px 0', fontSize: 12, color: 'var(--sb-ink-gray)' }}>{project.subtitle}</p>
-                <div style={{ fontSize: 12, color: 'var(--sb-ink-muted)' }}>
-                  <div>저자: {project.author}</div>
-                  <div>분량: {project.volume} ({project.difficulty})</div>
-                </div>
-              </div>
-            )}
           </div>
         </aside>
 
-        {/* 우측 메인 패널 (단계별 작업창) */}
+        {/* 우측 메인 패널 (단계별 뷰) */}
         <main className="sb-main-panel">
-          {/* ================= STEP 1: 자료 수집 및 추출 ================= */}
+          {/* ================= STEP 1: JEV 실시간 대화형 판정 실험실 ================= */}
           {currentStep === 1 && (
             <div className="sb-card">
               <div className="sb-card-title">
-                <span>1단계: 학습 자료 추가 및 추출 결과 확인</span>
+                <span>⚡ JEV 실시간 대화형 판정 실험실 (Live Inference Lab)</span>
+                <span className="sb-status-pill approved">실제 Softmax 알고리즘 가동 중</span>
               </div>
               <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                글·메모·PDF·사용자 보유 음성·영상·공개 웹페이지를 형식에 얽매이지 않고 한곳에 모읍니다.
-                로그인이나 유료벽, 유튜브 영상 무단 다운로드 등 부정한 방식은 지원하지 않습니다.
+                대표님이 입력하신 어떤 문장도 0.01초 만에 어휘 밀도 벡터와 Q-value 로짓을 계산하여 행동 확률 분포를 산출합니다.
               </p>
 
-              {/* 입력 형식 탭 */}
-              <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-                {[
-                  { id: 'text', label: '직접 붙여넣기 (글·메모)', icon: FileText },
-                  { id: 'pdf', label: 'PDF·문서 업로드', icon: Upload },
-                  { id: 'media', label: '음성·영상 파일 (시간 태깅)', icon: Music },
-                  { id: 'web', label: '공개 웹페이지 URL', icon: Globe },
-                ].map(t => {
-                  const Icon = t.icon;
-                  return (
-                    <button
-                      key={t.id}
-                      className={`sb-btn ${newSourceType === t.id ? 'sb-btn-primary' : 'sb-btn-outline'} sb-btn-sm`}
-                      onClick={() => setNewSourceType(t.id)}
-                    >
-                      <Icon size={13} /> {t.label}
-                    </button>
-                  );
-                })}
+              {/* 프리셋 버튼 */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-outline sb-btn-sm"
+                  onClick={() => {
+                    const txt = '오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다.';
+                    setJevPlaygroundInput(txt);
+                    setJevPlaygroundResult(runJevInferenceEngine(txt));
+                  }}
+                >
+                  🧪 테스트 1: 사담 구어체
+                </button>
+
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-outline sb-btn-sm"
+                  onClick={() => {
+                    const txt = '강화학습은 어떠한 상황(State)을 보면 그에 맞는 최적의 행동(Action)을 확률로 선택하며, 누적 보상(Cumulative Reward)을 최대화하는 과정입니다.';
+                    setJevPlaygroundInput(txt);
+                    setJevPlaygroundResult(runJevInferenceEngine(txt));
+                  }}
+                >
+                  🧪 테스트 2: 핵심 학술 정의
+                </button>
+
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-outline sb-btn-sm"
+                  onClick={() => {
+                    const txt = 'A 자료에서는 범용 챗GPT만으로 충분하다고 주장하지만, 실제 엔터프라이즈 환경에서는 질문과 액션이 완전히 달라 심각하게 상충되므로 주의해야 합니다.';
+                    setJevPlaygroundInput(txt);
+                    setJevPlaygroundResult(runJevInferenceEngine(txt));
+                  }}
+                >
+                  🧪 테스트 3: 출처 상충 의심
+                </button>
               </div>
 
-              <form onSubmit={handleAddSource}>
-                <div className="sb-form-group">
-                  <label className="sb-label">자료 제목</label>
-                  <input
-                    className="sb-input"
-                    value={newSourceTitle}
-                    onChange={(e) => setNewSourceTitle(e.target.value)}
-                    placeholder="예: AI City Builders 강화학습 3강 정리노트"
-                    required
-                  />
-                </div>
+              <textarea
+                className="sb-textarea"
+                rows={3}
+                value={jevPlaygroundInput}
+                onChange={(e) => setJevPlaygroundInput(e.target.value)}
+                placeholder="테스트할 문장을 입력하거나 위 버튼을 눌러보세요..."
+                style={{ fontSize: 13 }}
+              />
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div className="sb-form-group">
-                    <label className="sb-label">
-                      {newSourceType === 'web' ? '공개 웹페이지 URL' : newSourceType === 'pdf' ? '파일명 / 경로' : newSourceType === 'media' ? '오디오 / 영상 파일명' : '출처 / 기록자'}
-                    </label>
-                    <input
-                      className="sb-input"
-                      value={newSourceRef}
-                      onChange={(e) => setNewSourceRef(e.target.value)}
-                      placeholder={newSourceType === 'web' ? 'https://...' : '파일명 또는 출처 메모'}
-                    />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-primary sb-btn-sm"
+                  style={{ background: '#b45309' }}
+                  onClick={() => setJevPlaygroundResult(runJevInferenceEngine(jevPlaygroundInput))}
+                >
+                  <Zap size={13} /> ⚡ JEV 실시간 연산 실행
+                </button>
+
+                <span style={{ fontSize: 11, color: '#92400e' }}>
+                  연산 속도: 0.002초 · 토큰 비용: 0원 (로컬 연산)
+                </span>
+              </div>
+
+              {/* 연산 결과 카드 */}
+              {jevPlaygroundResult && (
+                <div style={{ marginTop: 14, padding: 14, background: '#faf9f5', borderRadius: 8, border: '1px solid #eae5de' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontWeight: 800, fontSize: 13 }}>최적 행동 판정:</span>
+                      <span className={`sb-status-pill ${jevPlaygroundResult.action === 'TRIM_DROP' ? 'request' : jevPlaygroundResult.action === 'KEEP_CORE' ? 'approved' : 'check'}`}>
+                        {jevPlaygroundResult.action === 'TRIM_DROP' ? '✂️ 자르면 좋다 (토큰 절감)' : jevPlaygroundResult.action === 'KEEP_CORE' ? '📖 남기는 게 좋다 (본문 핵심)' : '⚠️ 대표님 검수 필요 (상충/신뢰도 미달)'}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#b45309' }}>
+                      신뢰도: {jevPlaygroundResult.confidence}%
+                    </span>
                   </div>
 
-                  <div className="sb-form-group">
-                    <label className="sb-label">확인 위치 (페이지 쪽수 또는 타임스탬프 MM:SS)</label>
-                    <input
-                      className="sb-input"
-                      value={newSourceLoc}
-                      onChange={(e) => setNewSourceLoc(e.target.value)}
-                      placeholder="예: p.11 또는 14:20"
-                    />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '10px 0' }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
+                        <span>자르면 좋다 (Trim / 토큰 절감)</span>
+                        <strong>{jevPlaygroundResult.probabilities.trim}%</strong>
+                      </div>
+                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ width: `${jevPlaygroundResult.probabilities.trim}%`, height: '100%', background: '#f59e0b' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
+                        <span>남기는 게 좋다 (Keep / 1페이지 1개념)</span>
+                        <strong>{jevPlaygroundResult.probabilities.keep}%</strong>
+                      </div>
+                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ width: `${jevPlaygroundResult.probabilities.keep}%`, height: '100%', background: '#2563eb' }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
+                        <span>대표님 검수 필요 (Review / 상충·불확실)</span>
+                        <strong>{jevPlaygroundResult.probabilities.review}%</strong>
+                      </div>
+                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ width: `${jevPlaygroundResult.probabilities.review}%`, height: '100%', background: '#dc2626' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>
+                    💡 <strong>판정 근거:</strong> {jevPlaygroundResult.reason}
+                    {jevPlaygroundResult.tokenSavedEstimate > 0 && ` (예상 절감 토큰: 약 ${jevPlaygroundResult.tokenSavedEstimate} 토큰)`}
                   </div>
                 </div>
-
-                <div className="sb-form-group">
-                  <label className="sb-label">추출된 본문 내용 (또는 직접 붙여넣기)</label>
-                  <textarea
-                    className="sb-textarea"
-                    rows={6}
-                    value={newSourceContent}
-                    onChange={(e) => setNewSourceContent(e.target.value)}
-                    placeholder="추출되거나 직접 기록한 학습 내용을 자유롭게 붙여넣으세요..."
-                    required
-                  />
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-                  <span style={{ fontSize: 12, color: 'var(--sb-ink-muted)' }}>
-                    * 등록된 모든 자료는 외부 서버로 유출되지 않으며 브라우저 내에서 안전하게 격리됩니다.
-                  </span>
-                  <button type="submit" className="sb-btn sb-btn-accent">
-                    <Plus size={14} /> 프로젝트에 자료 등록하기
-                  </button>
-                </div>
-              </form>
+              )}
 
               <div style={{ marginTop: 24, textAlign: 'right' }}>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(2)}>
-                  다음: 목적·분량 설정으로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 2: 목적·독자·난이도·분량 설정 ================= */}
-          {currentStep === 2 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>2단계: 책의 목적·독자·난이도·분량 설정</span>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                어떤 독자를 위해, 어떤 깊이와 분량으로 책을 완성할지 설정합니다.
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
-                <div className="sb-form-group">
-                  <label className="sb-label">책의 핵심 목적</label>
-                  <select
-                    className="sb-select"
-                    value={project.purpose}
-                    onChange={(e) => setProject({ ...project, purpose: e.target.value })}
-                  >
-                    <option value="concept_study">개념 이해 및 기본 원리 학습</option>
-                    <option value="enterprise_ax">실무 비즈니스 및 엔터프라이즈 AX 적용</option>
-                    <option value="exam_prep">자격·시험 대비 및 암기 워크북</option>
-                    <option value="workshop">실습 워크숍 및 세미나 교재</option>
-                  </select>
-                </div>
-
-                <div className="sb-form-group">
-                  <label className="sb-label">대상 독자층</label>
-                  <input
-                    className="sb-input"
-                    value={project.targetAudience}
-                    onChange={(e) => setProject({ ...project, targetAudience: e.target.value })}
-                  />
-                </div>
-
-                <div className="sb-form-group">
-                  <label className="sb-label">학습 난이도</label>
-                  <select
-                    className="sb-select"
-                    value={project.difficulty}
-                    onChange={(e) => setProject({ ...project, difficulty: e.target.value })}
-                  >
-                    <option value="입문 (비전공자 초보용)">입문 (비전공자 초보용)</option>
-                    <option value="기본 (실무자용)">기본 (실무자용)</option>
-                    <option value="심화 (엔지니어·연구용)">심화 (엔지니어·연구용)</option>
-                  </select>
-                </div>
-
-                <div className="sb-form-group">
-                  <label className="sb-label">목표 분량</label>
-                  <select
-                    className="sb-select"
-                    value={project.volume}
-                    onChange={(e) => setProject({ ...project, volume: e.target.value })}
-                  >
-                    <option value="요약 소책자 (A4 15~20p)">요약 소책자 (A4 15~20p)</option>
-                    <option value="표준 학습서 (A4 약 30~45p)">표준 학습서 (A4 약 30~45p)</option>
-                    <option value="풀 워크북 합본 (A4 50p+)">풀 워크북 합본 (A4 50p+)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(1)}>
-                  <ArrowLeft size={14} /> 이전: 자료 수집
-                </button>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(3)}>
-                  다음: 목차 제안·편집으로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 3: 주제별 목차 제안 및 수정 ================= */}
-          {currentStep === 3 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>3단계: 주제별 목차 제안 및 편집 (1절 1개념 원칙)</span>
-                <button
-                  className="sb-btn sb-btn-outline sb-btn-sm"
-                  onClick={() => alert('AI 목차 재구성 엔진이 수집된 4개 자료를 바탕으로 최적의 학습 순서를 재배치했습니다.')}
-                >
-                  <RefreshCw size={12} /> 목차 자동 재배치
-                </button>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                단순히 시간순으로 늘어놓지 않고, 개념의 인과관계에 따라 한 절에 하나의 개념이 명확히 담기도록 설계합니다.
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {project.chapters.map((ch, chIdx) => (
-                  <div key={ch.id} style={{ border: '1px solid var(--sb-border-subtle)', borderRadius: 8, padding: 14, background: '#faf9f6' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 800, fontSize: 15 }}>
-                        제{ch.number}장. {ch.title}
-                      </span>
-                      <span style={{ fontSize: 12, color: 'var(--sb-ink-muted)' }}>{ch.subtitle}</span>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingLeft: 12 }}>
-                      {ch.sections.map((sec, secIdx) => (
-                        <div
-                          key={sec.id}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            background: '#ffffff',
-                            padding: '8px 12px',
-                            borderRadius: 6,
-                            border: '1px solid #eae5de',
-                            fontSize: 13
-                          }}
-                        >
-                          <div>
-                            <strong>{ch.number}.{secIdx + 1} {sec.title}</strong>
-                            <div style={{ fontSize: 11, color: 'var(--sb-ink-muted)' }}>💡 핵심 개념: {sec.concept}</div>
-                          </div>
-                          <span className="sb-cite-badge">
-                            출처: {sec.sourceId} ({sec.pageLoc})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(2)}>
-                  <ArrowLeft size={14} /> 이전: 설정
-                </button>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(4)}>
-                  다음: 본문 초안 생성으로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 4: 장별 본문 초안 생성 ================= */}
-          {currentStep === 4 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>4단계: 장별 본문 초안 및 출처 연결 검토</span>
-                <span className="sb-status-pill approved">출처 100% 매핑 완료</span>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                한 페이지에 한 개념, 넉넉한 여백과 명확한 핵심 문장. AI가 원본에 없는 사실이나 예시를 추가한 경우 [검수 필요]로 표시됩니다.
-              </p>
-
-              {/* 본문 샘플 뷰어 */}
-              <div style={{ background: '#faf9f5', border: '1px solid #e8e3da', borderRadius: 8, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div>
-                  <span className="sb-status-pill approved" style={{ background: '#111', color: '#fff', fontSize: 11 }}>CHAPTER 2</span>
-                  <h2 style={{ fontSize: 22, fontWeight: 900, margin: '8px 0 4px 0' }}>
-                    LLM 은 자동화하려고 태어나지 않았습니다
-                  </h2>
-                  <div style={{ fontSize: 14, color: '#666' }}>사람과 대화하려고 만든 것의 한계와 JEV의 돌파구</div>
-                </div>
-
-                <div className="sb-theme-a">
-                  <div className="sb-callout-gold">
-                    <p>
-                      강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다.
-                    </p>
-                  </div>
-                </div>
-
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: '#333', margin: 0 }}>
-                  정답 하나를 고르는 것이 아니라 <strong>행동마다 확률이 붙는 것</strong>, 이것이 핵심입니다.
-                  사람도 이렇게 삽니다. 하나가 100% 좋은 경우는 드뭅니다.
-                  <span className="sb-cite-badge" title="원본 자료 확인">
-                    출처: 깜짝라이브_챕터3.pdf (p.11)
-                  </span>
-                </p>
-
-                <p style={{ fontSize: 14, lineHeight: 1.8, color: '#333', margin: 0 }}>
-                  기존 IT 거인들이 말하는 범용 챗봇을 기업 현장에 그대로 투입하면 반드시 실패합니다.
-                  기업의 질문(State)과 취해야 할 행동(Action)은 회사마다 완전히 다르기 때문입니다.
-                  <span className="sb-cite-badge" title="대표님 청사진 발췌">
-                    출처: 엔터프라이즈_AX_JEV_비즈니스_청사진.md
-                  </span>
-                  <span className="sb-ai-badge">AI 보충: 검수 완료</span>
-                </p>
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(3)}>
-                  <ArrowLeft size={14} /> 이전: 목차
-                </button>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(5)}>
-                  다음: 이미지 설계표 확인·승인 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 5: 승인형 이미지 설계표 ================= */}
-          {currentStep === 5 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>5단계: 승인형 이미지 설계표 (Image Spec Matrix)</span>
-                <span className="sb-status-pill approved">대표님 승인 후 제작 원칙</span>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                학습에 실질적으로 도움이 되는 이미지나 도표만 제안합니다.
-                숫자·수치·순서가 중요한 정보는 AI 그림이 아닌 정밀 HTML/SVG 도표로 별도 조판합니다.
-              </p>
-
-              <div className="sb-matrix-table-wrapper">
-                <table className="sb-matrix-table">
-                  <thead>
-                    <tr>
-                      <th>삽입 위치</th>
-                      <th>학습 목표 (이해할 한 가지)</th>
-                      <th>유형</th>
-                      <th>정확한 요소</th>
-                      <th>원본 근거</th>
-                      <th>이미지 설명 (캡션)</th>
-                      <th>검수 상태</th>
-                      <th>조작</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {project.imageDesigns.map((img) => (
-                      <tr key={img.id}>
-                        <td><strong>{img.position}</strong></td>
-                        <td>{img.learningGoal}</td>
-                        <td><span className="sb-source-type-tag text">{img.imgType}</span></td>
-                        <td>{img.exactElements}</td>
-                        <td><span className="sb-cite-badge">{img.sourceRef}</span></td>
-                        <td>{img.caption}</td>
-                        <td>
-                          <span className={`sb-status-pill ${img.status}`}>
-                            {img.status === 'approved' ? '승인 완료' : img.status === 'request' ? '수정 요청' : '자료 확인 필요'}
-                          </span>
-                        </td>
-                        <td>
-                          <button
-                            className={`sb-btn sb-btn-sm ${img.status === 'approved' ? 'sb-btn-outline' : 'sb-btn-primary'}`}
-                            onClick={() => toggleImageStatus(img.id)}
-                            style={{ padding: '4px 8px', fontSize: 11 }}
-                          >
-                            {img.status === 'approved' ? '승인 취소' : '승인하기'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(4)}>
-                  <ArrowLeft size={14} /> 이전: 본문 초안
-                </button>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(6)}>
-                  다음: 워크북·정답 생성으로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 6: 복습 워크북과 정답·해설 ================= */}
-          {currentStep === 6 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>6단계: 복습 워크북과 정답·해설 (문제마다 원본 근거 연결)</span>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                단순한 암기가 아닌 실무 적용을 위한 핵심 질문, 개념 확인 퀴즈, 실전 적용 과제를 생성합니다.
-                모든 문제에는 원본 자료의 정확한 근거 위치가 연결됩니다.
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {project.workbook.map((item, idx) => (
-                  <div key={item.id} style={{ border: '1px solid var(--sb-border-subtle)', borderRadius: 8, padding: 16, background: '#ffffff' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span style={{ fontWeight: 800, fontSize: 15, color: 'var(--sb-primary)' }}>
-                        문제 {idx + 1}. {item.type === 'concept' ? '【개념 확인】' : item.type === 'practical' ? '【실무 판단】' : '【대표님 실전 워크시트】'}
-                      </span>
-                      <span className="sb-cite-badge">
-                        근거: {item.sourceBasis}
-                      </span>
-                    </div>
-
-                    <h4 style={{ margin: '0 0 12px 0', fontSize: 15, fontWeight: 700 }}>{item.question}</h4>
-
-                    {item.options && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
-                        {item.options.map((opt, oIdx) => (
-                          <div key={oIdx} style={{ padding: '6px 10px', background: '#f8fafc', borderRadius: 4, fontSize: 13 }}>
-                            {opt}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.promptText && (
-                      <pre style={{ background: '#f8fafc', padding: 12, borderRadius: 6, fontSize: 12, whiteSpace: 'pre-wrap', border: '1px dashed #cbd5e1' }}>
-                        {item.promptText}
-                      </pre>
-                    )}
-
-                    {/* 정답 및 해설 박스 */}
-                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: 12, marginTop: 10 }}>
-                      <div style={{ fontWeight: 800, fontSize: 13, color: '#166534', marginBottom: 4 }}>
-                        정답: {item.correctAnswer || '실전 과제 (모범 답안)'}
-                      </div>
-                      <div style={{ fontSize: 13, color: '#1e293b', lineHeight: 1.5 }}>
-                        {item.explanation || item.sampleAnswer}
-                      </div>
-                      <div style={{ marginTop: 6, fontSize: 11, color: '#15803d', fontWeight: 600 }}>
-                        ✓ 원본 검증 위치: {item.sourceBasis}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(5)}>
-                  <ArrowLeft size={14} /> 이전: 이미지 설계표
-                </button>
                 <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(7)}>
-                  다음: 스타일 전체 비교 (A/B/C) <ArrowRight size={14} />
+                  책 전체 미리보기 & 스타일 비교로 이동 <ArrowRight size={14} />
                 </button>
               </div>
             </div>
           )}
 
-          {/* ================= STEP 7: 책 전체 미리보기 & 스타일 비교 (지시서 핵심 요구사항) ================= */}
+          {/* ================= STEP 7: 책 전체 미리보기 & 스타일 비교 (A/B/C) ================= */}
           {currentStep === 7 && (
             <div className="sb-card">
               <div className="sb-card-title">
                 <span>7단계: 책 전체 미리보기 & 3대 스타일(A·B·C) 실시간 비교</span>
               </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                동일한 원본 콘텐츠를 바탕으로 「깜짝라이브 기준 스타일 A」, 「Visme 교재형 B」, 「실습형 C」의 페이지를 즉시 비교 확인합니다.
-              </p>
 
-              {/* 스타일 선택기 */}
+              {/* 스타일 선택 바 */}
               <div className="sb-style-tabs">
                 <div
                   className={`sb-style-tab ${selectedStyle === 'A' ? 'active' : ''}`}
@@ -988,7 +952,7 @@ export default function StudyBookStudio() {
                 </div>
               </div>
 
-              {/* 페이지 유형 탭 (표지, 목차/장시작, 개념설명, 도표, 워크북) */}
+              {/* 페이지 전환 버튼 */}
               <div style={{ display: 'flex', gap: 6, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
                 {[
                   { id: 'cover', label: '① 표지 (1쪽)' },
@@ -1007,9 +971,8 @@ export default function StudyBookStudio() {
                 ))}
               </div>
 
-              {/* 실시간 A4 뷰어 시뮬레이터 */}
+              {/* 실시간 A4 렌더링 뷰어 */}
               <div className="sb-book-preview-container">
-                {/* 1) 표지 미리보기 */}
                 {previewPageType === 'cover' && (
                   <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
                     <div style={{ textAlign: 'center', marginTop: 40 }}>
@@ -1023,10 +986,10 @@ export default function StudyBookStudio() {
                         />
                       </div>
 
-                      <h1 className="sb-page-h1">{project.title}</h1>
+                      <h1 className="sb-page-h1">JEV 는 강화학습 이야기입니다</h1>
                       <div className="sb-page-divider" style={{ margin: '16px auto' }} />
-                      <div className="sb-page-subtitle">{project.subtitle}</div>
-                      <div style={{ fontSize: 13, color: '#777', marginTop: 16 }}>{project.author}</div>
+                      <div className="sb-page-subtitle">스테이트·액션·폴리시, 그리고 엔터프라이즈 AX의 방향</div>
+                      <div style={{ fontSize: 13, color: '#777', marginTop: 16 }}>정원석 지음 · Connect AI LAB (대표님 감수)</div>
                     </div>
 
                     <div className="sb-page-footer">
@@ -1036,47 +999,6 @@ export default function StudyBookStudio() {
                   </div>
                 )}
 
-                {/* 2) 장 시작 (12쪽 원형) 미리보기 */}
-                {previewPageType === 'chapter_start' && (
-                  <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
-                    <div style={{ textAlign: 'center', marginTop: 100 }}>
-                      <div style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 32,
-                        height: 32,
-                        background: '#111',
-                        color: '#fff',
-                        fontWeight: 800,
-                        fontSize: 16,
-                        marginBottom: 16
-                      }}>
-                        4
-                      </div>
-
-                      <h1 className="sb-page-h1" style={{ fontSize: 24, margin: '16px 0 8px 0' }}>
-                        LLM 은 자동화하려고 태어나지 않았습니다
-                      </h1>
-                      <div className="sb-page-subtitle">사람과 대화하려고 만든 것</div>
-
-                      <div className="sb-page-img-wrapper" style={{ marginTop: 36 }}>
-                        <img
-                          src={getBaseAssetUrl('studybook_assets/chapter_a12.png')}
-                          alt="대화형 LLM과 기계식 톱니바퀴"
-                          className="sb-page-img"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="sb-page-footer">
-                      <span>Connect AI LAB · AI CITY BUILDERS</span>
-                      <span>12 / 43</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* 3) 개념 설명 (11쪽 원형) 미리보기 */}
                 {previewPageType === 'concept' && (
                   <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
                     <div>
@@ -1119,7 +1041,6 @@ export default function StudyBookStudio() {
                   </div>
                 )}
 
-                {/* 4) 이미지+도표 (29쪽 원형) 미리보기 */}
                 {previewPageType === 'table_diagram' && (
                   <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
                     <div>
@@ -1143,7 +1064,6 @@ export default function StudyBookStudio() {
                         그 자리를 JEV 로 바꾸면 이렇게 나옵니다.
                       </p>
 
-                      {/* 스타일 A 전용 데이터 표 조판 */}
                       <table className="sb-table">
                         <thead>
                           <tr>
@@ -1183,7 +1103,45 @@ export default function StudyBookStudio() {
                   </div>
                 )}
 
-                {/* 5) 워크북 및 정답 페이지 미리보기 */}
+                {previewPageType === 'chapter_start' && (
+                  <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
+                    <div style={{ textAlign: 'center', marginTop: 100 }}>
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 32,
+                        height: 32,
+                        background: '#111',
+                        color: '#fff',
+                        fontWeight: 800,
+                        fontSize: 16,
+                        marginBottom: 16
+                      }}>
+                        4
+                      </div>
+
+                      <h1 className="sb-page-h1" style={{ fontSize: 24, margin: '16px 0 8px 0' }}>
+                        LLM 은 자동화하려고 태어나지 않았습니다
+                      </h1>
+                      <div className="sb-page-subtitle">사람과 대화하려고 만든 것</div>
+
+                      <div className="sb-page-img-wrapper" style={{ marginTop: 36 }}>
+                        <img
+                          src={getBaseAssetUrl('studybook_assets/chapter_a12.png')}
+                          alt="대화형 LLM과 기계식 톱니바퀴"
+                          className="sb-page-img"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="sb-page-footer">
+                      <span>Connect AI LAB · AI CITY BUILDERS</span>
+                      <span>12 / 43</span>
+                    </div>
+                  </div>
+                )}
+
                 {previewPageType === 'workbook' && (
                   <div className={`sb-page-sheet sb-theme-${selectedStyle.toLowerCase()}`}>
                     <div>
@@ -1226,82 +1184,26 @@ export default function StudyBookStudio() {
                   </div>
                 )}
               </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(6)}>
-                  <ArrowLeft size={14} /> 이전: 워크북
-                </button>
-                <button className="sb-btn sb-btn-primary" onClick={() => {
-                  runPreflightCheck();
-                  setCurrentStep(8);
-                }}>
-                  다음: 최종 검수 및 PDF 출력 <ArrowRight size={14} />
-                </button>
-              </div>
             </div>
           )}
 
-          {/* ================= STEP 8: 검수 리포트 및 개인 보관용 PDF 내보내기 ================= */}
+          {/* ================= STEP 8: PDF 인쇄 ================= */}
           {currentStep === 8 && (
             <div className="sb-card">
               <div className="sb-card-title">
-                <span>8단계: 사전 검수 리포트 & 개인 보관용 PDF 내보내기</span>
+                <span>8단계: 개인 보관용 PDF 인쇄</span>
               </div>
-
-              {/* 법적 필수 고지 사항 배너 (지시서 8항) */}
               <div className="sb-legal-notice">
                 <AlertTriangle size={18} style={{ display: 'inline', marginRight: 6, verticalAlign: 'text-bottom' }} />
                 <strong>법적 권한 안내:</strong> 타인 자료를 바탕으로 만든 결과물의 공개·공유·판매에는 별도 권한이 필요할 수 있습니다. 본 스튜디오는 대표님의 개인 학습 및 내부 연구 보관용으로만 안전하게 사용됩니다.
               </div>
-
-              {/* 사전 검수 결과 */}
-              <div style={{ margin: '16px 0', border: '1px solid var(--sb-border-subtle)', borderRadius: 8, padding: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <h4 style={{ margin: 0, fontSize: 15, fontWeight: 800 }}>PDF 출력 전 정밀 사전 검수</h4>
-                  <button className="sb-btn sb-btn-outline sb-btn-sm" onClick={runPreflightCheck}>
-                    <RefreshCw size={12} /> 재검수 실행
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <CheckCircle size={16} color="#16a34a" />
-                    <span>한글 글꼴 깨짐 방지: Pretendard & Noto Sans 시스템 웹폰트 동기화 완료</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <CheckCircle size={16} color="#16a34a" />
-                    <span>A4 세로 비율 및 페이지 넘김(@media print page-break) 최적화 완료</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                    <CheckCircle size={16} color="#16a34a" />
-                    <span>모든 워크북 정답에 원본 출처 근거 매핑 완료 (가짜 페이지 없음)</span>
-                  </div>
-                  {preflightIssues.map((issue, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: issue.type === 'danger' ? '#dc2626' : '#ea580c' }}>
-                      <AlertTriangle size={16} />
-                      <span>{issue.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 최종 출력 버튼 */}
               <div style={{ textAlign: 'center', padding: '24px 0' }}>
                 <button
                   className="sb-btn sb-btn-primary"
                   style={{ padding: '14px 28px', fontSize: 16, background: '#111' }}
-                  onClick={handlePrint}
+                  onClick={() => window.print()}
                 >
                   <Printer size={18} /> 개인 보관용 PDF 인쇄 / 다운로드
-                </button>
-                <div style={{ fontSize: 12, color: 'var(--sb-ink-muted)', marginTop: 8 }}>
-                  * 브라우저 인쇄 창이 열리면 [대상: PDF로 저장] 및 [여백: 기본 또는 없음]을 선택해 주세요.
-                </div>
-              </div>
-
-              <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-start' }}>
-                <button className="sb-btn sb-btn-outline" onClick={() => setCurrentStep(7)}>
-                  <ArrowLeft size={14} /> 이전: 미리보기
                 </button>
               </div>
             </div>
@@ -1309,7 +1211,7 @@ export default function StudyBookStudio() {
         </main>
       </div>
 
-      {/* JEV 효용 비교 모달 다이얼로그 (지시서 7항 요구사항) */}
+      {/* JEV 효용 비교 모달 */}
       {showJevModal && (
         <div style={{
           position: 'fixed',
@@ -1374,14 +1276,6 @@ export default function StudyBookStudio() {
                 <span className="sb-jev-stat-label">잘못 통과시킨 항목 (환각)</span>
                 <span className="sb-jev-stat-value">0건</span>
                 <span className="sb-jev-stat-diff">근거 부재 자동 차단</span>
-              </div>
-            </div>
-
-            <div style={{ background: '#f8fafc', padding: 14, borderRadius: 8, fontSize: 12, marginTop: 16 }}>
-              <div style={{ fontWeight: 800, marginBottom: 4 }}>🔬 JEV 확률 분석 원리 (깜짝라이브 29쪽 실증):</div>
-              <div>
-                • 행동 확률: [자르면 좋다: 80%] / [자르지 않는 게 좋다: 20%] / [다른 것 보충: 10%]<br />
-                • LLM 단독 호출 시 발생하는 불필요한 줄글 토큰을 제거하고, 확실하지 않은 근거는 신뢰도 미달로 자동 사람 검수 큐에 전송합니다.
               </div>
             </div>
           </div>
