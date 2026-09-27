@@ -101,16 +101,6 @@ function App() {
     return params.get('tab') || 'studybook';
   });
 
-  // activeTab 변경 시 activeTabGroup도 자동 동기화하는 훅
-  useEffect(() => {
-    if (['content', 'quiz', 'wrong', 'textbook', 'study', 'casestudy', 'fable5', 'scrollworld', 'aitamagotchi', 'lerobot', 'oxalpha', 'motion3d', 'jarvis', 'studybook'].includes(activeTab)) {
-      setActiveTabGroup('study');
-    } else if (['sciencelab', 'inkword', 'scenehub', 'memefactory', 'avatarstudio', 'travellog'].includes(activeTab)) {
-      setActiveTabGroup('practice');
-    } else if (['fugu', 'chatbotbuilder', 'nichediagnoser', 'aiblogwriter', 'passvoicesaas', 'voicetonote'].includes(activeTab)) {
-      setActiveTabGroup('builder');
-    }
-  }, [activeTab]);
   
   // AI 데이터 상태
   const [summary, setSummary] = useState('');

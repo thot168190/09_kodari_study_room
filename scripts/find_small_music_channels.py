@@ -115,6 +115,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-videos", type=int, default=15)
     ap.add_argument("--min-subs", type=int, default=1000)
+    ap.add_argument("--created-after", default="2026-01-01", help="채널 개설일 기준 (기본: 2026-01-01 이후 개설 채널만)")
     ap.add_argument("--pages", type=int, default=2)
     ap.add_argument("--out", default="small_music_channels.csv")
     ap.add_argument("--json", action="store_true", help="JSON 형태로도 저장")
@@ -124,7 +125,7 @@ def main():
     since_dt = now - dt.timedelta(days=365)
     since = since_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    print("1) 키워드 검색으로 채널 모으는 중...")
+    print(f"1) 키워드 검색으로 채널 모으는 중... (개설일 {a.created_after} 이후 필터)")
     ids = collect_channel_ids(since, a.pages)
 
     print("2) 채널 통계 확인 + 조건 거르기...")
@@ -133,6 +134,10 @@ def main():
         data = api("channels", {"part": "snippet,statistics,contentDetails", "id": ",".join(group)})
         for ch in data.get("items", []):
             st = ch["statistics"]
+            sn = ch["snippet"]
+            pub_date = sn.get("publishedAt", "")[:10]
+            if pub_date < a.created_after:
+                continue
             if st.get("hiddenSubscriberCount"):
                 continue
             subs, vcount = int(st.get("subscriberCount", 0)), int(st.get("videoCount", 0))
@@ -140,7 +145,6 @@ def main():
                 continue
             up = ch["contentDetails"]["relatedPlaylists"]["uploads"]
             hrs, n_recent, longest_min, top_title, top_views = recent_watch_hours(up, since_dt)
-            sn = ch["snippet"]
             rows.append({
                 "채널명": sn["title"], "핸들": sn.get("customUrl", ""),
                 "링크": f"https://www.youtube.com/channel/{ch['id']}",
