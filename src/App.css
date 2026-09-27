@@ -1309,3 +1309,36 @@ body {
   cursor: not-allowed;
 }
 
+/* 📱 StudyBook Studio Fullscreen Mount & Global Scroll Fix */
+.studybook-fullscreen-mount {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto !important;
+  }
+  .study-app {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important;
+  }
+  .workspace {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+  }
+  .studybook-fullscreen-mount {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important;
+  }
+}
+

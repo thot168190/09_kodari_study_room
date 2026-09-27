@@ -33,11 +33,12 @@
   max-width: 1300px;
   margin: 0 auto;
   padding: 16px;
+  padding-bottom: 120px; /* 모바일 하단 내비게이션 바에 가려지지 않도록 넉넉한 스크롤 여백 */
   background-color: #f7f6f2;
   color: var(--sb-ink-black);
   font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
   box-sizing: border-box;
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 /* 상단 메인 헤더 */

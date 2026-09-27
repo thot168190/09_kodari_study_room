@@ -1339,7 +1339,7 @@ ${selectedNote.content}`
             </div>
           </div>
         ) : activeTab === 'studybook' ? (
-          <div className="studybook-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+          <div className="studybook-fullscreen-mount">
             <StudyBookStudio />
           </div>
         ) : activeTab === 'jarvis' ? (
