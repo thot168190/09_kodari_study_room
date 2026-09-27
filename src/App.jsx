@@ -1338,6 +1338,10 @@ ${selectedNote.content}`
               </button>
             </div>
           </div>
+        ) : activeTab === 'musicfinder' ? (
+          <div className="musicfinder-fullscreen-mount" style={{ width: '100%', padding: '8px 14px', boxSizing: 'border-box' }}>
+            <SmallMusicFinder />
+          </div>
         ) : activeTab === 'studybook' ? (
           <div className="studybook-fullscreen-mount">
             <StudyBookStudio />
