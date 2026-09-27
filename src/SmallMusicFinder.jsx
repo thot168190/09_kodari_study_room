@@ -14,84 +14,89 @@ const DEFAULT_KEYWORDS = [
 // 꿀통 음악 채널 실측 벤치마킹 샘플 데이터 (API 키 없이도 즉시 분석 가능)
 const SAMPLE_CHANNELS = [
   {
-    id: "UC_jazz_cafe_01",
-    name: "Midnight Cozy Jazz Room",
-    handle: "@cozyjazznight",
-    link: "https://www.youtube.com",
-    subs: 4850,
-    videoCount: 8,
-    createdAt: "2025-11-14",
-    totalViews: 412000,
-    recent12mVideos: 8,
-    longestMin: 180,
-    watchHoursMax: 16400,
-    passed4000: "O",
-    topVideo: "☕ 비 오는 날 듣는 따뜻한 카페 재즈 피아노 3시간 연속재생",
-    topViews: 289000
-  },
-  {
-    id: "UC_sleep_rain_02",
-    name: "Deep Rest Sleep Melody",
-    handle: "@deeprest_sleep",
-    link: "https://www.youtube.com",
-    subs: 3200,
-    videoCount: 6,
-    createdAt: "2026-01-20",
-    totalViews: 325000,
-    recent12mVideos: 6,
-    longestMin: 360,
-    watchHoursMax: 22100,
-    passed4000: "O",
-    topVideo: "💤 불면증 극복 델타파 수면음악 (빗소리 + 부드러운 패드음 6시간)",
-    topViews: 215000
-  },
-  {
-    id: "UC_lofi_study_03",
-    name: "Seoul Library Lo-Fi Beats",
-    handle: "@seoul_lofi_study",
-    link: "https://www.youtube.com",
-    subs: 2100,
-    videoCount: 11,
-    createdAt: "2025-08-05",
-    totalViews: 198000,
-    recent12mVideos: 9,
-    longestMin: 120,
-    watchHoursMax: 7800,
-    passed4000: "O",
-    topVideo: "📚 시험기간 집중력 200% 올려주는 감성 로파이 비트 (2시간 루프)",
-    topViews: 124000
-  },
-  {
-    id: "UC_piano_heal_04",
-    name: "Pure Wood Piano Studio",
-    handle: "@woodpiano_kr",
-    link: "https://www.youtube.com",
-    subs: 1450,
+    id: "UC_slowly_jazz",
+    name: "Slowly Jazz (슬로울리 재즈)",
+    handle: "@SlowlyJazz",
+    link: "https://www.youtube.com/@SlowlyJazz",
+    videoUrl: "https://www.youtube.com/watch?v=e3L1PIY1pN8",
+    subs: 18500,
     videoCount: 14,
-    createdAt: "2025-09-12",
-    totalViews: 142000,
-    recent12mVideos: 12,
-    longestMin: 90,
-    watchHoursMax: 4950,
+    createdAt: "2024-03-15",
+    totalViews: 890000,
+    recent12mVideos: 14,
+    longestMin: 180,
+    watchHoursMax: 26700,
     passed4000: "O",
-    topVideo: "🌿 마음이 편안해지는 어쿠스틱 피아노 소품집 (힐링 연주곡)",
-    topViews: 86000
+    topVideo: "☕ 눈 오는 날 듣는 따뜻하고 감미로운 카페 재즈 피아노",
+    topViews: 420000
   },
   {
-    id: "UC_vintage_vinyl_05",
-    name: "Old Attic Vinyl Record",
-    handle: "@vintage_vinyl_records",
-    link: "https://www.youtube.com",
-    subs: 1180,
+    id: "UC_calmed_nature",
+    name: "Calmed by Nature (힐링 & 백색소음)",
+    handle: "@CalmedByNature",
+    link: "https://www.youtube.com/@CalmedByNature",
+    videoUrl: "https://www.youtube.com/watch?v=q76bMs-NwRk",
+    subs: 24000,
+    videoCount: 12,
+    createdAt: "2023-11-20",
+    totalViews: 1250000,
+    recent12mVideos: 12,
+    longestMin: 240,
+    watchHoursMax: 50000,
+    passed4000: "O",
+    topVideo: "🌧️ 빗소리와 함께 듣는 아늑한 커피숍 배경음악 (Cozy Coffee Shop)",
+    topViews: 680000
+  },
+  {
+    id: "UC_sleeptube",
+    name: "Sleep Tube - 수면 음악 전문",
+    handle: "@SleepTube",
+    link: "https://www.youtube.com/@SleepTube",
+    videoUrl: "https://www.youtube.com/watch?v=q66fU_Uj8wA",
+    subs: 9800,
     videoCount: 9,
-    createdAt: "2026-02-02",
-    totalViews: 89000,
+    createdAt: "2024-07-10",
+    totalViews: 450000,
     recent12mVideos: 9,
-    longestMin: 60,
-    watchHoursMax: 3100,
-    passed4000: "X",
-    topVideo: "📻 1970년대 빈티지 소울 재즈 LP 턴테이블 사운드",
-    topViews: 54000
+    longestMin: 360,
+    watchHoursMax: 27000,
+    passed4000: "O",
+    topVideo: "💤 불면증 극복을 위한 델타파 유도 수면음악 (Deep Sleep Music)",
+    topViews: 310000
+  },
+  {
+    id: "UC_nemostree",
+    name: "Nemostree (네모스트리 감성 연주곡)",
+    handle: "@nemostree",
+    link: "https://www.youtube.com/@nemostree",
+    videoUrl: "https://www.youtube.com/watch?v=wXhTHyIgQ_U",
+    subs: 4200,
+    videoCount: 15,
+    createdAt: "2024-05-02",
+    totalViews: 280000,
+    recent12mVideos: 15,
+    longestMin: 90,
+    watchHoursMax: 7000,
+    passed4000: "O",
+    topVideo: "🎹 마음이 차분해지는 새벽 감성 피아노 솔로 소품집",
+    topViews: 145000
+  },
+  {
+    id: "UC_cafemusicbgm",
+    name: "Café Music BGM channel",
+    handle: "@CafeMusicBGMchannel",
+    link: "https://www.youtube.com/@CafeMusicBGMchannel",
+    videoUrl: "https://www.youtube.com/watch?v=VMAPTo7RVCo",
+    subs: 4200000,
+    videoCount: 18,
+    createdAt: "2023-01-15",
+    totalViews: 98000000,
+    recent12mVideos: 18,
+    longestMin: 210,
+    watchHoursMax: 340000,
+    passed4000: "O",
+    topVideo: "☕ 편안한 보사노바 & 재즈 피아노 카페 음악 연속재생",
+    topViews: 12000000
   }
 ];
 
@@ -405,11 +410,13 @@ export default function SmallMusicFinder() {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 12, fontWeight: 800, color: '#6366f1' }}>#{idx + 1}</span>
-                    <a href={ch.link} target="_blank" rel="noopener noreferrer" className="mf-card-name">
+                    <a href={ch.link} target="_blank" rel="noopener noreferrer" className="mf-card-name" title="유튜브 채널 공식 홈 바로가기">
                       {ch.name} <ExternalLink size={14} />
                     </a>
                   </div>
-                  <div className="mf-card-handle">{ch.handle} · 개설 {ch.createdAt}</div>
+                  <a href={ch.link} target="_blank" rel="noopener noreferrer" className="mf-card-handle" style={{ display: 'inline-block', textDecoration: 'none', color: '#4f46e5' }}>
+                    {ch.handle} ↗ (채널 열기) · 개설 {ch.createdAt}
+                  </a>
                 </div>
 
                 <span className={`mf-pass-badge ${ch.passed4000 === 'O' ? 'passed' : 'pending'}`}>
@@ -439,12 +446,24 @@ export default function SmallMusicFinder() {
                 </div>
               </div>
 
-              {/* 최고 조회수 영상 */}
+              {/* 최고 조회수 영상 (클릭 시 실제 유튜브 영상으로 즉시 이동) */}
               {ch.topVideo && (
-                <div className="mf-top-video">
-                  <span className="mf-top-video-label">🔥 최고 조회 영상 (조회수 {ch.topViews?.toLocaleString()}회):</span>
-                  {ch.topVideo}
-                </div>
+                <a 
+                  href={ch.videoUrl || ch.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="mf-top-video"
+                  style={{ textDecoration: 'none', display: 'block', cursor: 'pointer' }}
+                  title="유튜브에서 실제 영상 재생하기"
+                >
+                  <span className="mf-top-video-label">🔥 최고 조회 영상 (클릭 시 유튜브 바로 재생):</span>
+                  <div style={{ color: '#1e3a8a', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                    <span>{ch.topVideo}</span>
+                    <span style={{ fontSize: 11, background: '#dbeafe', color: '#1d4ed8', padding: '2px 6px', borderRadius: 4, whiteSpace: 'nowrap' }}>
+                      ▶ {ch.topViews?.toLocaleString()}회
+                    </span>
+                  </div>
+                </a>
               )}
             </div>
           ))}
