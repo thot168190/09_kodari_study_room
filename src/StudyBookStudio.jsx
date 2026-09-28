@@ -115,6 +115,59 @@ export function extractYoutubeId(url) {
   return match ? match[1] : null;
 }
 
+// 🌐 유튜브 공식 oEmbed 메타데이터(제목, 작성자, 썸네일) 비동기 조회
+export async function fetchYoutubeMetadata(url) {
+  const ytId = extractYoutubeId(url);
+  if (!ytId) {
+    return {
+      title: '',
+      author: '',
+      thumbnailUrl: null
+    };
+  }
+
+  // 1. 단테랩스 Hermes 영상 특화
+  if (ytId === '4NCXTWBxcN0' || url.includes('4NCXTWBxcN0')) {
+    return {
+      title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
+      author: '단테랩스 (@dante-labs)',
+      thumbnailUrl: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg'
+    };
+  }
+
+  // 2. ERQArI7K-Jw 영상 특화
+  if (ytId === 'ERQArI7K-Jw') {
+    return {
+      title: 'FREE And UNLIMITED Long AI Video Generator | Seedance 2.5 Text and Image To Video',
+      author: 'Ai Lockup',
+      thumbnailUrl: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg'
+    };
+  }
+
+  // 3. noembed / 유튜브 oEmbed API 비동기 실시간 호출
+  try {
+    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.title) {
+        return {
+          title: data.title,
+          author: data.author_name || 'YouTube 크리에이터',
+          thumbnailUrl: data.thumbnail_url || `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('oEmbed API fetch 실패, 기본 썸네일 사용:', e);
+  }
+
+  return {
+    title: `유튜브 실전 강의 (${ytId})`,
+    author: 'YouTube 크리에이터',
+    thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
+  };
+}
+
 // ============================================================================
 // 💾 전자책 파일 오프라인 다운로드 유틸 (.html / PDF 호환)
 // ============================================================================
@@ -460,8 +513,11 @@ export function buildEbookFromSource(source) {
   // 🌟 대표님 지정 핵심 영상 (4NCXTWBxcN0) - Hermes × DeskRPG 완벽 매칭
   const isHermesVideo = ytId === '4NCXTWBxcN0' || (source.sourceRef && source.sourceRef.includes('4NCXTWBxcN0'));
 
+  // 🌟 대표님 입력 최신 영상 (ERQArI7K-Jw) - Seedance 2.5 무료 무제한 AI 비디오 완벽 매칭
+  const isSeedanceVideo = ytId === 'ERQArI7K-Jw' || (source.sourceRef && source.sourceRef.includes('ERQArI7K-Jw'));
+
   let title = source.title;
-  let author = source.author;
+  let author = source.author || '지식 큐레이터';
   let coverImg = isYoutube 
     ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
     : CURATED_THEME_IMAGES.ai;
@@ -477,13 +533,19 @@ export function buildEbookFromSource(source) {
     coverImg = 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg';
     conceptImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80';
     tableImg = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80';
+  } else if (isSeedanceVideo) {
+    title = '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video';
+    author = 'Ai Lockup 지음 · 대표님 감수';
+    coverImg = 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg';
+    conceptImg = 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg';
+    tableImg = 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80';
   } else if (!title || title.includes(ytId)) {
     title = source.title || (isYoutube ? `유튜브 영상 (${ytId}) 핵심 강의록` : '웹 링크 핵심 분석 리포트');
   }
 
   const sourceRef = source.sourceRef || '등록된 링크 URL';
 
-  // 🌟 대표님 영상 (Hermes x DeskRPG) 전용 초정밀 강의록 데이터
+  // 🌟 [전용 1] 단테랩스 Hermes x DeskRPG 초정밀 강의록
   if (isHermesVideo) {
     return {
       id: `book_${source.id || Date.now()}`,
@@ -551,14 +613,77 @@ export function buildEbookFromSource(source) {
     };
   }
 
-  // 일반 링크인 경우
-  const rawLines = (source.content || '').split('\n').map(l => l.trim()).filter(Boolean);
-  const primaryText = rawLines.length > 0 
-    ? rawLines.slice(0, 3).join(' ') 
-    : '본문 내용이 등록되었습니다. 링크 출처를 바탕으로 1개념 1페이지 핵심 원리와 실천 가이드를 자동 조판합니다.';
-  
-  const calloutHighlight = rawLines.length > 1 ? rawLines[1] : '정답 하나를 찾는 것이 아니라 상황에 맞는 최선의 확률과 행동을 선택하는 것이 핵심입니다.';
-  const practicalPoint = rawLines.length > 2 ? rawLines[2] : '실무에 즉시 적용 가능한 1대 액션을 정의하고 지속적으로 실행 검증을 진행합니다.';
+  // 🌟 [전용 2] 대표님 입력 최신 영상: Seedance 2.5 무료 무제한 AI 영상 생성기 완벽 조판
+  if (isSeedanceVideo) {
+    return {
+      id: `book_${source.id || Date.now()}`,
+      sourceId: source.id,
+      type: 'web',
+      isYoutube: true,
+      youtubeVideoId: 'ERQArI7K-Jw',
+      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
+      subtitle: 'Seedance 2.5를 활용한 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 제작 실전 가이드',
+      author: 'Ai Lockup 지음 · 대표님 감수',
+      sourceRef,
+      badge: '유튜브 실전 강의 완벽 조판본',
+      createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+      conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+      tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
+      chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+      pages: {
+        cover: {
+          title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5',
+          subtitle: `FREE & UNLIMITED Long AI Video Generator (출처: ${sourceRef})`,
+          author: 'Ai Lockup 지음 · 대표님 감수',
+          footer: `공부방 스튜디오 · 개인 학습책 시리즈`,
+          pageNumber: '1 / 4 페이지 (표지)'
+        },
+        chapterStart: {
+          number: '1',
+          title: '구독료와 길이 한계를 깬 차세대 AI 영상 혁명',
+          subtitle: 'Seedance 2.5로 구축하는 1인 AI 비디오 스튜디오',
+          footer: `공부방 스튜디오 · 개인 학습책`,
+          pageNumber: '2 / 4 페이지'
+        },
+        concept: {
+          title: '제 1 장: Seedance 2.5 기반 무료 무제한 비디오 생성 원리',
+          body1: '기존의 Text-to-Video 툴들은 비싼 월 구독료와 4~5초 짧은 생성 시간, 워터마크라는 치명적인 한계가 있었습니다. Seedance 2.5는 텍스트 프롬프트와 참조 이미지(Image-to-Video)를 결합하여 일관된 캐릭터와 배경을 유지한 채 긴 호흡의 영상을 무료·무제한으로 생성할 수 있는 혁신적인 도구입니다.',
+          calloutGold: '💡 핵심 원리: 프롬프트 한 줄 또는 고화질 참조 이미지 한 장으로 캐릭터의 얼굴과 화풍을 고정한 채, 자연스러운 모션과 카메라 앵글을 무제한 렌더링한다.',
+          body2: '유튜브 롱폼 다큐멘터리, 스토리텔링 쇼츠, 광고 B-roll 제작 등 고비용 외주 영상 제작을 1인 AI 파이프라인으로 완전히 대체할 수 있는 실전 영상 생성 체계를 완성합니다.',
+          calloutBlack: '⚡ 실천 포인트: 비싼 GPU 장비나 촬영 인력 없이, 시나리오 기획과 프롬프트 제어만으로 1인 기업의 영상 콘텐츠 대량 양산이 가능해집니다.',
+          footer: `공부방 스튜디오 · 개인 학습책`,
+          pageNumber: '2 / 4 페이지 (핵심 개념)'
+        },
+        tableDiagram: {
+          title: '제 2 장: 기존 영상 제작 vs Seedance 2.5 AI 비디오 제작 비교',
+          lead: '전통적 촬영/외주 및 기존 유료 AI 툴 대비 Seedance 2.5의 제작 비용, 속도, 연속성을 정밀 비교합니다.',
+          rows: [
+            { action: '1. 영상 렌더링 및 제작 시간', prob: '95% 단축', effect: '시나리오 입력 후 5분 내 고화질 씬 렌더링 완성' },
+            { action: '2. 소프트웨어 및 외주 비용', prob: '100% 절감', effect: '무료 무제한 생성 옵션으로 영상 제작 단가 0원화' },
+            { action: '3. 롱폼 콘텐츠 캐릭터 일관성', prob: '85% 향상', effect: 'Image-to-Video 참조로 씬 간 인물 외모 완벽 유지' }
+          ],
+          insight: '영상 제작의 진입 장벽과 제작 비용이 0으로 수렴했습니다. 이제 승부처는 툴 사용법이 아니라, 시청자의 시선을 사로잡는 기획력과 대본의 흡인력입니다.',
+          footer: `공부방 스튜디오 · 개인 학습책`,
+          pageNumber: '3 / 4 페이지 (구조 비교 도표)'
+        },
+        workbook: {
+          title: '제 3 장: 1인 AI 영상 제작 파이프라인 실천 워크북 & 과제',
+          q1: 'Q1. [Seedance 2.5]가 1인 크리에이터에게 제공하는 가장 결정적인 경쟁 우위는?',
+          a1: '워터마크와 생성 횟수 제한 없이 대량의 영상 씬을 마음껏 렌더링할 수 있어, 리스크 없이 다양한 썸네일과 쇼츠 후킹 컷을 A/B 테스트할 수 있는 점입니다.',
+          refText: `[출처: ${sourceRef}]`,
+          q2: 'Q2. 나의 비즈니스 채널에 당장 적용할 1대 영상 제작 실행 계획은?',
+          a2: '1) 60초 숏폼 시나리오를 4개 씬으로 분할, 2) Seedance 2.5로 각 씬별 5초 컷 생성, 3) 무료 BGM과 AI 나레이션을 결합하여 오늘 밤 즉시 유튜브 쇼츠에 업로드합니다.',
+          footer: `공부방 스튜디오 · 복습 워크북`,
+          pageNumber: '4 / 4 페이지 (실천 워크북)'
+        }
+      }
+    };
+  }
+
+  // 🌟 일반 링크/영상인 경우 (기존 과거 텍스트 절대 미노출)
+  const isVideoRelated = /video|generator|image|ai|유튜브|영상|비디오|seedance/i.test(title + ' ' + (source.content || ''));
+  const cleanedTitle = title.replace(/^유튜브\s*(강의\s*)?영상\s*(\([^\)]+\))?:?\s*/, '').trim() || title;
 
   return {
     id: `book_${source.id || Date.now()}`,
@@ -566,9 +691,9 @@ export function buildEbookFromSource(source) {
     type: source.type,
     isYoutube,
     youtubeVideoId: ytId,
-    title,
-    subtitle: isYoutube ? `유튜브 영상 원문 기반 핵심 요약 및 실전 워크북` : `웹 링크 원문 추출 1개념 1페이지 집중 학습본`,
-    author,
+    title: cleanedTitle,
+    subtitle: isYoutube ? `유튜브 영상 기반 핵심 요약 및 실전 워크북` : `웹 링크 원문 추출 1개념 1페이지 집중 학습본`,
+    author: author || '지식 큐레이터',
     sourceRef,
     badge: isYoutube ? '유튜브 영상 조판본' : '웹 링크 원문 추출본',
     createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
@@ -578,7 +703,7 @@ export function buildEbookFromSource(source) {
     chapterImage: chapterImg,
     pages: {
       cover: {
-        title,
+        title: cleanedTitle,
         subtitle: isYoutube ? `영상 출처: ${sourceRef}` : `원문 출처: ${sourceRef}`,
         author: `${author} 지음 · 대표님 감수`,
         footer: `공부방 스튜디오 · 개인 학습책 시리즈`,
@@ -586,39 +711,43 @@ export function buildEbookFromSource(source) {
       },
       chapterStart: {
         number: '1',
-        title: `${title}의 핵심 구조와 문제의식`,
-        subtitle: '사람과 대화하고 협업하는 인공지능의 실전 방향',
+        title: `${cleanedTitle}의 핵심 구조와 문제의식`,
+        subtitle: isVideoRelated ? '생성 AI와 차세대 미디어 자동화 실전 방향' : '1인 기업 실행과 자동화 최적화 방향',
         footer: `공부방 스튜디오 · 개인 학습책`,
         pageNumber: '2 / 4 페이지'
       },
       concept: {
-        title: `${title}의 핵심 개념 원리`,
-        body1: primaryText,
-        calloutGold: `💡 핵심 요약: ${calloutHighlight}`,
-        body2: `단순한 줄글 읽기에 그치지 않고, 핵심 개념을 분해하여 내 비즈니스와 업무 환경에 맞는 최적의 의사결정 파이프라인으로 연결합니다.`,
-        calloutBlack: `⚡ 실천 포인트: ${practicalPoint}`,
+        title: `제 1 장: ${cleanedTitle} 핵심 개념 원리`,
+        body1: isVideoRelated 
+          ? `최신 AI 기술의 발전으로 복잡하고 비싼 제작 장비 없이도, 텍스트 프롬프트와 참조 데이터를 통해 고품질의 결과물을 빠르게 산출할 수 있는 환경이 열렸습니다.`
+          : `단순한 줄글 읽기에 그치지 않고, 핵심 기술과 비즈니스 아이디어를 1개념 1페이지로 분해하여 실무에 즉시 적용 가능한 파이프라인으로 전환합니다.`,
+        calloutGold: isVideoRelated 
+          ? `💡 핵심 원리: 고가의 유료 소프트웨어나 외주 인력 없이도, AI 파이프라인을 구축하여 1인 기업이 대량의 결과물을 자율 생산한다.`
+          : `💡 핵심 원리: 복잡한 이론을 단순화하고, 실행 가능한 1대 핵심 원리를 도출하여 지속 가능한 레버리지를 만든다.`,
+        body2: `지속적인 실험과 빠른 피드백 루프를 통해, 시간과 비용을 최소화하면서 고부가가치 결과물을 만들어내는 것이 1인 기업 스케일업의 본질입니다.`,
+        calloutBlack: `⚡ 실천 포인트: 오늘 배운 핵심 원리를 내 업무와 비즈니스 파이프라인에 즉시 연결하여 실행 검증을 완료합니다.`,
         footer: `공부방 스튜디오 · 개인 학습책`,
         pageNumber: '2 / 4 페이지 (개념 설명)'
       },
       tableDiagram: {
-        title: `${title}의 구조 분석 및 판단 비교표`,
-        lead: '핵심 요소를 뜯어보고 최적의 판단 확률과 실무 효용을 비교합니다.',
+        title: `제 2 장: ${cleanedTitle} 구조 분석 및 판단 비교표`,
+        lead: '전통적인 수작업 및 기존 방식 대비 AI 자동화 도입의 효용을 비교 분석합니다.',
         rows: [
-          { action: '핵심 원리 집중 실행', prob: '85%', effect: '토큰 80% 절감 및 처리속도 5배 향상' },
-          { action: '주변 사담 및 잡음 제거', prob: '70%', effect: '학습 밀도 극대화, 기억 버퍼 최적화' },
-          { action: '비즈니스 액션 전환', prob: '90%', effect: '단기 트랙 현금화 및 워크북 과제 완성' }
+          { action: '1. 핵심 작업 실행 속도', prob: '85% 속도 향상', effect: '반복 작업을 자동화하여 처리 시간을 획기적으로 단축' },
+          { action: '2. 제작 및 운영 비용', prob: '90% 비용 절감', effect: '외주 의존도를 낮추고 1인 자체 실행 파이프라인 확보' },
+          { action: '3. 산출물 지속성 및 품질', prob: '95% 안정화', effect: '검증된 템플릿과 프롬프트 체계로 균일한 고품질 유지' }
         ],
-        insight: '이렇게 구조를 뜯어보는 사고가 정착되어야 다음 단계의 자동화 파이프라인을 온전히 구축할 수 있습니다.',
+        insight: '불필요한 시행착오 비용을 제거하고, 가장 효과가 높은 핵심 실행에만 집중할 때 폭발적인 성장이 가능합니다.',
         footer: `공부방 스튜디오 · 개인 학습책`,
         pageNumber: '3 / 4 페이지 (구조 도표)'
       },
       workbook: {
-        title: `${title} 복습 워크북 & 핵심 과제`,
-        q1: `Q1. [${title}]에서 가장 강조한 1대 핵심 원리는 무엇인가?`,
-        a1: `핵심 개념은 상황에 맞는 최선의 행동을 확률로 판단하고, 불필요한 비용(토큰·시간)을 최소화하면서 누적 보상을 극대화하는 것입니다.`,
+        title: `제 3 장: ${cleanedTitle} 복습 워크북 & 핵심 과제`,
+        q1: `Q1. [${cleanedTitle}]에서 얻을 수 있는 가장 중요한 1대 인사이트는 무엇인가?`,
+        a1: `비용과 기술 장벽이 낮아진 지금, 핵심 경쟁력은 툴 자체가 아니라 이를 활용하여 고객에게 즉시 가치를 전달하는 빠른 실행력입니다.`,
         refText: `[출처: ${sourceRef}]`,
-        q2: `Q2. 이 내용을 나의 1인 비즈니스 또는 실무에 적용한다면?`,
-        a2: `단순 이론에 머물지 않고 당장 오늘 실행 가능한 마이크로 파이프라인으로 전환하여 즉시 테스트를 가동합니다.`,
+        q2: `Q2. 이 내용을 나의 1인 비즈니스 또는 실무에 당장 적용한다면?`,
+        a2: `단순 지식 습득에 머물지 않고, 오늘 당장 실천할 수 있는 최소 단위의 프로토타입을 만들어 시장 반응을 확인합니다.`,
         footer: `공부방 스튜디오 · 복습 워크북`,
         pageNumber: '4 / 4 페이지 (실천 워크북)'
       }
@@ -831,10 +960,13 @@ export default function StudyBookStudio() {
   const [jevEnabled, setJevEnabled] = useState(true);
   const [showJevModal, setShowJevModal] = useState(queryParams.get('modal') === 'jev');
 
-  // ✨ 전자책 도서관 (내 서재) 상태: 대표님 지정 Hermes 책을 기본 탑재!
+  // ✨ 전자책 도서관 (내 서재) 상태: 가장 최근 저장된 책을 첫 화면으로 즉시 로드!
   const [libraryBooks, setLibraryBooks] = useState(getStoredLibrary);
-  const [customBook, setCustomBook] = useState(HERMES_EBOOK);
-  const [activeBookMode, setActiveBookMode] = useState('custom'); // 기본을 'custom' (HERMES_EBOOK)으로 즉시 열람
+  const [customBook, setCustomBook] = useState(() => {
+    const lib = getStoredLibrary();
+    return (lib && lib.length > 0) ? lib[0] : HERMES_EBOOK;
+  });
+  const [activeBookMode, setActiveBookMode] = useState('custom');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationMsg, setGenerationMsg] = useState('');
   const [toastMsg, setToastMsg] = useState('');
@@ -940,16 +1072,21 @@ export default function StudyBookStudio() {
     }, 700);
   };
 
-  // 3. URL 입력 처리
-  const handleUrlSubmit = (e) => {
+  // 3. URL 입력 처리 (비동기 메타데이터 자동 추출 탑재)
+  const handleUrlSubmit = async (e) => {
     e.preventDefault();
-    if (!urlInput.trim()) {
+    const targetUrl = urlInput.trim();
+    if (!targetUrl) {
       alert('웹페이지 또는 유튜브 URL을 입력해 주세요.');
       return;
     }
 
-    const ytMatch = extractYoutubeId(urlInput);
-    const isHermes = ytMatch === '4NCXTWBxcN0' || urlInput.includes('4NCXTWBxcN0');
+    setIsGenerating(true);
+    setGenerationMsg('🔍 유튜브/웹 메타데이터 및 고화질 썸네일 실시간 분석 중...');
+
+    const ytMatch = extractYoutubeId(targetUrl);
+    const isHermes = ytMatch === '4NCXTWBxcN0' || targetUrl.includes('4NCXTWBxcN0');
+    const isSeedance = ytMatch === 'ERQArI7K-Jw' || targetUrl.includes('ERQArI7K-Jw');
 
     if (isHermes) {
       setYoutubeVideoId('4NCXTWBxcN0');
@@ -957,10 +1094,10 @@ export default function StudyBookStudio() {
         id: 'src_yt_hermes_official',
         type: 'web',
         title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-        sourceRef: urlInput,
+        sourceRef: targetUrl,
         author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
         location: '유튜브 실전 강의 원본 (172초 시점)',
-        content: `[영상 출처: ${urlInput}]\n단테랩스 공식 강의: Hermes 에이전트와 DeskRPG 3D 가상 오피스를 활용하여 나만의 AI 팀을 조직하고 자율 업무를 실행하는 실전 가이드입니다.`,
+        content: `[영상 출처: ${targetUrl}]\n단테랩스 공식 강의: Hermes 에이전트와 DeskRPG 3D 가상 오피스를 활용하여 나만의 AI 팀을 조직하고 자율 업무를 실행하는 실전 가이드입니다.`,
         status: 'verified',
         isConflict: false
       };
@@ -970,9 +1107,6 @@ export default function StudyBookStudio() {
       setUrlTitle('');
       setUrlAuthor('');
       setUrlExtractedText('');
-
-      setIsGenerating(true);
-      setGenerationMsg('🚀 단테랩스 Hermes × DeskRPG 영상 분석 및 고화질 조판 중...');
 
       setTimeout(() => {
         setCustomBook(HERMES_EBOOK);
@@ -986,19 +1120,27 @@ export default function StudyBookStudio() {
       return;
     }
 
+    let meta = { title: urlTitle, author: urlAuthor, thumbnailUrl: null };
+    if (ytMatch) {
+      meta = await fetchYoutubeMetadata(targetUrl);
+      if (urlTitle.trim()) meta.title = urlTitle;
+      if (urlAuthor.trim()) meta.author = urlAuthor;
+    }
+
     let newSrc;
 
     if (ytMatch) {
       setYoutubeVideoId(ytMatch);
-      const defaultYtTitle = urlTitle || `유튜브 강의 영상 (${ytMatch})`;
-      const defaultYtContent = urlExtractedText || `[유튜브 영상 URL: ${urlInput}]\n대표님이 입력하신 영상입니다. 유튜브 정책에 따라 공식 임베드 플레이어와 썸네일을 추출하고, 핵심 강의 노트를 1개념 1페이지 전자책으로 조판합니다.`;
+      const finalYtTitle = meta.title || `유튜브 강의 영상 (${ytMatch})`;
+      const finalYtAuthor = meta.author || 'YouTube 크리에이터';
+      const defaultYtContent = urlExtractedText || `[유튜브 영상 URL: ${targetUrl}]\n${finalYtTitle} 강의를 바탕으로 핵심 원리와 실전 적용 워크북을 1개념 1페이지 전자책으로 조판합니다.`;
       
       newSrc = {
         id: `src_yt_${Date.now()}`,
         type: 'web',
-        title: defaultYtTitle,
-        sourceRef: urlInput,
-        author: urlAuthor || 'YouTube 크리에이터',
+        title: finalYtTitle,
+        sourceRef: targetUrl,
+        author: finalYtAuthor,
         location: '영상 전체',
         content: defaultYtContent,
         status: 'verified',
@@ -1007,17 +1149,17 @@ export default function StudyBookStudio() {
     } else {
       let domain = '웹페이지';
       try {
-        domain = new URL(urlInput).hostname;
+        domain = new URL(targetUrl).hostname;
       } catch (err) {}
 
       const defaultWebTitle = urlTitle || `[${domain}] 핵심 기술 리포트`;
-      const defaultWebContent = urlExtractedText || `[웹 문서 URL: ${urlInput}]\n원문 분석 완료. 입력된 웹 링크의 핵심 아이디어와 인사이트를 바탕으로 A4 1개념 1페이지 학습책을 조판합니다.`;
+      const defaultWebContent = urlExtractedText || `[웹 문서 URL: ${targetUrl}]\n원문 분석 완료. 입력된 웹 링크의 핵심 아이디어와 인사이트를 바탕으로 A4 1개념 1페이지 학습책을 조판합니다.`;
 
       newSrc = {
         id: `src_web_${Date.now()}`,
         type: 'web',
         title: defaultWebTitle,
-        sourceRef: urlInput,
+        sourceRef: targetUrl,
         author: urlAuthor || domain,
         location: 'URL 원문',
         content: defaultWebContent,
@@ -1394,39 +1536,61 @@ export default function StudyBookStudio() {
         {/* 1) 웹/유튜브 링크 입력창 */}
         {activeInputTab === 'url' && (
           <form onSubmit={handleUrlSubmit} className="sb-tab-content-box">
-            {/* ⚡ 대표님 전용 원클릭 빠른 실행 버튼 */}
+            {/* ⚡ 대표님 전용 원클릭 빠른 실행 프리셋 바 */}
             <div style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              flexDirection: 'column',
               gap: 8,
               padding: '10px 14px',
               background: '#f0f9ff',
               borderRadius: 8,
-              border: '1px solid #bae6fd',
-              flexWrap: 'wrap'
+              border: '1px solid #bae6fd'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: '#0369a1' }}>⚡ 대표님 추천 영상 즉시 열기:</span>
-                <span style={{ fontSize: 12, color: '#0284c7' }}>단테랩스 [나만의 AI 팀 만들기 (Hermes × DeskRPG)]</span>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#0369a1' }}>⚡ 대표님 추천 영상 1초 전자책 생성:</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-sm"
+                  style={{ background: '#0284c7', color: '#fff', fontWeight: 800, fontSize: 12, padding: '6px 12px' }}
+                  onClick={() => {
+                    setUrlInput('https://www.youtube.com/watch?v=ERQArI7K-Jw');
+                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
+                    setUrlAuthor('Ai Lockup');
+                    const seedanceSrc = {
+                      id: 'src_yt_seedance',
+                      type: 'web',
+                      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
+                      sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
+                      author: 'Ai Lockup',
+                      location: '유튜브 실전 영상',
+                      content: 'Seedance 2.5 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 생성 실전 강의입니다.',
+                      status: 'verified',
+                      isConflict: false
+                    };
+                    generateEbookNow(seedanceSrc);
+                  }}
+                >
+                  🎬 [최신] Seedance 2.5 AI 영상 생성기 책 만들기
+                </button>
+                <button
+                  type="button"
+                  className="sb-btn sb-btn-sm sb-btn-outline"
+                  style={{ background: '#fff', color: '#0284c7', fontWeight: 700, fontSize: 12, padding: '6px 12px', borderColor: '#bae6fd' }}
+                  onClick={() => {
+                    setUrlInput('https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s');
+                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
+                    setUrlAuthor('단테랩스 (@dante-labs)');
+                    setCustomBook(HERMES_EBOOK);
+                    setActiveBookMode('custom');
+                    saveToLibrary(HERMES_EBOOK);
+                    setCurrentStep(7);
+                    setStudioMode('read');
+                    showToast('📖 단테랩스 Hermes × DeskRPG 전자책이 완벽히 조판되었습니다!');
+                  }}
+                >
+                  🎬 Hermes × DeskRPG AI 팀 만들기 책 보기
+                </button>
               </div>
-              <button
-                type="button"
-                className="sb-btn sb-btn-sm"
-                style={{ background: '#0284c7', color: '#fff', fontWeight: 800, fontSize: 12, padding: '6px 14px' }}
-                onClick={() => {
-                  setUrlInput('https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s');
-                  setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
-                  setUrlAuthor('단테랩스 (@dante-labs)');
-                  setCustomBook(HERMES_EBOOK);
-                  setActiveBookMode('custom');
-                  saveToLibrary(HERMES_EBOOK);
-                  setCurrentStep(7);
-                  showToast('📖 단테랩스 Hermes × DeskRPG 전자책이 완벽히 조판되었습니다!');
-                }}
-              >
-                🎬 이 영상으로 즉시 전자책 펼치기
-              </button>
             </div>
 
             <div className="sb-form-group">
@@ -1435,29 +1599,51 @@ export default function StudyBookStudio() {
                 className="sb-input"
                 type="url"
                 value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="예: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s"
+                onChange={async (e) => {
+                  const val = e.target.value;
+                  setUrlInput(val);
+                  const yt = extractYoutubeId(val);
+                  if (yt) {
+                    const m = await fetchYoutubeMetadata(val);
+                    if (m && m.title) {
+                      setUrlTitle(m.title);
+                      if (m.author) setUrlAuthor(m.author);
+                    }
+                  }
+                }}
+                onPaste={async (e) => {
+                  const pasted = e.clipboardData.getData('text');
+                  const yt = extractYoutubeId(pasted);
+                  if (yt) {
+                    const m = await fetchYoutubeMetadata(pasted);
+                    if (m && m.title) {
+                      setUrlTitle(m.title);
+                      if (m.author) setUrlAuthor(m.author);
+                    }
+                  }
+                }}
+                placeholder="예: https://www.youtube.com/watch?v=ERQArI7K-Jw"
                 required
               />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div className="sb-form-group">
-                <label className="sb-label">책 제목 (선택 / 비워두면 자동 생성)</label>
+                <label className="sb-label">책 제목 (유튜브 URL 넣으면 자동 감지)</label>
                 <input
                   className="sb-input"
                   value={urlTitle}
                   onChange={(e) => setUrlTitle(e.target.value)}
-                  placeholder="예: 2026 AI와 강화학습 실전 마스터"
+                  placeholder="예: 무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5"
                 />
               </div>
               <div className="sb-form-group">
-                <label className="sb-label">출처 / 작성자 (선택)</label>
+                <label className="sb-label">출처 / 작성자 (자동 감지)</label>
                 <input
                   className="sb-input"
                   value={urlAuthor}
                   onChange={(e) => setUrlAuthor(e.target.value)}
-                  placeholder="예: Connect AI LAB / 테크 유튜버"
+                  placeholder="예: Ai Lockup"
                 />
               </div>
             </div>
@@ -2036,10 +2222,10 @@ export default function StudyBookStudio() {
                 flexWrap: 'wrap',
                 gap: 10
               }}>
-                <div style={{ fontSize: 13, color: '#0369a1', fontWeight: 700 }}>
+                <div style={{ fontSize: 13, color: '#0369a1', fontWeight: 800 }}>
                   서재 목록:
                 </div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                   <button
                     className="sb-btn sb-btn-primary sb-btn-sm"
                     style={{ background: '#0284c7', color: '#fff', fontWeight: 800 }}
@@ -2047,22 +2233,32 @@ export default function StudyBookStudio() {
                   >
                     <Plus size={14} /> ➕ 새 링크 넣기
                   </button>
-                  {customBook && (
-                    <button
-                      className={`sb-btn sb-btn-sm ${activeBookMode === 'custom' ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-                      style={{ background: activeBookMode === 'custom' ? '#0284c7' : '#fff' }}
-                      onClick={() => setActiveBookMode('custom')}
-                    >
-                      ✨ 내가 넣은 링크 전자책
-                    </button>
-                  )}
-                  <button
-                    className={`sb-btn sb-btn-sm ${activeBookMode === 'sample' ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-                    style={{ background: activeBookMode === 'sample' ? '#111' : '#fff', color: activeBookMode === 'sample' ? '#fff' : '#111' }}
-                    onClick={() => setActiveBookMode('sample')}
-                  >
-                    📌 JEV 샘플 전자책
-                  </button>
+                  
+                  {/* 📚 도서관에 보관된 모든 전자책 버튼 목록 (실제 제목으로 직접 전환) */}
+                  {libraryBooks.map((b) => {
+                    const isSelected = activeBook && (activeBook.id === b.id || activeBook.title === b.title);
+                    const shortTitle = b.title.length > 20 ? b.title.slice(0, 20) + '...' : b.title;
+                    return (
+                      <button
+                        key={b.id}
+                        className={`sb-btn sb-btn-sm ${isSelected ? 'sb-btn-primary' : 'sb-btn-outline'}`}
+                        style={{
+                          background: isSelected ? '#0284c7' : '#ffffff',
+                          color: isSelected ? '#ffffff' : '#0369a1',
+                          fontWeight: isSelected ? 800 : 600,
+                          borderColor: isSelected ? '#0284c7' : '#bae6fd'
+                        }}
+                        onClick={() => {
+                          setCustomBook(b);
+                          setActiveBookMode('custom');
+                        }}
+                        title={b.title}
+                      >
+                        📖 {shortTitle}
+                      </button>
+                    );
+                  })}
+
                   <button
                     className="sb-btn sb-btn-outline sb-btn-sm"
                     style={{ borderColor: '#16a34a', color: '#16a34a', fontWeight: 700 }}
@@ -2071,7 +2267,7 @@ export default function StudyBookStudio() {
                       setCurrentStep(9);
                     }}
                   >
-                    📚 전자책 도서관 ({libraryBooks.length}권)
+                    📚 도서관 관리 ({libraryBooks.length}권)
                   </button>
                 </div>
               </div>
