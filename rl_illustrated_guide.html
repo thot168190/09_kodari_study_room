@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>그림으로 1초 만에 이해하는 강화학습 하이퍼파라미터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e17;
+  --bg-card: #121a29;
+  --accent-gold: #f59e0b;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --text-main: #f3f4f6;
+  --text-sub: #9ca3af;
+  --border-glass: rgba(255, 255, 255, 0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+body { background: var(--bg-primary); color: var(--text-main); line-height: 1.7; padding-bottom: 80px; }
+
+.header {
+  text-align: center; padding: 30px 16px 20px;
+  background: linear-gradient(180deg, rgba(6, 182, 212, 0.1) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border-glass);
+}
+.header h1 { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.header p { font-size: 13px; color: var(--text-sub); }
+
+.container { max-width: 860px; margin: 0 auto; padding: 20px 16px; }
+
+.infographic-box {
+  width: 100%; border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  margin-bottom: 24px;
+}
+.infographic-box img { width: 100%; height: auto; display: block; }
+
+.section-card {
+  background: var(--bg-card); border: 1px solid var(--border-glass);
+  border-radius: 14px; padding: 22px 18px; margin-bottom: 20px;
+}
+.section-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 12px;
+}
+.section-tag {
+  font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px;
+}
+.cyan-tag { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+.gold-tag { background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); }
+.green-tag { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+.desc-text { font-size: 14px; color: #d1d5db; margin-bottom: 12px; }
+.analogy-box {
+  background: rgba(255, 255, 255, 0.03); border-left: 4px solid var(--accent-cyan);
+  padding: 12px 14px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 10px 0;
+}
+.analogy-title { font-weight: 800; color: var(--accent-cyan); margin-bottom: 3px; }
+
+.result-box {
+  background: rgba(245, 158, 11, 0.08); border-left: 4px solid var(--accent-gold);
+  padding: 12px 14px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 10px;
+}
+.result-title { font-weight: 800; color: var(--accent-gold); margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎨 대표님을 위한 그림 강화학습 특강</h1>
+  <p>수식 없이 그림 한 장으로 1초 만에 꿰뚫어 보는 3대 핵심 비밀</p>
+</div>
+
+<div class="container">
+
+  <!-- 메인 인포그래픽 이미지 -->
+  <div class="infographic-box">
+    <img src="./rl_infographic.jpg" alt="강화학습 3대 하이퍼파라미터 인포그래픽">
+  </div>
+
+  <!-- 개념 1: 은닉층 (왼쪽 상단 패널) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-tag cyan-tag">왼쪽 위 패널</span>
+      <span>1. 은닉층 96 (Neural Brain Width) : 두뇌의 생각 깊이</span>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-title">💡 쉬운 비유: "공부방에 모인 전략 전문가의 수"</div>
+      판을 움직이기 전에 "공이 저기서 오니까 어느 각도로 칠까?"를 고민하는 브레인의 수입니다.
+    </div>
+    <p class="desc-text">
+      • <strong>64명 (기본)</strong>: 전문가는 적당한데 머리가 살짝 단순해서 "공을 가운데로만 받아치는 수직 샷"에 갇혀 36점에 묶였습니다.<br>
+      • <strong>128명 (과적합)</strong>: 128명이나 모였는데 20만 걸음이라는 짧은 시간 동안 서로 싸우다가 멍청이가 되었습니다.<br>
+      • <strong>96명 (황금 체급)</strong>: 20만 걸음 안에 완벽히 호흡을 맞추며, <strong>판의 모서리로 깎아 쳐서 대각선으로 쏘아 올리는 정밀 각도</strong>를 완벽히 계산해 냈습니다!
+    </p>
+  </div>
+
+  <!-- 개념 2: 학습률 (왼쪽 하단 패널) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-tag gold-tag">왼쪽 아래 패널</span>
+      <span>2. 학습률 0.0004 (Learning Rate) : 운전대 미세 조율</span>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-title">💡 쉬운 비유: "고속도로에서 핸들을 꺾는 손의 힘"</div>
+      실수하거나 점수를 냈을 때, "내 생각을 한 번에 얼마나 크게 바꿀 것인가?"입니다.
+    </div>
+    <p class="desc-text">
+      • <strong>학습률이 크면 (급핸들)</strong>: 오른쪽 그림처럼 차가 지그재그로 흔들립니다. 공 한 번 놓쳤다고 운전대를 확 꺾어버려서 방금까지 잘하던 기술을 싹 까먹습니다 (망각 현상).<br>
+      • <strong>학습률 0.0004 (부드러운 조율)</strong>: 왼쪽 그림처럼 차선을 완벽하게 유지합니다. 모서리 끝 1픽셀 단위의 미세한 손맛을 잃지 않고 차분하게 실력을 누적시킵니다!
+    </p>
+  </div>
+
+  <!-- 개념 3: 감마 0.99 (오른쪽 거대 패널) -->
+  <div class="section-card">
+    <div class="section-title">
+      <span class="section-tag green-tag">오른쪽 패널</span>
+      <span>3. 감마 0.99 (Gamma Factor) : 미래를 내다보는 안목</span>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-title">💡 쉬운 비유: "눈앞의 1개 vs 천장을 뚫고 터지는 20개 연쇄 폭발"</div>
+      당장 눈앞의 벽돌 1개 깨는 것보다, 5초 뒤에 일어날 거대한 기적을 내다보는 미래 안목입니다!
+    </div>
+    <p class="desc-text">
+      • <strong>감마가 낮으면</strong>: 지금 눈앞에 보이는 벽돌 1개 깨려고 무리하다가 공을 놓치고 끝납니다.<br>
+      • <strong>감마가 0.99면</strong>: 그림처럼 <strong>"지금 당장 벽돌을 못 깨더라도, 공을 패들 끝으로 깎아 쳐서 저 구석 천장 틈새로 쏘아 올린다! 그러면 공이 위쪽에 갇혀서 혼자 벽돌 20개를 싹쓸이 폭파시킨다(Chain Reaction)!"</strong>는 100스텝 뒤의 빅픽처를 그리게 됩니다!
+    </p>
+    <div class="result-box">
+      <div class="result-title">🎯 결과: 58개, 57개 소탕의 비결</div>
+      아까 대표님 화면에서 58개, 57개짜리 만점 소탕 판이 터진 이유가 바로 이 <strong>감마 0.99의 빅픽처 샷</strong> 덕분이었습니다!
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

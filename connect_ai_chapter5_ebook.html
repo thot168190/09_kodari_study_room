@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Connect AI 챕터 5 요약 이북 & 벽돌깨기 대회 공략집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e17;
+  --bg-card: #121a29;
+  --accent-gold: #f59e0b;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --text-main: #f3f4f6;
+  --text-sub: #9ca3af;
+  --border-glass: rgba(255, 255, 255, 0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+body { background: var(--bg-primary); color: var(--text-main); line-height: 1.6; }
+
+.top-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 14, 23, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 12px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.brand { font-size: 16px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+.badge { background: var(--accent-gold); color: #000; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
+
+.btn-download {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000; font-weight: 800; font-size: 13px;
+  padding: 8px 16px; border-radius: 8px; border: none;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+  transition: transform 0.2s;
+}
+.btn-download:active { transform: scale(0.97); }
+
+.container { max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(145deg, #162032 0%, #0d1522 100%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 16px; padding: 28px 20px; margin-bottom: 24px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero h1 { font-size: 24px; font-weight: 900; margin-bottom: 8px; color: #fff; }
+.hero p { font-size: 14px; color: var(--text-sub); }
+.hero-stats { display: flex; justify-content: center; gap: 16px; margin-top: 18px; }
+.stat-box { background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-glass); }
+.stat-label { font-size: 11px; color: var(--text-sub); }
+.stat-val { font-size: 16px; font-weight: 800; color: var(--accent-cyan); }
+
+/* Card Section */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px; padding: 22px 18px; margin-bottom: 22px;
+}
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.card-title { font-size: 18px; font-weight: 800; color: #fff; }
+
+.img-container {
+  width: 100%; border-radius: 12px; overflow: hidden;
+  margin: 14px 0; border: 1px solid var(--border-glass);
+}
+.img-container img { width: 100%; height: auto; display: block; }
+.img-caption { font-size: 12px; color: var(--text-sub); text-align: center; padding: 6px; background: rgba(0,0,0,0.4); }
+
+/* Table */
+.styled-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+.styled-table th { background: rgba(255,255,255,0.06); color: var(--accent-gold); text-align: left; padding: 10px; font-weight: 700; }
+.styled-table td { padding: 10px; border-bottom: 1px solid var(--border-glass); color: #d1d5db; }
+.styled-table tr:last-child td { border-bottom: none; }
+.highlight-row { background: rgba(245, 158, 11, 0.1); font-weight: 700; color: #fff !important; }
+
+/* Callout */
+.callout {
+  background: rgba(6, 182, 212, 0.08); border-left: 4px solid var(--accent-cyan);
+  padding: 12px 14px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13px;
+}
+.callout-title { font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px; }
+
+.callout-gold {
+  background: rgba(245, 158, 11, 0.08); border-left: 4px solid var(--accent-gold);
+  padding: 12px 14px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13px;
+}
+.callout-gold-title { font-weight: 800; color: var(--accent-gold); margin-bottom: 4px; }
+
+/* Links Grid */
+.links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.link-card {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
+  padding: 12px; border-radius: 10px; text-decoration: none; color: inherit;
+  transition: background 0.2s;
+}
+.link-card:hover { background: rgba(255,255,255,0.07); }
+.link-card-title { font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 2px; }
+.link-card-desc { font-size: 11px; color: var(--text-sub); }
+
+@media (max-width: 480px) {
+  .links-grid { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">
+    <span>🤖 코다리 공부방</span>
+    <span class="badge">실습 챕터 5</span>
+  </div>
+  <a href="./Connect_AI_챕터5_대회공략이북.pdf" download="Connect_AI_챕터5_대회공략이북.pdf" class="btn-download">
+    📥 PDF 1초 소장
+  </a>
+</div>
+
+<div class="container">
+
+  <!-- Hero Header -->
+  <div class="hero">
+    <h1>🏆 강화학습 벽돌깨기 대회 & Connect AI</h1>
+    <p>정원석 랩장 Connect AI LAB 멤버십 라이브 챕터 5 정밀 요약 및 1등 공략 가이드</p>
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-label">대표님 현재 두뇌 점수</div>
+        <div class="stat-val" style="color:#ef4444;">9.4점 (5판 실측)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">공 따라가기 기준선</div>
+        <div class="stat-val" style="color:var(--accent-gold);">26.6점</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">대회 목표(모서리 타법)</div>
+        <div class="stat-val" style="color:var(--accent-green);">38~50점+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: 대회 및 게임 규칙 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(245,158,11,0.2); color:var(--accent-gold);">🎮</div>
+      <div class="card-title">1. 대회 규칙과 채점 방식</div>
+    </div>
+    <p style="font-size:13px; color:#d1d5db;">
+      대회는 아타리 원본(수 시간 소요) 대신 규칙이 동일한 <strong>미니 벽돌깨기</strong>로 진행됩니다. 코랩과 대회 사이트의 서버 시뮬레이터 코드가 완벽히 일치하므로 코랩 점수가 곧 대회 점수입니다.
+    </p>
+
+    <div class="img-container">
+      <img src="./dqn_breakout_tournament.jpg" alt="벽돌깨기 게임 환경 다이어그램">
+      <div class="img-caption">미니 벽돌깨기 환경: 상태 8개 관측 ➔ DQN 신경망 판단 ➔ 패들 3가지 액션</div>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>구분</th><th>규칙 및 파라미터</th><th>설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>상태(8개)</strong></td><td>판위치, 공x, 공y, 가로속도, 세로속도, 공-판거리, 남은벽돌, 목숨</td><td>0~1 정규화된 8개 숫자 입력</td></tr>
+        <tr><td><strong>행동(3개)</strong></td><td>0: 가만히 / 1: 왼쪽 / 2: 오른쪽</td><td>순간마다 1개 선택 (초당 수십 회)</td></tr>
+        <tr><td><strong>보상</strong></td><td>벽돌 1개 파괴 시 +1 / 공 놓치면 -1</td><td>공을 끝까지 살리며 깨야 함</td></tr>
+        <tr><td><strong>채점</strong></td><td>정해진 시드(0, 1, 2, 3, 4) 5판 평균</td><td>60개 만점, 판당 최대 3,000걸음</td></tr>
+        <tr><td><strong>제출</strong></td><td>하루 5회 / 전체 30회 제한</td><td>서버가 직접 두뇌를 돌려 채점(조작 불가)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 2: 왜 26.6점에 갇히는가? 모서리 타법의 비밀 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(6,182,212,0.2); color:var(--accent-cyan);">📐</div>
+      <div class="card-title">2. 기준 점수와 '모서리 타법'의 비밀</div>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>두뇌 수준</th><th>평균 점수</th><th>플레이 특징</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>가만히 있기</td><td>4.4점</td><td>공이 처음에 한두 개 깨고 사망</td></tr>
+        <tr><td>공만 졸졸 따라가기 (규칙)</td><td>26.6점</td><td>공을 안 놓치지만 중앙으로만 튕겨 수직 왕복 ➔ 3000걸음 타임아웃</td></tr>
+        <tr class="highlight-row"><td>DQN 1분 학습 (모서리 타법)</td><td>35 ~ 45점</td><td>판 끝으로 받아 대각선 각도로 올려 단숨에 대량 파괴!</td></tr>
+        <tr><td>만점</td><td>60.0점</td><td>벽돌 60개 완전 소탕</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-gold">
+      <div class="callout-gold-title">💡 코다리 부장의 핵심 통찰: 모서리 타법(Angled Hit)</div>
+      패들의 정중앙으로만 받으면 공의 가로 속도가 0이 되어 수직 왕복 운동만 반복합니다. 판의 <strong>왼쪽 끝이나 오른쪽 끝</strong>으로 받아 가로 속도를 발생시켜 대각선으로 올려보내야 위쪽 벽돌 숲을 뚫고 만점에 도달합니다!
+    </div>
+  </div>
+
+  <!-- Section 3: 코랩 튜닝 비법 (대표님 1등 가이드) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(16,185,129,0.2); color:var(--accent-green);">⚡</div>
+      <div class="card-title">3. 코랩 1등 하이퍼파라미터 공략법</div>
+    </div>
+    <p style="font-size:13px; color:#d1d5db; margin-bottom:12px;">
+      코랩의 <strong>Cell 9</strong>에서 아래 파라미터를 살짝 조절하고 실행하면 40점 이상의 강력한 챔피언 두뇌가 탄생합니다:
+    </p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>파라미터</th><th>기본값</th><th>추천 튜닝값</th><th>효과</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>은닉(Hidden)</strong></td><td>64</td><td><strong>128</strong></td><td>두뇌 용량을 2배로 키워 복잡한 각도 제어 계산</td></tr>
+        <tr><td><strong>총걸음</strong></td><td>200,000</td><td><strong>250,000</strong></td><td>약 1분 30초 학습, 안정적인 최고점 달성</td></tr>
+        <tr><td><strong>탐험기간</strong></td><td>0.4</td><td><strong>0.45</strong></td><td>초반에 다양한 반사각을 탐험하게 유도</td></tr>
+        <tr><td><strong>씨앗(Seed)</strong></td><td>0</td><td><strong>1, 42, 77</strong></td><td>난수가 바뀌어 최고 점수 갱신 기회 증가</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-title">⚠️ 코랩 자동 안전장치</div>
+      DQN은 오래 학습하면 갑자기 점수가 떨어질 수 있습니다(망각 현상). 코랩 코드는 이미 <strong>"2만 걸음마다 채점하여 역대 가장 점수가 높았던 순간의 두뇌"</strong>를 자동으로 저장하므로 안심하고 끝까지 돌리시면 됩니다!
+    </div>
+  </div>
+
+  <!-- Section 4: Connect AI (모두의 두뇌 연결) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(139,92,246,0.2); color:var(--accent-purple);">🌐</div>
+      <div class="card-title">4. Connect AI: 모두의 두뇌를 잇는 원리</div>
+    </div>
+
+    <div class="img-container">
+      <img src="./connect_ai_brain_network.jpg" alt="Connect AI 앙상블 다이어그램">
+      <div class="img-caption">숫자(W, b)를 합치면 망가진다! ➔ 매 순간 각자의 '판단(투표)'을 모아야 한다!</div>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>실험 방법</th><th>점수</th><th>원인 분석</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>가장 잘한 1명 (단독)</td><td>39.6점</td><td>개인 두뇌의 확고한 대각선 전략 유지</td></tr>
+        <tr><td>12명 개인 평균</td><td>31.4점</td><td>개별 점수 평균</td></tr>
+        <tr style="color:#ef4444;"><td>모두 한 표 (다수결)</td><td>24.0점</td><td>서로 노리는 각도가 달라 우왕좌왕 ➔ 공만 따라가기(26.6)보다 하락!</td></tr>
+        <tr><td>확률 가중 평균</td><td>30.8점</td><td>확신도 반영으로 다수결보다 개선</td></tr>
+        <tr class="highlight-row"><td><strong>상위 3명 정예 투표</strong></td><td><strong>36.2점</strong></td><td>고수들의 판단만 모아 우왕좌왕 최소화</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-gold">
+      <div class="callout-gold-title">🎯 Connect AI의 미래 연구 과제</div>
+      순간마다 판단을 바꾸면 패들이 떨리면서 전략이 끊깁니다. <strong>"공 하나를 칠 때까지는 한 두뇌가 전담"</strong>하거나 <strong>"상황별 전문 두뇌(벽 근처 전담, 중앙 전담)"</strong>로 역할을 나눌 때 비로소 1명을 뛰어넘는 초지능 집단지성이 완성됩니다!
+    </div>
+  </div>
+
+  <!-- Section 5: 바로가기 링크 허브 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(255,255,255,0.1); color:#fff;">🔗</div>
+      <div class="card-title">5. 오늘 저녁 실습 바로가기 허브</div>
+    </div>
+
+    <div class="links-grid">
+      <a href="https://www.aicitybuilders.com/contest?c=brick" target="_blank" class="link-card">
+        <div class="link-card-title">🏆 대회 및 Connect AI 순위표</div>
+        <div class="link-card-desc">내 brain.json을 끌어다 놓고 5판 실시간 채점</div>
+      </a>
+      <a href="https://colab.research.google.com/github/wonseokjung/aicb-colab/blob/main/%EA%B0%95%ED%99%94%ED%95%99%EC%8A%B5_%EB%B2%BD%EB%8F%8C%EA%B9%A8%EA%B8%B0_%EB%8C%80%ED%9A%8C.ipynb" target="_blank" class="link-card">
+        <div class="link-card-title">📓 대회용 공식 코랩 노트북</div>
+        <div class="link-card-desc">1~2분 만에 GPU 없이 나만의 두뇌 학습 및 추출</div>
+      </a>
+      <a href="https://www.aicitybuilders.com/dqn" target="_blank" class="link-card">
+        <div class="link-card-title">👀 실시간 3D 신경망 시각화</div>
+        <div class="link-card-desc">내 두뇌를 불러와 8개 상태와 Q값을 눈으로 확인</div>
+      </a>
+      <a href="/scratch/connect_ai_breakout_ebook.pdf" download="Connect_AI_대회_요약이북.pdf" class="link-card" style="border-color:var(--accent-gold);">
+        <div class="link-card-title" style="color:var(--accent-gold);">📥 대표님 전용 PDF 요약집 다운로드</div>
+        <div class="link-card-desc">인쇄창 없이 클릭 즉시 로컬 파일 다운로드</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
