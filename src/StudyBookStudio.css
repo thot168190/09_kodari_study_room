@@ -505,10 +505,11 @@
 
 .sb-page-sheet {
   width: 100%;
-  max-width: 595px; /* A4 */
+  max-width: 595px; /* A4 규격 (1:1.414) */
   min-height: 842px;
   box-sizing: border-box;
-  background: #ffffff;
+  background: #ffffff !important;
+  color: #0f172a !important; /* 최상위 다크 테마 상속 차단 */
   box-shadow: var(--sb-shadow-lg);
   display: flex;
   flex-direction: column;
@@ -517,6 +518,39 @@
   position: relative;
   border-radius: 2px;
 }
+
+/* 🖨️ A4 용지 내 모든 텍스트는 인쇄 시 100% 또렷하게 보이도록 강제 잉크 블랙 적용 */
+.sb-page-sheet h1,
+.sb-page-sheet h2,
+.sb-page-sheet h3,
+.sb-page-sheet p,
+.sb-page-sheet div,
+.sb-page-sheet span,
+.sb-page-sheet td,
+.sb-page-sheet th,
+.sb-page-sheet strong {
+  color: #0f172a;
+}
+
+.sb-page-sheet .sb-page-pill-badge {
+  color: #ffffff !important;
+}
+
+.sb-page-sheet .sb-callout-gold,
+.sb-page-sheet .sb-callout-gold * {
+  color: #0f172a !important;
+}
+
+.sb-page-sheet .sb-callout-black,
+.sb-page-sheet .sb-callout-black * {
+  color: #0f172a !important;
+}
+
+.sb-page-sheet .sb-page-footer,
+.sb-page-sheet .sb-page-footer * {
+  color: #64748b !important;
+}
+
 
 @media (max-width: 480px) {
   .sb-page-sheet {

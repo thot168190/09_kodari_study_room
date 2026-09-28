@@ -31,6 +31,9 @@ import Motion3DStudio from './Motion3DStudio';
 import JarvisStudio from './JarvisStudio';
 import StudyBookStudio from './StudyBookStudio';
 import SmallMusicFinder from './SmallMusicFinder';
+import HomeDashboard from './HomeDashboard';
+import AIOfficeStudio from './AIOfficeStudio';
+import { Home, Compass, Menu, X, Flame, Bot, Building2 } from 'lucide-react';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -98,8 +101,10 @@ function App() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('tab') || 'musicfinder';
+    return params.get('tab') || 'home';
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('all'); // 'all' | 'biz' | 'study' | 'agent' | 'lab'
 
   
   // AI 데이터 상태
@@ -869,14 +874,14 @@ ${selectedNote.content}`
 
   return (
     <div className="study-app top-nav-layout">
-      {/* 🚀 대표님 전용 2단(Two-Row) 정돈된 최상단 풀위드 탑 헤더 바 */}
-      <header className="global-top-header two-row-header">
-        {/* ROW 1: 브랜드 로고 & 노트 선택 드롭다운 & 퀵 도구 버튼 */}
+      {/* 🚀 대표님 전용 모바일 390px 퍼스트 정돈된 탑 헤더 바 */}
+      <header className="global-top-header clean-top-header">
+        {/* ROW 1: 로고 + 노트 선택 + 스마트 액션 바 */}
         <div className="header-row-1">
           <div className="row1-left">
-            <div className="brand-logo">
+            <div className="brand-logo" onClick={() => setActiveTab('home')} style={{ cursor: 'pointer' }} title="공부방 메인 홈으로 이동">
               <span className="logo-icon">💜</span>
-              <span className="logo-text">KODARI ROOM</span>
+              <span className="logo-text">코다리 공부방</span>
             </div>
 
             <div className="top-note-selector">
@@ -889,7 +894,7 @@ ${selectedNote.content}`
                   if (found) {
                     setSelectedNote(found);
                     setIsAddingNote(false);
-                    setActiveTab('content'); // 📖 노트 선택 시 즉시 본문&브리핑으로 화면 전환!
+                    setActiveTab('content');
                   }
                 }}
               >
@@ -903,72 +908,182 @@ ${selectedNote.content}`
           </div>
 
           <div className="row1-right">
-            <button onClick={() => setActiveTab('musicfinder')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #4338ca, #6366f1)', color: '#ffffff', borderColor: '#a5b4fc', fontWeight: 900, boxShadow: '0 0 16px rgba(99, 102, 241, 0.6)' }}>🔥 꿀통 음악 채널 발굴기</button>
-            <button onClick={() => setActiveTab('studybook')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #18181b, #27272a)', color: '#fbbf24', borderColor: '#f59e0b', fontWeight: 900 }}>📚 학습책·워크북 스튜디오</button>
-            <button onClick={() => setActiveTab('jarvis')} className="quick-tool-btn niche" style={{ background: 'linear-gradient(135deg, #0284c7, #38bdf8)', color: '#ffffff', borderColor: '#38bdf8', fontWeight: 900 }}>🤖 나만의 자비스 (Hui 9B)</button>
-            <button onClick={() => setActiveTab('oxalpha')} className="quick-tool-btn niche" style={{ background: '#262522', color: '#da7756', borderColor: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
-            <button onClick={() => setActiveTab('lerobot')} className="quick-tool-btn niche" style={{ background: '#f5f3ff', color: '#7c3aed', borderColor: '#c4b5fd', fontWeight: 900 }}>🦾 LeRobot 놀이터</button>
-            <button onClick={() => setActiveTab('cheolmanvoice')} className="quick-tool-btn niche" style={{ background: '#f0f9ff', color: '#0369a1', borderColor: '#7dd3fc', fontWeight: 900 }}>🎙️ 철만이 보이스</button>
-            <button onClick={() => setActiveTab('voicetonote')} className="quick-tool-btn niche" style={{ background: '#f0fdf4', color: '#15803d', borderColor: '#86efac', fontWeight: 900 }}>🗣️ 보이스 정제노트</button>
-            <button onClick={() => setActiveTab('passvoicesaas')} className="quick-tool-btn niche" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#3b82f6', fontWeight: 900 }}>🎙️ 패스보이스 SaaS</button>
-            <button onClick={() => setActiveTab('motion3d')} className="quick-tool-btn niche" style={{ background: '#064e3b', color: '#34d399', borderColor: '#059669', fontWeight: 900 }}>🏌️‍♂️ 3D 모션스튜디오</button>
-            <button onClick={() => setShowNicheSaaS(true)} className="quick-tool-btn niche">🎯 틈새진단기</button>
-            <button onClick={() => setShowHubPortal(true)} className="quick-tool-btn hub">🌐 채널포털</button>
-            <button onClick={() => setIsAddingNote(true)} className="quick-tool-btn add">➕ 노트추가</button>
+            <button
+              onClick={() => setActiveTab('home')}
+              className={`clean-nav-btn ${activeTab === 'home' ? 'active' : ''}`}
+              style={{ background: activeTab === 'home' ? '#4f46e5' : '#ffffff', color: activeTab === 'home' ? '#fff' : '#1e1b4b' }}
+            >
+              <Home size={14} /> 🏠 홈 대시보드
+            </button>
+            <button
+              onClick={() => setIsAddingNote(true)}
+              className="clean-nav-btn"
+              style={{ background: '#0284c7', color: '#ffffff' }}
+            >
+              ➕ 노트추가
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="clean-nav-btn mobile-only-toggle"
+              style={{ background: mobileMenuOpen ? '#111827' : '#ffffff', color: mobileMenuOpen ? '#ffffff' : '#111827' }}
+              title="전체 메뉴 서랍"
+            >
+              {mobileMenuOpen ? <X size={15} /> : <Menu size={15} />}
+              <span>{mobileMenuOpen ? '닫기' : '전체메뉴'}</span>
+            </button>
           </div>
         </div>
 
-        {/* ROW 2: 대표님의 4대 명확한 대분류 탭 (정돈된 4 Pillar Row) */}
-        <div className="header-row-2">
-          {/* 0. 🔥 현재 집중 도구 (꿀통 음악 발굴기) */}
-          <div className="pillar-group" style={{ background: 'rgba(99, 102, 241, 0.15)', borderColor: '#818cf8' }}>
-            <span className="pillar-tag" style={{ background: '#4338ca', color: '#fff' }}>🔥 핵심 발굴기</span>
-            <button className={`pillar-pill ${activeTab === 'musicfinder' ? 'active' : ''}`} onClick={() => setActiveTab('musicfinder')} style={{ color: activeTab === 'musicfinder' ? '#ffffff' : '#4338ca', fontWeight: 900, background: activeTab === 'musicfinder' ? '#4f46e5' : '#e0e7ff', borderColor: '#6366f1' }}>🎵 꿀통 음악 채널 발굴기 (철이 v2)</button>
-          </div>
+        {/* ROW 2: 깔끔한 가로 스크롤 카테고리 필터 탭 바 (모바일 390px 한손 최적화) */}
+        <div className="header-row-2 clean-category-bar">
+          <div className="clean-scroll-tabs">
+            {/* 1. 홈 */}
+            <button
+              className={`cat-pill ${activeTab === 'home' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('all'); setActiveTab('home'); }}
+            >
+              🏠 홈 포털
+            </button>
 
-          {/* 1. 🧠 AI 공부 */}
-          <div className="pillar-group">
-            <span className="pillar-tag">🧠 AI 공부</span>
-            <button className={`pillar-pill ${activeTab === 'studybook' ? 'active' : ''}`} onClick={() => setActiveTab('studybook')} style={{ color: '#d97706', fontWeight: 900, background: activeTab === 'studybook' ? '#fef3c7' : '#fffbeb', borderColor: '#f59e0b' }}>📚 학습책·워크북 스튜디오</button>
-            <button className={`pillar-pill ${activeTab === 'jarvis' ? 'active' : ''}`} onClick={() => setActiveTab('jarvis')} style={{ color: '#38bdf8', fontWeight: 900, background: activeTab === 'jarvis' ? 'rgba(56, 189, 248, 0.25)' : 'rgba(56, 189, 248, 0.1)', borderColor: '#38bdf8' }}>🤖 자비스 (Hui 9B)</button>
-            <button className={`pillar-pill ${activeTab === 'oxalpha' ? 'active' : ''}`} onClick={() => setActiveTab('oxalpha')} style={{ color: '#da7756', fontWeight: 900 }}>🛸 Ox Alpha (클로드UI)</button>
-            <button className={`pillar-pill ${activeTab === 'motion3d' ? 'active' : ''}`} onClick={() => setActiveTab('motion3d')} style={{ color: '#34d399', fontWeight: 900 }}>🏌️‍♂️ 3D 모션스튜디오</button>
-            <button className={`pillar-pill ${activeTab === 'lerobot' ? 'active' : ''}`} onClick={() => setActiveTab('lerobot')} style={{ color: '#c084fc', fontWeight: 800 }}>🦾 LeRobot 놀이터</button>
-            <button className={`pillar-pill ${activeTab === 'study' ? 'active' : ''}`} onClick={() => setActiveTab('study')}>📺 같이 수업듣기</button>
-            <button className={`pillar-pill ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>📖 본문&브리핑</button>
-            <button className={`pillar-pill ${activeTab === 'textbook' ? 'active' : ''}`} onClick={() => setActiveTab('textbook')}>📚 교재란</button>
-          </div>
+            {/* 2. 꿀통 음악 */}
+            <button
+              className={`cat-pill highlight-flame ${activeTab === 'musicfinder' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('biz'); setActiveTab('musicfinder'); }}
+            >
+              🔥 꿀통 음악 발굴기
+            </button>
 
-          {/* 2. 📚 잉크워드 */}
-          <div className="pillar-group">
-            <span className="pillar-tag">📚 잉크워드</span>
-            <button className={`pillar-pill ${activeTab === 'cheolmanvoice' ? 'active' : ''}`} onClick={() => setActiveTab('cheolmanvoice')} style={{ color: '#60a5fa', fontWeight: 800 }}>🎙️ 철만이 보이스</button>
-            <button className={`pillar-pill ${activeTab === 'scenehub' ? 'active' : ''}`} onClick={() => setActiveTab('scenehub')}>🎬 제작허브</button>
-            <button className={`pillar-pill ${activeTab === 'inkword' ? 'active' : ''}`} onClick={() => setActiveTab('inkword')}>📚 사전</button>
-            <button className={`pillar-pill ${activeTab === 'avatarstudio' ? 'active' : ''}`} onClick={() => setActiveTab('avatarstudio')}>🪄 아바타</button>
-          </div>
+            {/* 3. 학습책 & 전자책 */}
+            <button
+              className={`cat-pill highlight-gold ${activeTab === 'studybook' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('study'); setActiveTab('studybook'); }}
+            >
+              📚 전자책·워크북
+            </button>
 
-          {/* 3. 🧬 과학랩 */}
-          <div className="pillar-group">
-            <span className="pillar-tag">🧬 과학랩</span>
-            <button className={`pillar-pill ${activeTab === 'sciencelab' ? 'active' : ''}`} onClick={() => setActiveTab('sciencelab')}>⚖️ 식약처검수&DeepMind</button>
-          </div>
+            {/* 4. AI 팀 자비스 */}
+            <button
+              className={`cat-pill highlight-cyan ${activeTab === 'jarvis' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('agent'); setActiveTab('jarvis'); }}
+            >
+              🤖 나만의 자비스
+            </button>
 
-          {/* 4. ✈️ 여행기억하기 */}
-          <div className="pillar-group">
-            <span className="pillar-tag">✈️ 여행기억</span>
-            <button className={`pillar-pill ${activeTab === 'travellog' ? 'active' : ''}`} onClick={() => setActiveTab('travellog')}>✈️ 1초 여행로그</button>
-          </div>
+            {/* 4-1. 3D AI 가상오피스 (DeskRPG x Hermes) */}
+            <button
+              className={`cat-pill highlight-purple ${activeTab === 'aioffice' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('agent'); setActiveTab('aioffice'); }}
+            >
+              🏢 3D 가상오피스
+            </button>
 
-          {/* 5. ✍️ AI 랩 */}
-          <div className="pillar-group">
-            <span className="pillar-tag">✍️ AI 랩</span>
-            <button className={`pillar-pill ${activeTab === 'voicetonote' ? 'active' : ''}`} onClick={() => setActiveTab('voicetonote')} style={{ color: '#4ade80', fontWeight: 800 }}>🗣️ 보이스 정제노트</button>
-            <button className={`pillar-pill ${activeTab === 'passvoicesaas' ? 'active' : ''}`} onClick={() => setActiveTab('passvoicesaas')} style={{ color: '#38bdf8', fontWeight: 800 }}>🎙️ 패스보이스 SaaS</button>
-            <button className={`pillar-pill ${activeTab === 'aiblogwriter' ? 'active' : ''}`} onClick={() => setActiveTab('aiblogwriter')}>✍️ AI 블로그</button>
-            <button className={`pillar-pill ${activeTab === 'aitamagotchi' ? 'active' : ''}`} onClick={() => setActiveTab('aitamagotchi')}>🎮 잉크 펫</button>
+            {/* 5. Ox Alpha */}
+            <button
+              className={`cat-pill ${activeTab === 'oxalpha' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('agent'); setActiveTab('oxalpha'); }}
+            >
+              🛸 Ox Alpha
+            </button>
+
+            {/* 6. 본문 & 브리핑 */}
+            <button
+              className={`cat-pill ${activeTab === 'content' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('study'); setActiveTab('content'); }}
+            >
+              📖 본문·브리핑
+            </button>
+
+            {/* 7. 같이 수업듣기 */}
+            <button
+              className={`cat-pill ${activeTab === 'study' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('study'); setActiveTab('study'); }}
+            >
+              📺 같이 수업듣기
+            </button>
+
+            {/* 8. 3D 모션 */}
+            <button
+              className={`cat-pill ${activeTab === 'motion3d' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('lab'); setActiveTab('motion3d'); }}
+            >
+              🏌️ 3D 모션
+            </button>
+
+            {/* 9. LeRobot */}
+            <button
+              className={`cat-pill ${activeTab === 'lerobot' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('lab'); setActiveTab('lerobot'); }}
+            >
+              🦾 LeRobot
+            </button>
+
+            {/* 10. 교재란 */}
+            <button
+              className={`cat-pill ${activeTab === 'textbook' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('study'); setActiveTab('textbook'); }}
+            >
+              📑 교재란
+            </button>
           </div>
         </div>
+
+        {/* 📱 전체 메뉴 서랍 모달 (모바일에서 버튼 누르면 시원하게 펼쳐짐) */}
+        {mobileMenuOpen && (
+          <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
+            <div className="mobile-drawer-sheet" onClick={(e) => e.stopPropagation()}>
+              <div className="drawer-header">
+                <span style={{ fontWeight: 900, fontSize: 16 }}>📋 전체 도구 바로가기</span>
+                <button onClick={() => setMobileMenuOpen(false)} className="drawer-close-btn"><X size={18} /></button>
+              </div>
+
+              <div className="drawer-body">
+                <div className="drawer-section">
+                  <div className="drawer-section-title">🎵 꿀통 & 단기 트랙</div>
+                  <div className="drawer-grid">
+                    <button onClick={() => { setActiveTab('musicfinder'); setMobileMenuOpen(false); }}>🔥 꿀통 음악 채널 발굴기</button>
+                    <button onClick={() => { setShowNicheSaaS(true); setMobileMenuOpen(false); }}>🎯 틈새진단기</button>
+                    <button onClick={() => { setActiveTab('travellog'); setMobileMenuOpen(false); }}>✈️ 1초 여행로그</button>
+                    <button onClick={() => { setShowHubPortal(true); setMobileMenuOpen(false); }}>🌐 채널포털</button>
+                  </div>
+                </div>
+
+                <div className="drawer-section">
+                  <div className="drawer-section-title">📚 전자책 & 지식</div>
+                  <div className="drawer-grid">
+                    <button onClick={() => { setActiveTab('studybook'); setMobileMenuOpen(false); }}>📚 학습책·워크북 스튜디오</button>
+                    <button onClick={() => { setActiveTab('content'); setMobileMenuOpen(false); }}>📖 본문 & AI 브리핑</button>
+                    <button onClick={() => { setActiveTab('study'); setMobileMenuOpen(false); }}>📺 같이 수업듣기</button>
+                    <button onClick={() => { setActiveTab('textbook'); setMobileMenuOpen(false); }}>📑 공식 교재란</button>
+                  </div>
+                </div>
+
+                <div className="drawer-section">
+                  <div className="drawer-section-title">🤖 AI 팀 & 에이전트</div>
+                  <div className="drawer-grid">
+                    <button onClick={() => { setActiveTab('jarvis'); setMobileMenuOpen(false); }}>🤖 나만의 자비스 (Hui 9B)</button>
+                    <button onClick={() => { setActiveTab('oxalpha'); setMobileMenuOpen(false); }}>🛸 Ox Alpha (클로드UI)</button>
+                    <button onClick={() => { setActiveTab('cheolmanvoice'); setMobileMenuOpen(false); }}>🎙️ 철만이 보이스</button>
+                    <button onClick={() => { setActiveTab('voicetonote'); setMobileMenuOpen(false); }}>🗣️ 보이스 정제노트</button>
+                    <button onClick={() => { setActiveTab('passvoicesaas'); setMobileMenuOpen(false); }}>🎙️ 패스보이스 SaaS</button>
+                    <button onClick={() => { setActiveTab('aiblogwriter'); setMobileMenuOpen(false); }}>✍️ AI 블로그</button>
+                  </div>
+                </div>
+
+                <div className="drawer-section">
+                  <div className="drawer-section-title">🔬 랩 & 플레이그라운드</div>
+                  <div className="drawer-grid">
+                    <button onClick={() => { setActiveTab('motion3d'); setMobileMenuOpen(false); }}>🏌️ 3D 모션스튜디오</button>
+                    <button onClick={() => { setActiveTab('lerobot'); setMobileMenuOpen(false); }}>🦾 LeRobot 놀이터</button>
+                    <button onClick={() => { setActiveTab('sciencelab'); setMobileMenuOpen(false); }}>⚖️ 식약처검수&DeepMind</button>
+                    <button onClick={() => { setActiveTab('aitamagotchi'); setMobileMenuOpen(false); }}>🎮 잉크 펫 다마고치</button>
+                    <button onClick={() => { setActiveTab('scenehub'); setMobileMenuOpen(false); }}>🎬 제작허브</button>
+                    <button onClick={() => { setActiveTab('avatarstudio'); setMobileMenuOpen(false); }}>🪄 아바타스튜디오</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 📂 숨겨진 사이드바 (최상단 탑 헤더로 이전됨) */}
@@ -1338,6 +1453,17 @@ ${selectedNote.content}`
               </button>
             </div>
           </div>
+        ) : activeTab === 'home' ? (
+          <div className="home-dashboard-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <HomeDashboard
+              onSelectTab={(tabId) => setActiveTab(tabId)}
+              onOpenNiche={() => setShowNicheSaaS(true)}
+              onOpenHub={() => setShowHubPortal(true)}
+              notes={notes}
+              selectedNote={selectedNote}
+              onSelectNote={(note) => { setSelectedNote(note); setActiveTab('content'); }}
+            />
+          </div>
         ) : activeTab === 'musicfinder' ? (
           <div className="musicfinder-fullscreen-mount" style={{ width: '100%', padding: '8px 14px', boxSizing: 'border-box' }}>
             <SmallMusicFinder />
@@ -1349,6 +1475,10 @@ ${selectedNote.content}`
         ) : activeTab === 'jarvis' ? (
           <div className="jarvis-fullscreen-mount" style={{ width: '100%', padding: '8px 14px', boxSizing: 'border-box' }}>
             <JarvisStudio />
+          </div>
+        ) : activeTab === 'aioffice' ? (
+          <div className="aioffice-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <AIOfficeStudio onExit={() => setActiveTab('home')} />
           </div>
         ) : selectedNote ? (
           <>
@@ -2089,7 +2219,47 @@ ${selectedNote.content}`
       {showColorChartModal && (
         <ColorChartModal onClose={() => setShowColorChartModal(false)} />
       )}
+
+      {/* 📱 모바일 390px 전용 엄지손가락 하단 독 바 (Mobile Bottom Dock) */}
+      <nav className="mobile-bottom-dock">
+        <button
+          className={`dock-btn ${activeTab === 'home' ? 'active' : ''}`}
+          onClick={() => setActiveTab('home')}
+        >
+          <Home size={18} />
+          <span>홈</span>
+        </button>
+        <button
+          className={`dock-btn ${activeTab === 'musicfinder' ? 'active' : ''}`}
+          onClick={() => setActiveTab('musicfinder')}
+        >
+          <Flame size={18} />
+          <span>꿀통음악</span>
+        </button>
+        <button
+          className={`dock-btn ${activeTab === 'studybook' ? 'active' : ''}`}
+          onClick={() => setActiveTab('studybook')}
+        >
+          <BookOpen size={18} />
+          <span>전자책</span>
+        </button>
+        <button
+          className={`dock-btn ${activeTab === 'jarvis' ? 'active' : ''}`}
+          onClick={() => setActiveTab('jarvis')}
+        >
+          <Bot size={18} />
+          <span>자비스</span>
+        </button>
+        <button
+          className={`dock-btn ${mobileMenuOpen ? 'active' : ''}`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <Menu size={18} />
+          <span>메뉴</span>
+        </button>
+      </nav>
     </div>
+
   );
 }
 
