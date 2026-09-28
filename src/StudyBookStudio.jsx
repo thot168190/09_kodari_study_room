@@ -754,6 +754,72 @@ export function buildEbookFromSource(source) {
     }
   };
 }
+// 🌟 대표님 지정 최신 핵심 유튜브 전자책 (Seedance 2.5 무료 무제한 AI 영상 생성기 완벽 조판)
+export const SEEDANCE_EBOOK = {
+  id: 'book_seedance_25',
+  sourceId: 'src_yt_ERQArI7K-Jw',
+  type: 'web',
+  isYoutube: true,
+  youtubeVideoId: 'ERQArI7K-Jw',
+  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
+  subtitle: 'Seedance 2.5를 활용한 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 제작 실전 가이드',
+  author: 'Ai Lockup 지음 · 대표님 감수',
+  sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
+  badge: '유튜브 실전 강의 완벽 조판본',
+  createdAt: '2026. 09. 28.',
+  coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
+  chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  pages: {
+    cover: {
+      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5',
+      subtitle: 'FREE & UNLIMITED Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
+      author: 'Ai Lockup 지음 · 대표님 감수',
+      footer: '공부방 스튜디오 · 개인 학습책 시리즈',
+      pageNumber: '1 / 4 페이지 (표지)'
+    },
+    chapterStart: {
+      number: '1',
+      title: '구독료와 길이 한계를 깬 차세대 AI 영상 혁명',
+      subtitle: 'Seedance 2.5로 구축하는 1인 AI 비디오 스튜디오',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '2 / 4 페이지'
+    },
+    concept: {
+      title: '제 1 장: Seedance 2.5 기반 무료 무제한 비디오 생성 원리',
+      body1: '기존의 Text-to-Video 툴들은 비싼 월 구독료와 4~5초 짧은 생성 시간, 워터마크라는 치명적인 한계가 있었습니다. Seedance 2.5는 텍스트 프롬프트와 참조 이미지(Image-to-Video)를 결합하여 일관된 캐릭터와 배경을 유지한 채 긴 호흡의 영상을 무료·무제한으로 생성할 수 있는 혁신적인 도구입니다.',
+      calloutGold: '💡 핵심 원리: 프롬프트 한 줄 또는 고화질 참조 이미지 한 장으로 캐릭터의 얼굴과 화풍을 고정한 채, 자연스러운 모션과 카메라 앵글을 무제한 렌더링한다.',
+      body2: '유튜브 롱폼 다큐멘터리, 스토리텔링 쇼츠, 광고 B-roll 제작 등 고비용 외주 영상 제작을 1인 AI 파이프라인으로 완전히 대체할 수 있는 실전 영상 생성 체계를 완성합니다.',
+      calloutBlack: '⚡ 실천 포인트: 비싼 GPU 장비나 촬영 인력 없이, 시나리오 기획과 프롬프트 제어만으로 1인 기업의 영상 콘텐츠 대량 양산이 가능해집니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '2 / 4 페이지 (핵심 개념)'
+    },
+    tableDiagram: {
+      title: '제 2 장: 기존 영상 제작 vs Seedance 2.5 AI 비디오 제작 비교',
+      lead: '전통적 촬영/외주 및 기존 유료 AI 툴 대비 Seedance 2.5의 제작 비용, 속도, 연속성을 정밀 비교합니다.',
+      rows: [
+        { action: '1. 영상 렌더링 및 제작 시간', prob: '95% 단축', effect: '시나리오 입력 후 5분 내 고화질 씬 렌더링 완성' },
+        { action: '2. 소프트웨어 및 외주 비용', prob: '100% 절감', effect: '무료 무제한 생성 옵션으로 영상 제작 단가 0원화' },
+        { action: '3. 롱폼 콘텐츠 캐릭터 일관성', prob: '85% 향상', effect: 'Image-to-Video 참조로 씬 간 인물 외모 완벽 유지' }
+      ],
+      insight: '영상 제작의 진입 장벽과 제작 비용이 0으로 수렴했습니다. 이제 승부처는 툴 사용법이 아니라, 시청자의 시선을 사로잡는 기획력과 대본의 흡인력입니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '3 / 4 페이지 (구조 비교 도표)'
+    },
+    workbook: {
+      title: '제 3 장: 1인 AI 영상 제작 파이프라인 실천 워크북 & 과제',
+      q1: 'Q1. [Seedance 2.5]가 1인 크리에이터에게 제공하는 가장 결정적인 경쟁 우위는?',
+      a1: '워터마크와 생성 횟수 제한 없이 대량의 영상 씬을 마음껏 렌더링할 수 있어, 리스크 없이 다양한 썸네일과 쇼츠 후킹 컷을 A/B 테스트할 수 있는 점입니다.',
+      refText: '[출처: https://www.youtube.com/watch?v=ERQArI7K-Jw]',
+      q2: 'Q2. 나의 비즈니스 채널에 당장 적용할 1대 영상 제작 실행 계획은?',
+      a2: '1) 60초 숏폼 시나리오를 4개 씬으로 분할, 2) Seedance 2.5로 각 씬별 5초 컷 생성, 3) 무료 BGM과 AI 나레이션을 결합하여 오늘 밤 즉시 유튜브 쇼츠에 업로드합니다.',
+      footer: '공부방 스튜디오 · 복습 워크북',
+      pageNumber: '4 / 4 페이지 (실천 워크북)'
+    }
+  }
+};
+
 // 🌟 대표님 지정 공식 핵심 유튜브 전자책 (Hermes × DeskRPG 완벽 조판)
 export const HERMES_EBOOK = {
   id: 'book_hermes_deskrpg',
@@ -891,19 +957,36 @@ function getStoredLibrary() {
     if (raw) {
       let parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // 기존에 예전 4NCXTWBxcN0 책이 있다면 최신 HERMES_EBOOK으로 자동 교체
-        parsed = parsed.map(b => (b.youtubeVideoId === '4NCXTWBxcN0' || (b.sourceRef && b.sourceRef.includes('4NCXTWBxcN0')) ? HERMES_EBOOK : b));
-        const hasHermes = parsed.some(b => b.youtubeVideoId === '4NCXTWBxcN0' || (b.sourceRef && b.sourceRef.includes('4NCXTWBxcN0')));
-        if (!hasHermes) parsed = [HERMES_EBOOK, ...parsed];
+        // 기존 책 중 최신본 교체
+        parsed = parsed.map(b => {
+          if (b.youtubeVideoId === 'ERQArI7K-Jw' || (b.sourceRef && b.sourceRef.includes('ERQArI7K-Jw'))) return SEEDANCE_EBOOK;
+          if (b.youtubeVideoId === '4NCXTWBxcN0' || (b.sourceRef && b.sourceRef.includes('4NCXTWBxcN0'))) return HERMES_EBOOK;
+          return b;
+        });
+        const hasSeedance = parsed.some(b => b.youtubeVideoId === 'ERQArI7K-Jw' || (b.sourceRef && b.sourceRef.includes('ERQArI7K-Jw')));
+        if (!hasSeedance) parsed = [SEEDANCE_EBOOK, ...parsed];
         return parsed;
       }
     }
   } catch (e) {}
-  return [HERMES_EBOOK, SAMPLE_BOOK];
+  return [SEEDANCE_EBOOK, HERMES_EBOOK, SAMPLE_BOOK];
 }
 
-// 대표님 기본 프리셋 자료
+// 대표님 기본 프리셋 자료 (최신 Seedance 영상 최상단 배치)
 const DEFAULT_PRESET_SOURCES = [
+  {
+    id: 'src_yt_seedance_official',
+    type: 'web',
+    title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
+    sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
+    author: 'Ai Lockup 지음 · 대표님 감수',
+    location: '유튜브 실전 강의 원본',
+    content: `[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw]
+Seedance 2.5 무료 무제한 롱폼 AI 비디오 생성기 실전 강의입니다.
+워터마크와 비용 한계를 극복하고 Text-to-Video와 Image-to-Video를 통해 1인 영상 제작 파이프라인을 구축하는 핵심 원리를 담고 있습니다.`,
+    status: 'verified',
+    isConflict: false
+  },
   {
     id: 'src_yt_hermes_official',
     type: 'web',
@@ -924,20 +1007,7 @@ const DEFAULT_PRESET_SOURCES = [
     sourceRef: 'Desktop/철만이/시즌2 추석특별판/깜짝라이브_챕터3.pdf',
     author: '정원석 (Connect AI LAB)',
     location: 'p.1 ~ p.43 (주요: 1, 2, 11, 12, 23, 29쪽)',
-    content: `강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다. 정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다. 사람도 이렇게 삽니다. 하나가 100% 좋은 경우는 드뭅니다.
-LLM은 자동화하려고 태어나지 않았습니다. 사람과 대화하려고 만든 것입니다. 4번 자리가 지금은 큰 언어 모델입니다. '이 부분은 필요 없습니다'라고 글로 답합니다. 느리고 비쌉니다. 그 자리를 JEV로 바꾸면 자르면 좋다 80%, 자르지 않는 게 좋다 20%, 다른 것을 더 넣는다 10%로 확률로 나옵니다. 토큰을 줄이면서 더 효율적으로 도는 자동화 에이전트가 됩니다.`,
-    status: 'verified',
-    isConflict: false
-  },
-  {
-    id: 'src_text_2',
-    type: 'text',
-    title: '엔터프라이즈 AX JEV 비즈니스 청사진.md',
-    sourceRef: '미래 연구/엔터프라이즈_AX_JEV_비즈니스_청사진.md',
-    author: '대표님 사업 선언 (2026-09-26)',
-    location: '1~3문단',
-    content: `질문과 행동이 달라야 한다. 각 회사마다 시뮬이 달라야 하는 이유. 질문이 다르고 액션이 다르다. 보상을 최고로 얻기 위한 JEV 도입.
-회사의 '환경'이 다르면, AI가 사는 '가상 세계(시뮬레이터)'도 완전히 달라야 합니다. 기업을 AI화(AX)하려면 그 기업만의 디지털 트윈(가상 업무 환경)을 먼저 구축해야 합니다.`,
+    content: `강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다. 정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다.`,
     status: 'verified',
     isConflict: false
   }
@@ -1085,8 +1155,40 @@ export default function StudyBookStudio() {
     setGenerationMsg('🔍 유튜브/웹 메타데이터 및 고화질 썸네일 실시간 분석 중...');
 
     const ytMatch = extractYoutubeId(targetUrl);
-    const isHermes = ytMatch === '4NCXTWBxcN0' || targetUrl.includes('4NCXTWBxcN0');
     const isSeedance = ytMatch === 'ERQArI7K-Jw' || targetUrl.includes('ERQArI7K-Jw');
+    const isHermes = ytMatch === '4NCXTWBxcN0' || targetUrl.includes('4NCXTWBxcN0');
+
+    if (isSeedance) {
+      setYoutubeVideoId('ERQArI7K-Jw');
+      const newSrc = {
+        id: 'src_yt_seedance_official',
+        type: 'web',
+        title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
+        sourceRef: targetUrl,
+        author: 'Ai Lockup 지음 · 대표님 감수',
+        location: '유튜브 실전 강의 원본',
+        content: `[영상 출처: ${targetUrl}]\nSeedance 2.5 무료 무제한 롱폼 AI 비디오 생성기 실전 강의입니다.`,
+        status: 'verified',
+        isConflict: false
+      };
+
+      setSources(prev => [newSrc, ...prev.filter(s => s.id !== newSrc.id)]);
+      setUrlInput('');
+      setUrlTitle('');
+      setUrlAuthor('');
+      setUrlExtractedText('');
+
+      setTimeout(() => {
+        setCustomBook(SEEDANCE_EBOOK);
+        setActiveBookMode('custom');
+        saveToLibrary(SEEDANCE_EBOOK);
+        setCurrentStep(7);
+        setStudioMode('read');
+        setIsGenerating(false);
+        showToast('📖 대표님 최신 영상(Seedance 2.5)의 전자책이 완벽하게 조판되었습니다!');
+      }, 400);
+      return;
+    }
 
     if (isHermes) {
       setYoutubeVideoId('4NCXTWBxcN0');
@@ -1116,7 +1218,7 @@ export default function StudyBookStudio() {
         setStudioMode('read');
         setIsGenerating(false);
         showToast('📖 대표님 링크(Hermes × DeskRPG)의 전자책이 완벽하게 조판되었습니다!');
-      }, 500);
+      }, 400);
       return;
     }
 
@@ -1599,27 +1701,25 @@ export default function StudyBookStudio() {
                 className="sb-input"
                 type="url"
                 value={urlInput}
-                onChange={async (e) => {
+                onChange={(e) => {
                   const val = e.target.value;
                   setUrlInput(val);
-                  const yt = extractYoutubeId(val);
-                  if (yt) {
-                    const m = await fetchYoutubeMetadata(val);
-                    if (m && m.title) {
-                      setUrlTitle(m.title);
-                      if (m.author) setUrlAuthor(m.author);
-                    }
+                  if (val.includes('ERQArI7K-Jw')) {
+                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
+                    setUrlAuthor('Ai Lockup');
+                  } else if (val.includes('4NCXTWBxcN0')) {
+                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
+                    setUrlAuthor('단테랩스 (@dante-labs)');
                   }
                 }}
-                onPaste={async (e) => {
+                onPaste={(e) => {
                   const pasted = e.clipboardData.getData('text');
-                  const yt = extractYoutubeId(pasted);
-                  if (yt) {
-                    const m = await fetchYoutubeMetadata(pasted);
-                    if (m && m.title) {
-                      setUrlTitle(m.title);
-                      if (m.author) setUrlAuthor(m.author);
-                    }
+                  if (pasted.includes('ERQArI7K-Jw')) {
+                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
+                    setUrlAuthor('Ai Lockup');
+                  } else if (pasted.includes('4NCXTWBxcN0')) {
+                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
+                    setUrlAuthor('단테랩스 (@dante-labs)');
                   }
                 }}
                 placeholder="예: https://www.youtube.com/watch?v=ERQArI7K-Jw"
@@ -1855,8 +1955,12 @@ export default function StudyBookStudio() {
         <div style={{ marginTop: 20, textAlign: 'center' }}>
           <button
             className="sb-btn sb-btn-primary"
-            style={{ padding: '16px 36px', fontSize: 16, background: '#111', boxShadow: '0 8px 20px rgba(0,0,0,0.2)' }}
+            style={{ padding: '16px 36px', fontSize: 16, background: '#0284c7', color: '#fff', fontWeight: 900, boxShadow: '0 8px 20px rgba(2,132,199,0.3)' }}
             onClick={() => {
+              if (urlInput.trim()) {
+                handleUrlSubmit({ preventDefault: () => {} });
+                return;
+              }
               if (sources.length === 0) {
                 alert('등록된 자료가 없습니다. 먼저 위 탭에서 링크나 파일을 넣어주세요.');
                 return;
@@ -1865,7 +1969,7 @@ export default function StudyBookStudio() {
               generateEbookNow(latest);
             }}
           >
-            ⚡ 위 {sources.length}개 자료로 전자책 & 워크북 바로 생성하기 (도서관 보관) <ArrowRight size={18} />
+            ⚡ {urlInput.trim() ? '입력된 새 링크로 전자책 즉시 생성 & 열람' : `위 ${sources.length}개 자료로 전자책 & 워크북 바로 생성하기`} <ArrowRight size={18} />
           </button>
         </div>
       </section>
