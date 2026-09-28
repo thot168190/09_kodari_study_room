@@ -1,0 +1,47 @@
+{
+  "estimated_cost_usd": 0.0029020499999999998,
+  "cost_status": "estimated",
+  "cost_source": "official_docs_snapshot",
+  "input_tokens": 12775,
+  "output_tokens": 75,
+  "cache_read_tokens": 12544,
+  "cache_write_tokens": 0,
+  "reasoning_tokens": 0,
+  "total_tokens": 25394,
+  "api_calls": 2,
+  "model": "gpt-4o-mini",
+  "provider": "openai-api",
+  "session_id": "20260928_205954_604671",
+  "completed": true,
+  "partial": false,
+  "interrupted": false,
+  "turn_exit_reason": "text_response(finish_reason=stop)",
+  "failed": false,
+  "service_tier": null,
+  "auxiliary": {
+    "api_calls": 1,
+    "input_tokens": 244,
+    "output_tokens": 17,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "reasoning_tokens": 0,
+    "estimated_cost_usd": 4.68e-05,
+    "total_tokens": 261,
+    "by_task": {
+      "title_generation": {
+        "api_calls": 1,
+        "input_tokens": 244,
+        "output_tokens": 17,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "estimated_cost_usd": 4.68e-05
+      }
+    }
+  },
+  "total_including_auxiliary": {
+    "estimated_cost_usd": 0.00294885,
+    "total_tokens": 25655,
+    "api_calls": 3
+  }
+}

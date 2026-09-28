@@ -240,18 +240,22 @@ export function printEbookCleanly(book) {
     table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12px; }
     th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
     th { background: #f8fafc; font-weight: bold; }
+    .step-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 12px; }
+    .prompt-box { background: #0f172a; color: #38bdf8; padding: 10px 14px; border-radius: 6px; font-family: monospace; font-size: 11px; white-space: pre-wrap; line-height: 1.4; margin: 10px 0; }
+    .preset-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 11.5px; margin: 8px 0; }
+    .check-item { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; margin: 5px 0; color: #334155; }
     .footer { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <!-- 1. 표지 (1쪽) -->
+  <!-- 1. 표지 -->
   <div class="print-page">
-    <div style="text-align: center; padding-top: 20mm;">
+    <div style="text-align: center; padding-top: 15mm;">
       <span class="badge">${book.badge}</span>
-      <h1 style="font-size: 26px; margin: 24px 0 12px 0;">${book.pages.cover.title}</h1>
-      <p style="color: #64748b; font-size: 15px; margin-bottom: 24px;">${book.pages.cover.subtitle}</p>
-      <img src="${book.coverImage}" alt="표지 이미지" style="max-height: 260px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-      <div style="font-weight: 700; margin-top: 24px; font-size: 14px; color: #1e293b;">${book.pages.cover.author}</div>
+      <h1 style="font-size: 24px; margin: 20px 0 10px 0;">${book.pages.cover.title}</h1>
+      <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">${book.pages.cover.subtitle}</p>
+      <img src="${book.coverImage}" alt="표지 이미지" style="max-height: 250px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+      <div style="font-weight: 700; margin-top: 20px; font-size: 14px; color: #1e293b;">${book.pages.cover.author}</div>
       <div style="font-size: 12px; color: #0284c7; margin-top: 8px;">출처: ${book.sourceRef}</div>
     </div>
     <div class="footer">
@@ -260,15 +264,26 @@ export function printEbookCleanly(book) {
     </div>
   </div>
 
-  <!-- 2. 개념 설명 (11쪽) -->
+  <!-- 2. 핵심 개념 및 세팅 -->
   <div class="print-page">
     <div>
-      <span class="badge">개념 설명</span>
+      <span class="badge">제 1 장: 핵심 개념 & 세팅</span>
       <h1>${book.pages.concept.title}</h1>
-      <img src="${book.conceptImage}" alt="개념 삽화">
-      <p style="line-height: 1.6; font-size: 13.5px;">${book.pages.concept.body1}</p>
+      <img src="${book.conceptImage}" alt="개념 삽화" style="max-height: 190px;">
+      <p style="line-height: 1.6; font-size: 13px;">${book.pages.concept.body1}</p>
       <div class="callout-gold">${book.pages.concept.calloutGold}</div>
-      <p style="line-height: 1.6; font-size: 13.5px;">${book.pages.concept.body2}</p>
+      ${book.pages.concept.stepCards ? `
+        <div style="margin: 12px 0;">
+          ${book.pages.concept.stepCards.map(sc => `
+            <div class="step-card">
+              <span style="background:#0284c7;color:#fff;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;">${sc.step}</span>
+              <strong style="margin-left:6px;color:#0f172a;">${sc.title}</strong>
+              <div style="margin-top:4px;color:#475569;line-height:1.4;">${sc.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      <p style="line-height: 1.6; font-size: 13px;">${book.pages.concept.body2}</p>
       <div class="callout-black">${book.pages.concept.calloutBlack}</div>
     </div>
     <div class="footer">
@@ -277,16 +292,76 @@ export function printEbookCleanly(book) {
     </div>
   </div>
 
-  <!-- 3. 구조 분석표 (29쪽) -->
+  <!-- 3. 마스터 프롬프트 & 캐릭터 앵커링 (있는 경우) -->
+  ${book.pages.promptGuide ? `
   <div class="print-page">
     <div>
-      <span class="badge">구조 및 비교 도표</span>
+      <span class="badge" style="background:#7c3aed;">제 2 장: 마스터 프롬프트 & 앵커링</span>
+      <h1>${book.pages.promptGuide.title}</h1>
+      <p style="line-height: 1.6; font-size: 13px; margin: 10px 0;">${book.pages.promptGuide.lead}</p>
+      ${book.pages.promptGuide.anchorWorkflow ? `
+        <div style="margin: 10px 0;">
+          ${book.pages.promptGuide.anchorWorkflow.map(wf => `
+            <div style="background:#f5f3ff;border-left:3px solid #7c3aed;padding:8px 12px;margin:6px 0;border-radius:0 4px 4px 0;font-size:12px;">
+              <strong style="color:#6d28d9;">[${wf.tag}] ${wf.title}</strong>
+              <div style="color:#475569;margin-top:3px;line-height:1.4;">${wf.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      ${book.pages.promptGuide.promptTemplate ? `
+        <div style="margin: 12px 0;">
+          <div style="font-weight:bold;font-size:12px;color:#0f172a;">📋 5대 표준 마스터 프롬프트 템플릿:</div>
+          <div class="prompt-box">${book.pages.promptGuide.promptTemplate}</div>
+        </div>
+      ` : ''}
+      ${book.pages.promptGuide.presets ? `
+        <div class="preset-box">
+          <div style="font-weight:bold;margin-bottom:4px;color:#0f172a;">🎨 3대 추천 화풍(Style) 프리셋:</div>
+          ${book.pages.promptGuide.presets.map(ps => `
+            <div style="margin:3px 0;"><strong>${ps.name}:</strong> <code>${ps.code}</code></div>
+          `).join('')}
+        </div>
+      ` : ''}
+      ${book.pages.promptGuide.callout ? `<div class="callout-gold">${book.pages.promptGuide.callout}</div>` : ''}
+    </div>
+    <div class="footer">
+      <span>${book.pages.promptGuide.footer || book.pages.concept.footer}</span>
+      <span>${book.pages.promptGuide.pageNumber}</span>
+    </div>
+  </div>
+  ` : ''}
+
+  <!-- 4. 구조 분석 및 씬 콘티 도표 -->
+  <div class="print-page">
+    <div>
+      <span class="badge">${book.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}</span>
       <h1>${book.pages.tableDiagram.title}</h1>
-      <img src="${book.tableImage}" alt="도표 이미지">
-      <p style="line-height: 1.6; font-size: 13.5px;">${book.pages.tableDiagram.lead}</p>
+      <img src="${book.tableImage}" alt="도표 이미지" style="max-height: 180px;">
+      <p style="line-height: 1.6; font-size: 13px;">${book.pages.tableDiagram.lead}</p>
+      ${book.pages.tableDiagram.storyboard ? `
+        <div style="margin: 10px 0;">
+          <div style="font-weight:bold;font-size:12px;margin-bottom:4px;">🎬 60초 AI 단편 영화 실전 씬 바이 씬 콘티표:</div>
+          <table>
+            <thead>
+              <tr style="background:#f1f5f9;"><th>씬 / 단계</th><th>시각 연출 & 카메라 워크</th><th>AI 음성 나레이션</th></tr>
+            </thead>
+            <tbody>
+              ${book.pages.tableDiagram.storyboard.map(sb => `
+                <tr>
+                  <td><strong>${sb.scene}</strong><br><small style="color:#0284c7;">${sb.phase}</small></td>
+                  <td>${sb.visual}</td>
+                  <td style="font-style:italic;">${sb.narration}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : ''}
+      <div style="font-weight:bold;font-size:12px;margin-top:10px;margin-bottom:4px;">📊 주요 AI 영상 생성기 4사 실전 스펙 비교:</div>
       <table>
         <thead>
-          <tr><th>핵심 항목</th><th>확률</th><th>기대 효용 및 결과</th></tr>
+          <tr><th>핵심 항목</th><th>비용 / 확률</th><th>기대 효용 및 결과</th></tr>
         </thead>
         <tbody>
           ${book.pages.tableDiagram.rows.map(r => `<tr><td><strong>${r.action}</strong></td><td style="color:#0284c7;font-weight:bold;">${r.prob}</td><td>${r.effect}</td></tr>`).join('')}
@@ -300,23 +375,42 @@ export function printEbookCleanly(book) {
     </div>
   </div>
 
-  <!-- 4. 복습 워크북 -->
+  <!-- 5. 복습 워크북 & 실천 체크리스트 -->
   <div class="print-page">
     <div>
-      <span class="badge" style="background:#16a34a;">복습 워크북</span>
+      <span class="badge" style="background:#16a34a;">${book.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}</span>
       <h1>${book.pages.workbook.title}</h1>
-      <div style="margin: 16px 0;">
-        <p style="font-weight: bold; font-size: 14.5px;">${book.pages.workbook.q1}</p>
-        <div class="callout-gold" style="background:#fef9c3;">
+      ${book.pages.workbook.lead ? `<p style="line-height:1.6;font-size:13px;margin:8px 0;">${book.pages.workbook.lead}</p>` : ''}
+      ${book.pages.workbook.postProduction ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;">
+          ${book.pages.workbook.postProduction.map(pp => `
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 8px;border-radius:4px;font-size:11px;">
+              <strong style="color:#166534;">${pp.step}. ${pp.title}</strong>
+              <div style="color:#475569;margin-top:2px;line-height:1.3;">${pp.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      <div style="margin: 12px 0;">
+        <p style="font-weight: bold; font-size: 14px; margin: 8px 0;">${book.pages.workbook.q1}</p>
+        <div class="callout-gold" style="background:#fef9c3; margin: 6px 0;">
           <div><strong>정답 및 해설:</strong></div>
           <div style="margin-top: 4px;">${book.pages.workbook.a1}</div>
-          <div style="font-size: 11px; color: #888; margin-top: 6px;">${book.pages.workbook.refText || ''}</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">${book.pages.workbook.refText || ''}</div>
         </div>
-        <p style="font-weight: bold; font-size: 14.5px; margin-top: 18px;">${book.pages.workbook.q2}</p>
-        <div class="callout-black">
+        <p style="font-weight: bold; font-size: 14px; margin: 12px 0 6px 0;">${book.pages.workbook.q2}</p>
+        <div class="callout-black" style="margin: 6px 0;">
           <strong>실천 가이드:</strong> ${book.pages.workbook.a2}
         </div>
       </div>
+      ${book.pages.workbook.checklist ? `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:6px;margin:10px 0;">
+          <div style="font-weight:bold;font-size:12px;color:#0f172a;margin-bottom:6px;">✅ 오늘 밤 30분 숏폼 완성 6대 액션 체크리스트:</div>
+          ${book.pages.workbook.checklist.map(item => `
+            <div class="check-item"><span style="color:#16a34a;font-weight:bold;">✔</span><span>${item}</span></div>
+          `).join('')}
+        </div>
+      ` : ''}
     </div>
     <div class="footer">
       <span>${book.pages.workbook.footer}</span>
@@ -413,11 +507,29 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
         <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.concept.body2}</p>
         <div style="background:#f1f5f9; border-left:4px solid #0f172a; padding:12px 16px; margin:14px 0; font-size:13px;">${book.pages.concept.calloutBlack}</div>
         <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.concept.footer}</span><span>2 / 4 페이지 (개념 설명)</span>
+          <span>${book.pages.concept.footer}</span><span>${book.pages.concept.pageNumber || (book.pages.promptGuide ? '2 / 5 페이지 (개념 설명)' : '2 / 4 페이지 (개념 설명)')}</span>
         </div>
       </div>
+      ${book.pages.promptGuide ? `
       <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#0284c7; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">제 2 장: 구조 분석 및 비교</span>
+        <span style="background:#7c3aed; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">제 2 장: 마스터 프롬프트 & 앵커링</span>
+        <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.promptGuide.title}</h1>
+        <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.promptGuide.lead}</p>
+        ${book.pages.promptGuide.promptTemplate ? `
+          <div style="background:#0f172a; color:#38bdf8; padding:14px; border-radius:6px; font-family:monospace; font-size:11px; white-space:pre-wrap; margin:14px 0;">
+            ${book.pages.promptGuide.promptTemplate}
+          </div>
+        ` : ''}
+        ${book.pages.promptGuide.callout ? `
+          <div style="background:#fef3c7; border-left:4px solid #d97706; padding:12px 16px; margin:14px 0; font-weight:bold; font-size:13.5px;">${book.pages.promptGuide.callout}</div>
+        ` : ''}
+        <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
+          <span>${book.pages.promptGuide.footer || book.pages.concept.footer}</span><span>${book.pages.promptGuide.pageNumber || '3 / 5 페이지'}</span>
+        </div>
+      </div>
+      ` : ''}
+      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
+        <span style="background:#0284c7; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">${book.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}</span>
         <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.tableDiagram.title}</h1>
         <img src="${book.tableImage}" style="width:100%; max-height:240px; object-fit:cover; border-radius:8px; margin:14px 0;" crossOrigin="anonymous">
         <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.tableDiagram.lead}</p>
@@ -431,11 +543,11 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
         </table>
         <div style="background:#f1f5f9; border-left:4px solid #0f172a; padding:12px 16px; margin:14px 0; font-size:13px;">${book.pages.tableDiagram.insight}</div>
         <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.tableDiagram.footer}</span><span>3 / 4 페이지 (구조 도표)</span>
+          <span>${book.pages.tableDiagram.footer}</span><span>${book.pages.tableDiagram.pageNumber || (book.pages.promptGuide ? '4 / 5 페이지 (구조 도표)' : '3 / 4 페이지 (구조 도표)')}</span>
         </div>
       </div>
       <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#16a34a; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">제 3 장: 복습 워크북 & 액션 플랜</span>
+        <span style="background:#16a34a; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">${book.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}</span>
         <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.workbook.title}</h1>
         <div style="margin:16px 0; color:#0f172a;">
           <p style="font-weight:800; font-size:15px; color:#0f172a; margin-bottom:8px;">${book.pages.workbook.q1}</p>
@@ -450,7 +562,7 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
           </div>
         </div>
         <div style="margin-top:200px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.workbook.footer}</span><span>4 / 4 페이지 (실천 워크북)</span>
+          <span>${book.pages.workbook.footer}</span><span>${book.pages.workbook.pageNumber || (book.pages.promptGuide ? '5 / 5 페이지 (실천 워크북)' : '4 / 4 페이지 (실천 워크북)')}</span>
         </div>
       </div>
     `;
@@ -499,8 +611,233 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
 }
 
 // ============================================================================
-// 📚 동적 전자책 빌더 함수 (사용자가 입력한 링크/자료로 실제 책 생성)
+// 🌟 1. 대표님 지정 최신 핵심 유튜브 전자책 (ByteDance Seedance 2.5 × Dola AI 완벽 조판)
 // ============================================================================
+export const SEEDANCE_EBOOK = {
+  id: 'book_seedance_25',
+  sourceId: 'src_yt_ERQArI7K-Jw',
+  type: 'web',
+  isYoutube: true,
+  youtubeVideoId: 'ERQArI7K-Jw',
+  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
+  subtitle: 'Dola AI 확장 애드온과 마스터 프롬프트로 완성하는 씬 바이 씬(Scene-by-Scene) AI 장편 영화 제작 가이드',
+  author: 'Ai Lockup 분석 · 대표님 감수 (코다리 총괄부장 실전 조판)',
+  sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
+  badge: '유튜브 실전 강의 완벽 조판본 (00:00~05:46)',
+  createdAt: '2026. 09. 28.',
+  coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
+  chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+  pages: {
+    cover: {
+      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
+      subtitle: 'Free & Unlimited Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
+      author: 'Ai Lockup 분석 · 대표님 감수 (코다리 총괄부장 실전 조판)',
+      footer: '공부방 스튜디오 · 개인 학습책 시리즈 (A4 완벽 조판본)',
+      pageNumber: '1 / 5 페이지 (표지)'
+    },
+    concept: {
+      title: '제 1 장: Seedance 2.5 모델 스펙 & Dola 확장 애드온 무제한 설치법',
+      body1: '대부분의 상용 AI 영상 생성기(Runway Gen-3, Kling 1.5, Luma Dream Machine)는 5초 클립 하나에도 막대한 유료 크레딧을 차감하여, 1분 이상의 영상을 만들려면 수십 달러가 소모됩니다. 반면 ByteDance가 개발한 Seedance 2.5는 최대 30초 4K 렌더링, 50개 멀티모달 참조 슬롯, 오디오 네이티브 동기화를 지원하는 차세대 모델입니다. 이 강의는 Dola AI 플랫폼(dola.com)과 전용 브라우저 확장 애드온을 결합하여 크레딧 결제 없이 100% 무료·무제한으로 영상을 생성하는 파이프라인을 다룹니다.',
+      calloutGold: '💡 무료 무제한 AI 영화 제작 3대 원칙: 1) 크레딧 차감 우회(Dola 애드온) ➔ 2) 캐릭터 외모 고정(Turnaround Sheet 앵커링) ➔ 3) 15초 단위 씬 바이 씬 분할 렌더링',
+      stepCards: [
+        {
+          step: '1단계',
+          time: '00:41',
+          title: 'Dola AI 접속 및 모델 셀렉터 설정',
+          desc: 'dola.com 또는 trydola.com에 접속한 후, 비디오 엔진 셀렉터에서 ByteDance의 [Seedance 2.5]를 선택합니다. 기본 무료 계정은 렌더링 크레딧이 빠르게 고갈되므로 아래 2단계 확장을 반드시 연결해야 합니다.'
+        },
+        {
+          step: '2단계',
+          time: '01:18, 05:18',
+          title: 'Dola Seedance 2.5 Ad-on 브라우저 확장 설치 (핵심 우회)',
+          desc: '배포된 Dola Seedance 2.5 Ad-on.zip을 다운로드 후 압축을 풉니다. Chrome 브라우저에서 chrome://extensions 접속 ➔ 우측 상단 [개발자 모드] 활성화 ➔ 좌측 상단 [압축해제된 확장 프로그램을 로드합니다] 클릭 후 폴더를 선택합니다.'
+        },
+        {
+          step: '3단계',
+          time: '05:46',
+          title: '무제한 렌더링 세션 활성화 확인',
+          desc: 'Dola AI 대시보드로 돌아와 F5(새로고침)를 누르면, 우측 상단의 크레딧 카운터가 Unlimited(무제한) 모드로 전환되며 대기열 지연 없이 고화질 텍스트/이미지 기반 영상 생성이 무제한 개방됩니다.'
+        }
+      ],
+      body2: '이렇게 구축된 무료 무제한 환경 덕분에, 1회 생성 비용(평균 500~1,000원) 걱정 없이 한 씬당 3~4개의 서로 다른 카메라 앵글을 마음껏 렌더링하여 최상의 결과물만 골라 쓸 수 있는 1인 크리에이터의 절대적 레버리지가 완성됩니다.',
+      calloutBlack: '⚡ 실천 주의점: 확장 프로그램이 로드된 Chrome 브라우저 탭을 유지해야 무제한 세션 토큰이 유지됩니다. 렌더링 중 오류가 발생하면 탭 새로고침 후 확장 토글이 On 상태인지 확인하세요.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '2 / 5 페이지 (핵심 개념 & 세팅)'
+    },
+    promptGuide: {
+      title: '제 2 장: 캐릭터 일관성(얼굴 보존) 앵커링 & 마스터 프롬프트 구조',
+      lead: 'AI 영상 제작에서 가장 흔한 실패는 씬(Scene)이 바뀔 때마다 주인공의 얼굴과 옷이 달라지는 형상 변형(Morphing) 문제입니다. Seedance 2.5의 멀티모달 참조 슬롯과 마스터 프롬프트 5대 태그를 적용하여 외모를 100% 일관되게 고정하는 공식을 정리합니다.',
+      anchorWorkflow: [
+        {
+          tag: 'A단계 (선제작)',
+          title: '무료 AI 이미지 툴로 캐릭터 시트 선제작 (03:22)',
+          desc: '영상을 바로 돌리지 마십시오! Flux, Midjourney, Leonardo AI 등에서 주인공 캐릭터의 정면 샷, 45도 측면 샷, 전신 샷을 동일한 화풍으로 먼저 렌더링하여 고화질 PNG 에셋으로 저장합니다.'
+        },
+        {
+          tag: 'B단계 (주입)',
+          title: 'Seedance 2.5 Image-to-Video 앵커 슬롯에 주입 (04:16)',
+          desc: 'Dola 인터페이스의 Reference Image 슬롯에 앞서 저장한 캐릭터 이미지를 업로드합니다. Seedance 2.5는 최대 50장의 레퍼런스를 수용하여 주인공의 이목구비, 헤어, 의상을 완벽히 잠급니다.'
+        },
+        {
+          tag: 'C단계 (구조화)',
+          title: '5대 마스터 프롬프트 태그 작성 (02:14)',
+          desc: '모든 씬에 일관된 시각적 톤앤매너와 호흡을 부여하기 위해, 프롬프트를 5개 섹션(TITLE, STYLE, DURATION, VISUAL, NARRATION)으로 엄격하게 분리하여 작성합니다.'
+        }
+      ],
+      promptTemplate: `TITLE: Section 1 — The Awakening (씬 제목)
+STYLE: 3D Pixar animation style, Unreal Engine 5 render, cinematic volumetric lighting, 8k (화풍 고정)
+DURATION: 15s (15초 단위 분할)
+VISUAL: Slow camera pan left, female young scientist in high-tech laboratory looking at glowing holographic core, expressive eyes, subtle wind motion, 16:9 cinematic aspect ratio (시각 연출 & 카메라 워크)
+NARRATION: "The experiment was never meant to open this door. But now, there is no turning back." (AI 음성 나레이션 대사)`,
+      presets: [
+        { name: '① 픽사/디즈니 3D 애니메이션', code: 'Pixar 3D animation style, Unreal Engine 5, smooth subsurface scattering, cute expressive character, volumetric warm lighting' },
+        { name: '② 스튜디오 지브리 2D 애니메이션', code: 'Studio Ghibli aesthetic, hand-drawn anime, watercolor background, lush natural tones, Hayao Miyazaki inspired mood' },
+        { name: '③ 극화체 실사 시네마틱', code: 'Hyper-realistic 4K footage, 35mm cinematic film grain, anamorphic lens flare, shallow depth of field, dramatic rim light' }
+      ],
+      callout: '💡 앵커링 꿀팁: VISUAL 지시어에 "maintain character appearance from reference image exactly" 문구를 추가하면 얼굴 뒤틀림을 99% 억제할 수 있습니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '3 / 5 페이지 (마스터 프롬프트 & 앵커링)'
+    },
+    tableDiagram: {
+      title: '제 3 장: 60초 씬 바이 씬 실전 콘티 & AI 영상 생성기 4사 정밀 비교',
+      lead: '영상 원본(02:14~05:46)에서 시연된 15초 단위 씬 바이 씬(Scene-by-Scene) 제작 방식을 기반으로 완성한 4개 씬(총 60초)의 실제 콘티표와 주요 AI 영상 툴 스펙 비교표입니다.',
+      storyboard: [
+        {
+          scene: '씬 1 (00~15s)',
+          phase: '도입부 (세계관)',
+          visual: '광대한 사이버펑크 메가시티 전경 ➔ 고각 하강 부감 앵글 ➔ 중심부 타워의 푸른 빛무리',
+          narration: '"인류는 기술이 모든 문제를 해결했다고 믿었다. 그 오만이 균열을 만들기 전까지는."',
+          type: 'Text-to-Video'
+        },
+        {
+          scene: '씬 2 (15~30s)',
+          phase: '전개 (주인공 등장)',
+          visual: '연구실 내부 ➔ 캐릭터 시트 앵커 주입 ➔ 주인공의 놀란 표정과 홀로그램 조작 핑거 모션',
+          narration: '"시스템 깊숙한 곳에서, 승인되지 않은 지능이 스스로 숨을 쉬고 있었다."',
+          type: 'Image-to-Video (앵커)'
+        },
+        {
+          scene: '씬 3 (30~45s)',
+          phase: '위기 (클라이맥스)',
+          visual: '비상 경보 적색 조명 ➔ 급박한 랙 포커스 ➔ 데이터 코어가 폭주하며 방출되는 에너지 파동',
+          narration: '"통제선이 무너지는 순간, 나는 선택해야 했다. 차단인가, 아니면 공존인가."',
+          type: '모션 강도 7.5'
+        },
+        {
+          scene: '씬 4 (45~60s)',
+          phase: '결말 (여운/메시지)',
+          visual: '새벽빛이 스며드는 연구소 창가 ➔ 인물의 결연한 미소 ➔ 수평 패닝 아웃과 타이틀 로고',
+          narration: '"이것은 재앙이 아니다. 우리가 마주할 다음 진화의 시작이다."',
+          type: '슬로우 줌아웃'
+        }
+      ],
+      rows: [
+        { action: 'ByteDance Seedance 2.5', prob: '0원 (무제한)', effect: '최대 30초 4K | 멀티모달 레퍼런스 50장 | 오디오 네이티브 동기화 지원' },
+        { action: 'Runway Gen-3 Alpha', prob: '월 $12~$76+', effect: '5~10초 1080p | 레퍼런스 1장 제한 (변형 잦음) | 오디오 별도 생성 필요' },
+        { action: 'Kling AI 1.5', prob: '월 $10~$60+', effect: '5~10초 1080p | 크레딧 고속 소진 | 효과음 자체 생성 불가' },
+        { action: 'OpenAI Sora', prob: '일반 미공개', effect: '최대 60초 1080p | 파트너 한정 베타 | 높은 비용 장벽' }
+      ],
+      insight: '⚡ 코다리 총괄부장 인사이트: 유료 툴은 한 번 돌릴 때마다 돈이 나가므로 다양한 앵글을 시도하기 두렵습니다. Seedance 2.5는 0원이므로 각 씬마다 3~4개의 앵글을 렌더링한 후 가장 좋은 컷을 골라 쓸 수 있는 엄청난 볼륨의 우위를 제공합니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '4 / 5 페이지 (구조 분석 & 씬 콘티)'
+    },
+    workbook: {
+      title: '제 4 장: 최종 영상 조립(Post-Production) & 실천 워크북',
+      lead: '렌더링된 4개의 15초 클립을 무료 편집기(CapCut / Premiere)에서 하나로 묶고 AI 음성을 입혀 유튜브 쇼츠/롱폼으로 즉시 릴리즈(Ship)하는 3단계 마감 공정입니다.',
+      postProduction: [
+        { step: '1', title: '타임라인 조립', desc: 'CapCut을 열고 16:9 프로젝트를 생성한 뒤, 씬 1부터 씬 4까지 순서대로 배치합니다 (총 60초 클립 결합).' },
+        { step: '2', title: 'AI 음성 나레이션 입히기', desc: 'ElevenLabs 또는 무료 TTS에서 마스터 프롬프트의 NARRATION 대사를 음성으로 추출하여 각 씬 타임코드에 정확히 정렬합니다.' },
+        { step: '3', title: '사운드 믹싱 & 자막', desc: 'Seedance 2.5가 자체 생성한 배경 효과음 볼륨을 70%로 낮추고, AI 나레이션을 100%로 설정하여 명음비를 확보하고 자동 캡션 자막을 생성합니다.' }
+      ],
+      q1: 'Q1. [Seedance 2.5 × Dola AI]에서 씬이 바뀌어도 캐릭터가 절대 변하지 않게 고정하는 핵심 비법은?',
+      a1: '03:22에 설명하듯 텍스트로만 영상을 돌리지 않고, 무료 이미지 생성기로 캐릭터의 정면/측면 시트를 먼저 생성한 후 Seedance의 Image-to-Video 슬롯에 앵커로 주입하고 마스터 프롬프트와 함께 돌리는 것입니다.',
+      refText: '[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw (타임코드: 02:14~04:36)]',
+      q2: 'Q2. Dola AI에서 유료 크레딧 차감 없이 무제한으로 영상을 렌더링하는 원리는?',
+      a2: 'Chrome 브라우저 확장 프로그램 관리자(chrome://extensions)에서 개발자 모드를 켜고 제공된 Dola Seedance 2.5 Ad-on을 압축 해제 로드하여 세션 토큰을 무제한 상태로 우회 활성화하는 방식입니다.',
+      checklist: [
+        'Dola AI 사이트 접속 및 Chrome 확장 애드온 설치 (개발자 모드 로드 확인)',
+        '60초 분량의 시나리오를 15초 × 4개 씬으로 분할 기획',
+        '무료 이미지 생성기로 주인공 캐릭터 정면/측면 시트 1장 생성',
+        '마스터 프롬프트 템플릿(TITLE, STYLE, DURATION, VISUAL, NARRATION) 작성',
+        'Seedance 2.5 Image-to-Video 슬롯에 캐릭터 앵커 주입 후 씬 1~4 연속 렌더링',
+        'CapCut에서 4개 클립 결합 + AI 나레이션 싱크 맞춘 후 유튜브에 즉시 배포(Ship)'
+      ],
+      footer: '공부방 스튜디오 · 복습 워크북',
+      pageNumber: '5 / 5 페이지 (실천 워크북 & 체크리스트)'
+    }
+  }
+};
+
+// ============================================================================
+// 🌟 2. 대표님 지정 공식 핵심 유튜브 전자책 (Hermes × DeskRPG 완벽 조판)
+// ============================================================================
+export const HERMES_EBOOK = {
+  id: 'book_hermes_deskrpg',
+  sourceId: 'src_yt_4NCXTWBxcN0',
+  type: 'web',
+  isYoutube: true,
+  youtubeVideoId: '4NCXTWBxcN0',
+  title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
+  subtitle: 'Hermes 에이전트와 DeskRPG 3D 가상 오피스로 구축하는 1인 기업 AX 시스템',
+  author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
+  sourceRef: 'https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
+  badge: '유튜브 실전 강의 완벽 조판본',
+  createdAt: '2026. 09. 28.',
+  coverImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
+  conceptImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+  tableImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+  chapterImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
+  pages: {
+    cover: {
+      title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
+      subtitle: '영상 출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
+      author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
+      footer: '공부방 스튜디오 · 개인 학습책 시리즈',
+      pageNumber: '1 / 4 페이지 (표지)'
+    },
+    chapterStart: {
+      number: '1',
+      title: '대화형 챗봇을 넘어선 자율 실행 AI 팀원의 탄생',
+      subtitle: 'Hermes Agent와 DeskRPG가 여는 1인 기업 가상 오피스',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '2 / 4 페이지'
+    },
+    concept: {
+      title: '제 1 장: 자율 실행 AI 팀원과 3D 가상 오피스 원리',
+      body1: '단순한 1회성 질문-답변 챗봇의 시대는 끝났습니다. Hermes 에이전트와 DeskRPG 가상 오피스를 결합하면, 각자 고유한 직무(기획자, 개발자, 데이터 분석가)를 부여받은 AI 팀원들이 3D 오피스에 상주하며 실시간으로 회의하고 태스크를 자율 실행합니다.',
+      calloutGold: '💡 핵심 원리: 대표는 CEO 위치에서 큰 방향만 지시하고, 회의·칸반 태스크 분배·코드 실행은 AI 팀원이 24시간 가상 오피스에서 자율 수행한다.',
+      body2: 'DeskRPG는 에이전트의 작업 상태(작업 중, 회의 중, 완료)를 3D 공간에 시각화하고, 칸반 보드를 통해 실시간 진행 상황을 한눈에 통제할 수 있는 차세대 1인 기업 본부입니다.',
+      calloutBlack: '⚡ 실천 포인트: 1인 기업 스케일업의 본질은 혼자 모든 일을 처리하는 것이 아니라, 나만의 AI 전문 팀을 조직하여 레버리지를 극대화하는 것입니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '2 / 4 페이지 (핵심 개념)'
+    },
+    tableDiagram: {
+      title: '제 2 장: 전통적 1인 작업 vs Hermes × DeskRPG AI 팀 협업 체계',
+      lead: '1인 기업의 3대 핵심 업무(기획, 개발, 관리)를 분해하여 AI 팀원 도입 전후의 실전 효용을 비교합니다.',
+      rows: [
+        { action: '1. 신규 비즈니스 기획 및 전략 수립', prob: '85% 속도 향상', effect: 'AI 기획팀의 10분 브레인스토밍 및 즉시 조판' },
+        { action: '2. 소프트웨어 개발 및 자동화 구현', prob: '95% 비용 절감', effect: 'AI 개발 에이전트의 자율 코딩, 에러 수정, 배포' },
+        { action: '3. 일일 업무 추적 및 칸반 관리', prob: '100% 자동화', effect: 'DeskRPG 3D 오피스 칸반 카드로 24시간 무중단 관리' }
+      ],
+      insight: '대표님의 소중한 시간은 최고 가치의 비즈니스 의사결정에만 쓰여야 합니다. 반복적인 회의와 실행은 AI 팀원에게 완전히 위임합니다.',
+      footer: '공부방 스튜디오 · 개인 학습책',
+      pageNumber: '3 / 4 페이지 (구조 비교 도표)'
+    },
+    workbook: {
+      title: '제 3 장: 나만의 AI 팀 빌딩 실천 워크북 & 핵심 과제',
+      q1: 'Q1. [Hermes × DeskRPG]가 1인 기업 대표님에게 제공하는 가장 강력한 레버리지는 무엇인가?',
+      a1: '1회성 질문에 머물던 AI를 "상시 대기하는 직무별 팀원"으로 승격시켜, 대표의 개입 없이도 AI 팀원들끼리 회의하고 칸반 카드를 해결하도록 만드는 자율성입니다.',
+      refText: '[출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s]',
+      q2: 'Q2. 나의 사업에 당장 투입할 3대 AI 에이전트 직책과 첫 번째 임무는?',
+      a2: '1) 숏폼/트렌드 기획관, 2) 파이썬 & 웹 자동화 개발자, 3) 고객 데이터 분석관을 임명하고 DeskRPG 칸반 보드에 첫 업무 카드를 등록합니다.',
+      footer: '공부방 스튜디오 · 복습 워크북',
+      pageNumber: '4 / 4 페이지 (실천 워크북)'
+    }
+  }
+};
+
 // ============================================================================
 // 📚 동적 전자책 빌더 함수 (사용자가 입력한 링크/자료로 실제 책 생성)
 // ============================================================================
@@ -516,6 +853,13 @@ export function buildEbookFromSource(source) {
   // 🌟 대표님 입력 최신 영상 (ERQArI7K-Jw) - Seedance 2.5 무료 무제한 AI 비디오 완벽 매칭
   const isSeedanceVideo = ytId === 'ERQArI7K-Jw' || (source.sourceRef && source.sourceRef.includes('ERQArI7K-Jw'));
 
+  if (isHermesVideo) {
+    return HERMES_EBOOK;
+  }
+  if (isSeedanceVideo) {
+    return SEEDANCE_EBOOK;
+  }
+
   let title = source.title;
   let author = source.author || '지식 큐레이터';
   let coverImg = isYoutube 
@@ -527,159 +871,11 @@ export function buildEbookFromSource(source) {
   let tableImg = CURATED_THEME_IMAGES.chart;
   let chapterImg = coverImg;
 
-  if (isHermesVideo) {
-    title = '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG';
-    author = '단테랩스 (@dante-labs) 지음 · 대표님 감수';
-    coverImg = 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg';
-    conceptImg = 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80';
-    tableImg = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80';
-  } else if (isSeedanceVideo) {
-    title = '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video';
-    author = 'Ai Lockup 지음 · 대표님 감수';
-    coverImg = 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg';
-    conceptImg = 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg';
-    tableImg = 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80';
-  } else if (!title || title.includes(ytId)) {
+  if (!title || title.includes(ytId)) {
     title = source.title || (isYoutube ? `유튜브 영상 (${ytId}) 핵심 강의록` : '웹 링크 핵심 분석 리포트');
   }
 
   const sourceRef = source.sourceRef || '등록된 링크 URL';
-
-  // 🌟 [전용 1] 단테랩스 Hermes x DeskRPG 초정밀 강의록
-  if (isHermesVideo) {
-    return {
-      id: `book_${source.id || Date.now()}`,
-      sourceId: source.id,
-      type: 'web',
-      isYoutube: true,
-      youtubeVideoId: ytId,
-      title,
-      subtitle: 'Hermes 에이전트와 DeskRPG 3D 가상 오피스로 구축하는 1인 기업 AX 시스템',
-      author,
-      sourceRef,
-      badge: '유튜브 실전 강의 완벽 조판본',
-      createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-      coverImage: coverImg,
-      conceptImage: conceptImg,
-      tableImage: tableImg,
-      chapterImage: chapterImg,
-      pages: {
-        cover: {
-          title,
-          subtitle: `영상 출처: ${sourceRef}`,
-          author,
-          footer: `공부방 스튜디오 · 개인 학습책 시리즈`,
-          pageNumber: '1 / 4 페이지 (표지)'
-        },
-        chapterStart: {
-          number: '1',
-          title: '대화형 챗봇을 넘어선 자율 실행 AI 팀원의 탄생',
-          subtitle: 'Hermes Agent와 DeskRPG가 여는 1인 기업 가상 오피스',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '2 / 4 페이지'
-        },
-        concept: {
-          title: '제 1 장: 자율 실행 AI 팀원과 3D 가상 오피스 원리',
-          body1: '단순한 1회성 질문-답변 챗봇의 시대는 끝났습니다. Hermes 에이전트와 DeskRPG 가상 오피스를 결합하면, 각자 고유한 직무(기획자, 개발자, 데이터 분석가)를 부여받은 AI 팀원들이 3D 오피스에 상주하며 실시간으로 회의하고 태스크를 자율 실행합니다.',
-          calloutGold: '💡 핵심 원리: 대표는 CEO 위치에서 큰 방향만 지시하고, 회의·칸반 태스크 분배·코드 실행은 AI 팀원이 24시간 가상 오피스에서 자율 수행한다.',
-          body2: 'DeskRPG는 에이전트의 작업 상태(작업 중, 회의 중, 완료)를 3D 공간에 시각화하고, 칸반 보드를 통해 실시간 진행 상황을 한눈에 통제할 수 있는 차세대 1인 기업 본부입니다.',
-          calloutBlack: '⚡ 실천 포인트: 1인 기업 스케일업의 본질은 혼자 모든 일을 처리하는 것이 아니라, 나만의 AI 전문 팀을 조직하여 레버리지를 극대화하는 것입니다.',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '2 / 4 페이지 (핵심 개념)'
-        },
-        tableDiagram: {
-          title: '제 2 장: 전통적 1인 작업 vs Hermes × DeskRPG AI 팀 협업 체계',
-          lead: '1인 기업의 3대 핵심 업무(기획, 개발, 관리)를 분해하여 AI 팀원 도입 전후의 실전 효용을 비교합니다.',
-          rows: [
-            { action: '1. 신규 비즈니스 기획 및 전략 수립', prob: '85% 속도 향상', effect: 'AI 기획팀의 10분 브레인스토밍 및 즉시 조판' },
-            { action: '2. 소프트웨어 개발 및 자동화 구현', prob: '95% 비용 절감', effect: 'AI 개발 에이전트의 자율 코딩, 에러 수정, 배포' },
-            { action: '3. 일일 업무 추적 및 칸반 관리', prob: '100% 자동화', effect: 'DeskRPG 3D 오피스 칸반 카드로 24시간 무중단 관리' }
-          ],
-          insight: '대표님의 소중한 시간은 최고 가치의 비즈니스 의사결정에만 쓰여야 합니다. 반복적인 회의와 실행은 AI 팀원에게 완전히 위임합니다.',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '3 / 4 페이지 (구조 비교 도표)'
-        },
-        workbook: {
-          title: '제 3 장: 나만의 AI 팀 빌딩 실천 워크북 & 핵심 과제',
-          q1: 'Q1. [Hermes × DeskRPG]가 1인 기업 대표님에게 제공하는 가장 강력한 레버리지는 무엇인가?',
-          a1: '1회성 질문에 머물던 AI를 "상시 대기하는 직무별 팀원"으로 승격시켜, 대표의 개입 없이도 AI 팀원들끼리 회의하고 칸반 카드를 해결하도록 만드는 자율성입니다.',
-          refText: `[출처: ${sourceRef}]`,
-          q2: 'Q2. 나의 사업에 당장 투입할 3대 AI 에이전트 직책과 첫 번째 임무는?',
-          a2: '1) 숏폼/트렌드 기획관, 2) 파이썬 & 웹 자동화 개발자, 3) 고객 데이터 분석관을 임명하고 DeskRPG 칸반 보드에 첫 업무 카드를 등록합니다.',
-          footer: `공부방 스튜디오 · 복습 워크북`,
-          pageNumber: '4 / 4 페이지 (실천 워크북)'
-        }
-      }
-    };
-  }
-
-  // 🌟 [전용 2] 대표님 입력 최신 영상: Seedance 2.5 무료 무제한 AI 영상 생성기 완벽 조판
-  if (isSeedanceVideo) {
-    return {
-      id: `book_${source.id || Date.now()}`,
-      sourceId: source.id,
-      type: 'web',
-      isYoutube: true,
-      youtubeVideoId: 'ERQArI7K-Jw',
-      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
-      subtitle: 'Seedance 2.5를 활용한 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 제작 실전 가이드',
-      author: 'Ai Lockup 지음 · 대표님 감수',
-      sourceRef,
-      badge: '유튜브 실전 강의 완벽 조판본',
-      createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-      coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-      conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-      tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
-      chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-      pages: {
-        cover: {
-          title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5',
-          subtitle: `FREE & UNLIMITED Long AI Video Generator (출처: ${sourceRef})`,
-          author: 'Ai Lockup 지음 · 대표님 감수',
-          footer: `공부방 스튜디오 · 개인 학습책 시리즈`,
-          pageNumber: '1 / 4 페이지 (표지)'
-        },
-        chapterStart: {
-          number: '1',
-          title: '구독료와 길이 한계를 깬 차세대 AI 영상 혁명',
-          subtitle: 'Seedance 2.5로 구축하는 1인 AI 비디오 스튜디오',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '2 / 4 페이지'
-        },
-        concept: {
-          title: '제 1 장: Seedance 2.5 기반 무료 무제한 비디오 생성 원리',
-          body1: '기존의 Text-to-Video 툴들은 비싼 월 구독료와 4~5초 짧은 생성 시간, 워터마크라는 치명적인 한계가 있었습니다. Seedance 2.5는 텍스트 프롬프트와 참조 이미지(Image-to-Video)를 결합하여 일관된 캐릭터와 배경을 유지한 채 긴 호흡의 영상을 무료·무제한으로 생성할 수 있는 혁신적인 도구입니다.',
-          calloutGold: '💡 핵심 원리: 프롬프트 한 줄 또는 고화질 참조 이미지 한 장으로 캐릭터의 얼굴과 화풍을 고정한 채, 자연스러운 모션과 카메라 앵글을 무제한 렌더링한다.',
-          body2: '유튜브 롱폼 다큐멘터리, 스토리텔링 쇼츠, 광고 B-roll 제작 등 고비용 외주 영상 제작을 1인 AI 파이프라인으로 완전히 대체할 수 있는 실전 영상 생성 체계를 완성합니다.',
-          calloutBlack: '⚡ 실천 포인트: 비싼 GPU 장비나 촬영 인력 없이, 시나리오 기획과 프롬프트 제어만으로 1인 기업의 영상 콘텐츠 대량 양산이 가능해집니다.',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '2 / 4 페이지 (핵심 개념)'
-        },
-        tableDiagram: {
-          title: '제 2 장: 기존 영상 제작 vs Seedance 2.5 AI 비디오 제작 비교',
-          lead: '전통적 촬영/외주 및 기존 유료 AI 툴 대비 Seedance 2.5의 제작 비용, 속도, 연속성을 정밀 비교합니다.',
-          rows: [
-            { action: '1. 영상 렌더링 및 제작 시간', prob: '95% 단축', effect: '시나리오 입력 후 5분 내 고화질 씬 렌더링 완성' },
-            { action: '2. 소프트웨어 및 외주 비용', prob: '100% 절감', effect: '무료 무제한 생성 옵션으로 영상 제작 단가 0원화' },
-            { action: '3. 롱폼 콘텐츠 캐릭터 일관성', prob: '85% 향상', effect: 'Image-to-Video 참조로 씬 간 인물 외모 완벽 유지' }
-          ],
-          insight: '영상 제작의 진입 장벽과 제작 비용이 0으로 수렴했습니다. 이제 승부처는 툴 사용법이 아니라, 시청자의 시선을 사로잡는 기획력과 대본의 흡인력입니다.',
-          footer: `공부방 스튜디오 · 개인 학습책`,
-          pageNumber: '3 / 4 페이지 (구조 비교 도표)'
-        },
-        workbook: {
-          title: '제 3 장: 1인 AI 영상 제작 파이프라인 실천 워크북 & 과제',
-          q1: 'Q1. [Seedance 2.5]가 1인 크리에이터에게 제공하는 가장 결정적인 경쟁 우위는?',
-          a1: '워터마크와 생성 횟수 제한 없이 대량의 영상 씬을 마음껏 렌더링할 수 있어, 리스크 없이 다양한 썸네일과 쇼츠 후킹 컷을 A/B 테스트할 수 있는 점입니다.',
-          refText: `[출처: ${sourceRef}]`,
-          q2: 'Q2. 나의 비즈니스 채널에 당장 적용할 1대 영상 제작 실행 계획은?',
-          a2: '1) 60초 숏폼 시나리오를 4개 씬으로 분할, 2) Seedance 2.5로 각 씬별 5초 컷 생성, 3) 무료 BGM과 AI 나레이션을 결합하여 오늘 밤 즉시 유튜브 쇼츠에 업로드합니다.',
-          footer: `공부방 스튜디오 · 복습 워크북`,
-          pageNumber: '4 / 4 페이지 (실천 워크북)'
-        }
-      }
-    };
-  }
 
   // 🌟 일반 링크/영상인 경우 (기존 과거 텍스트 절대 미노출)
   const isVideoRelated = /video|generator|image|ai|유튜브|영상|비디오|seedance/i.test(title + ' ' + (source.content || ''));
@@ -754,138 +950,6 @@ export function buildEbookFromSource(source) {
     }
   };
 }
-// 🌟 대표님 지정 최신 핵심 유튜브 전자책 (Seedance 2.5 × Dola AI 실전 강의 완벽 조판)
-export const SEEDANCE_EBOOK = {
-  id: 'book_seedance_25',
-  sourceId: 'src_yt_ERQArI7K-Jw',
-  type: 'web',
-  isYoutube: true,
-  youtubeVideoId: 'ERQArI7K-Jw',
-  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
-  subtitle: 'Dola AI 확장과 마스터 프롬프트로 완성하는 씬 바이 씬(Scene-by-Scene) AI 장편 영화 제작 가이드',
-  author: 'Ai Lockup 지음 · 대표님 감수',
-  sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
-  badge: '유튜브 실전 강의 완벽 조판본',
-  createdAt: '2026. 09. 28.',
-  coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
-  chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  pages: {
-    cover: {
-      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
-      subtitle: 'Free & Unlimited Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
-      author: 'Ai Lockup 지음 · 대표님 감수',
-      footer: '공부방 스튜디오 · 개인 학습책 시리즈',
-      pageNumber: '1 / 4 페이지 (표지)'
-    },
-    chapterStart: {
-      number: '1',
-      title: 'Dola AI와 Seedance 2.5가 여는 크레딧 제로 AI 영화 제작',
-      subtitle: '마스터 프롬프트와 참조 에셋으로 완성하는 1인 AI 스튜디오',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지'
-    },
-    concept: {
-      title: '제 1 장: Dola AI × Seedance 2.5 무료 무제한 영상 생성 원리',
-      body1: '대부분의 상용 AI 영상 생성기는 짧은 영상에도 막대한 유료 크레딧을 요구합니다. 이 영상에서는 Dola AI 플랫폼과 Seedance 2.5 전용 애드온(Extension)을 활용하여 크레딧 결제 없이 텍스트(Text-to-Video)와 이미지(Image-to-Video)를 무료·무제한으로 생성하는 실전 파이프라인을 다룹니다.',
-      calloutGold: '💡 핵심 원리: 1) Dola 확장 설치 ➔ 2) 마스터 프롬프트와 화풍(3D, 지브리 등) 고정 ➔ 3) 무료 AI 툴로 캐릭터·장소 참조 에셋 생성 ➔ 4) 참조 이미지를 주입해 씬 바이 씬(Scene-by-Scene) 클립을 생성한다.',
-      body2: '영상 전체의 시각적 일관성을 유지하기 위해, 먼저 주인공과 주요 장소의 키 이미지를 고정한 뒤 마스터 프롬프트와 결합하여 씬별 클립을 연속 렌더링하고 이를 이어 붙여 긴 호흡의 완성형 AI 영화(Long AI Film)를 완성합니다.',
-      calloutBlack: '⚡ 실천 포인트: 값비싼 외주나 크레딧 충전 없이, 1인 제작자가 직접 시나리오를 바탕으로 6단계 영상 제작 파이프라인을 자율 구동할 수 있습니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지 (핵심 개념)'
-    },
-    tableDiagram: {
-      title: '제 2 장: [타임라인 분석] Seedance 2.5 영상 제작 6단계 실전 비교표',
-      lead: '영상 원본(00:00~05:46)에서 설명하는 단계별 작업 내용과 기존 제작 방식의 한계 극복 포인트를 비교합니다.',
-      rows: [
-        { action: '1단계: Dola AI & 확장 설치 (00:41, 05:18)', prob: '100% 무료화', effect: '브라우저 애드온 연결로 크레딧 제한 우회 및 무제한 생성 환경 구축' },
-        { action: '2단계: 마스터 프롬프트 & 스타일 (02:14, 02:44)', prob: '화풍 일관성 확보', effect: '3D 애니메이션, 지브리 등 원하는 시각적 톤앤매너를 프롬프트로 고정' },
-        { action: '3단계: 캐릭터·장소 참조 생성 (03:22, 04:16)', prob: '캐릭터 얼굴 보존', effect: '무료 AI 이미지 툴로 주인공 에셋을 먼저 뽑아 Image-to-Video에 주입' },
-        { action: '4단계: 씬 바이 씬 롱폼 조판 (04:36, 05:46)', prob: '장편 영화 완성', effect: '씬별 클립을 연속 렌더링하여 완전한 하나의 AI 단편/롱폼 필름 완성' }
-      ],
-      insight: '영상 제작의 본질은 툴에 종속되는 것이 아니라, 마스터 프롬프트와 참조 이미지를 활용해 일관된 스토리를 씬 단위로 구축하는 파이프라인에 있습니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '3 / 4 페이지 (구조 비교 도표)'
-    },
-    workbook: {
-      title: '제 3 장: 씬 바이 씬 AI 필름메이킹 실천 워크북 & 과제',
-      q1: 'Q1. [Seedance 2.5 × Dola AI]에서 캐릭터가 바뀌지 않게 만드는 핵심 기법은?',
-      a1: '03:22에 설명하듯, 영상을 바로 뽑지 않고 무료 AI 이미지 툴로 캐릭터의 정면/측면 참조 이미지를 먼저 확보한 후 Image-to-Video 슬롯에 넣어 마스터 프롬프트와 함께 돌리는 것입니다.',
-      refText: '[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw (타임코드: 02:14~04:36)]',
-      q2: 'Q2. 오늘 당장 실행할 나의 첫 AI 숏폼/롱폼 제작 액션 플랜은?',
-      a2: '1) 마스터 프롬프트 문서 확인, 2) Dola 애드온 설치, 3) 4개 씬(도입-전개-위기-결말)별 참조 이미지 1장씩 준비 후 씬 바이 씬으로 5초 클립 4개를 렌더링합니다.',
-      footer: '공부방 스튜디오 · 복습 워크북',
-      pageNumber: '4 / 4 페이지 (실천 워크북)'
-    }
-  }
-};
-
-// 🌟 대표님 지정 공식 핵심 유튜브 전자책 (Hermes × DeskRPG 완벽 조판)
-export const HERMES_EBOOK = {
-  id: 'book_hermes_deskrpg',
-  sourceId: 'src_yt_4NCXTWBxcN0',
-  type: 'web',
-  isYoutube: true,
-  youtubeVideoId: '4NCXTWBxcN0',
-  title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-  subtitle: 'Hermes 에이전트와 DeskRPG 3D 가상 오피스로 구축하는 1인 기업 AX 시스템',
-  author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
-  sourceRef: 'https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
-  badge: '유튜브 실전 강의 완벽 조판본',
-  createdAt: '2026. 09. 28.',
-  coverImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
-  conceptImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-  tableImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-  chapterImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
-  pages: {
-    cover: {
-      title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-      subtitle: '영상 출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
-      author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
-      footer: '공부방 스튜디오 · 개인 학습책 시리즈',
-      pageNumber: '1 / 4 페이지 (표지)'
-    },
-    chapterStart: {
-      number: '1',
-      title: '대화형 챗봇을 넘어선 자율 실행 AI 팀원의 탄생',
-      subtitle: 'Hermes Agent와 DeskRPG가 여는 1인 기업 가상 오피스',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지'
-    },
-    concept: {
-      title: '제 1 장: 자율 실행 AI 팀원과 3D 가상 오피스 원리',
-      body1: '단순한 1회성 질문-답변 챗봇의 시대는 끝났습니다. Hermes 에이전트와 DeskRPG 가상 오피스를 결합하면, 각자 고유한 직무(기획자, 개발자, 데이터 분석가)를 부여받은 AI 팀원들이 3D 오피스에 상주하며 실시간으로 회의하고 태스크를 자율 실행합니다.',
-      calloutGold: '💡 핵심 원리: 대표는 CEO 위치에서 큰 방향만 지시하고, 회의·칸반 태스크 분배·코드 실행은 AI 팀원이 24시간 가상 오피스에서 자율 수행한다.',
-      body2: 'DeskRPG는 에이전트의 작업 상태(작업 중, 회의 중, 완료)를 3D 공간에 시각화하고, 칸반 보드를 통해 실시간 진행 상황을 한눈에 통제할 수 있는 차세대 1인 기업 본부입니다.',
-      calloutBlack: '⚡ 실천 포인트: 1인 기업 스케일업의 본질은 혼자 모든 일을 처리하는 것이 아니라, 나만의 AI 전문 팀을 조직하여 레버리지를 극대화하는 것입니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지 (핵심 개념)'
-    },
-    tableDiagram: {
-      title: '제 2 장: 전통적 1인 작업 vs Hermes × DeskRPG AI 팀 협업 체계',
-      lead: '1인 기업의 3대 핵심 업무(기획, 개발, 관리)를 분해하여 AI 팀원 도입 전후의 실전 효용을 비교합니다.',
-      rows: [
-        { action: '1. 신규 비즈니스 기획 및 전략 수립', prob: '85% 속도 향상', effect: 'AI 기획팀의 10분 브레인스토밍 및 즉시 조판' },
-        { action: '2. 소프트웨어 개발 및 자동화 구현', prob: '95% 비용 절감', effect: 'AI 개발 에이전트의 자율 코딩, 에러 수정, 배포' },
-        { action: '3. 일일 업무 추적 및 칸반 관리', prob: '100% 자동화', effect: 'DeskRPG 3D 오피스 칸반 카드로 24시간 무중단 관리' }
-      ],
-      insight: '대표님의 소중한 시간은 최고 가치의 비즈니스 의사결정에만 쓰여야 합니다. 반복적인 회의와 실행은 AI 팀원에게 완전히 위임합니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '3 / 4 페이지 (구조 비교 도표)'
-    },
-    workbook: {
-      title: '제 3 장: 나만의 AI 팀 빌딩 실천 워크북 & 핵심 과제',
-      q1: 'Q1. [Hermes × DeskRPG]가 1인 기업 대표님에게 제공하는 가장 강력한 레버리지는 무엇인가?',
-      a1: '1회성 질문에 머물던 AI를 "상시 대기하는 직무별 팀원"으로 승격시켜, 대표의 개입 없이도 AI 팀원들끼리 회의하고 칸반 카드를 해결하도록 만드는 자율성입니다.',
-      refText: '[출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s]',
-      q2: 'Q2. 나의 사업에 당장 투입할 3대 AI 에이전트 직책과 첫 번째 임무는?',
-      a2: '1) 숏폼/트렌드 기획관, 2) 파이썬 & 웹 자동화 개발자, 3) 고객 데이터 분석관을 임명하고 DeskRPG 칸반 보드에 첫 업무 카드를 등록합니다.',
-      footer: '공부방 스튜디오 · 복습 워크북',
-      pageNumber: '4 / 4 페이지 (실천 워크북)'
-    }
-  }
-};
 
 // 기본 샘플 책 (JEV 강화학습 이야기)
 const SAMPLE_BOOK = {
@@ -2208,24 +2272,33 @@ export default function StudyBookStudio() {
                   </div>
                 </div>
                 <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#111', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>11쪽</span>
+                  <span style={{ background: '#111', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '1장' : '11쪽'}</span>
                   <div>
                     <strong>[개념 설명] {activeBook.pages.concept.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>원문 브리핑 및 1대 핵심 원칙</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>원문 브리핑 및 실전 셋업 매뉴얼</div>
                   </div>
                 </div>
+                {activeBook.pages.promptGuide && (
+                  <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ background: '#7c3aed', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>2장</span>
+                    <div>
+                      <strong>[마스터 프롬프트] {activeBook.pages.promptGuide.title}</strong>
+                      <div style={{ fontSize: 12, color: '#64748b' }}>캐릭터 앵커링 공식 & 5대 마스터 프롬프트 템플릿</div>
+                    </div>
+                  </div>
+                )}
                 <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#d97706', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>29쪽</span>
+                  <span style={{ background: '#d97706', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '3장' : '29쪽'}</span>
                   <div>
                     <strong>[구조 분석표] {activeBook.pages.tableDiagram.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>행동 판단 확률 및 비교 매트릭스 도표</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{activeBook.pages.tableDiagram.storyboard ? '60초 실전 씬 콘티 & AI 툴 비교 매트릭스' : '행동 판단 확률 및 비교 매트릭스 도표'}</div>
                   </div>
                 </div>
                 <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#16a34a', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>워크북</span>
+                  <span style={{ background: '#16a34a', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '4장' : '워크북'}</span>
                   <div>
                     <strong>[실천 워크북] {activeBook.pages.workbook.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>복습 퀴즈, 정답 해설 및 액션 플랜 필기 노트</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{activeBook.pages.workbook.checklist ? '포스트 프로덕션 3단계 & 6대 액션 체크리스트' : '복습 퀴즈, 정답 해설 및 액션 플랜 필기 노트'}</div>
                   </div>
                 </div>
               </div>
@@ -2444,14 +2517,14 @@ export default function StudyBookStudio() {
 
                   <div className="sb-page-footer" style={{ marginTop: 40, color: '#64748b' }}>
                     <span style={{ color: '#64748b' }}>{activeBook.pages.cover.footer}</span>
-                    <span style={{ color: '#64748b' }}>1 / 4 페이지 (표지)</span>
+                    <span style={{ color: '#64748b' }}>{activeBook.pages.cover.pageNumber || (activeBook.pages.promptGuide ? '1 / 5 페이지 (표지)' : '1 / 4 페이지 (표지)')}</span>
                   </div>
                 </div>
 
-                {/* ── 2. 개념 설명 (Page 2) ── */}
+                {/* ── 2. 개념 설명 & 실전 셋업 (Page 2) ── */}
                 <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
                   <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>제 1 장: 핵심 개념</span>
+                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>제 1 장: 핵심 개념 & 세팅</span>
                     <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
                       {activeBook.pages.concept.title}
                     </h1>
@@ -2477,6 +2550,22 @@ export default function StudyBookStudio() {
                       <p style={{ color: '#0f172a', fontWeight: 700, margin: 0, fontSize: 14.5 }}>{activeBook.pages.concept.calloutGold}</p>
                     </div>
 
+                    {/* 실전 단계별 스텝 카드 (있는 경우) */}
+                    {activeBook.pages.concept.stepCards && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '16px 0' }}>
+                        {activeBook.pages.concept.stepCards.map((sc, idx) => (
+                          <div key={idx} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '12px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                              <span style={{ background: '#0284c7', color: '#fff', fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 4 }}>{sc.step}</span>
+                              <span style={{ fontSize: 11, color: '#d97706', fontWeight: 700 }}>⏱️ {sc.time}</span>
+                              <strong style={{ fontSize: 13.5, color: '#0f172a' }}>{sc.title}</strong>
+                            </div>
+                            <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{sc.desc}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7 }}>
                       {activeBook.pages.concept.body2}
                     </p>
@@ -2488,14 +2577,105 @@ export default function StudyBookStudio() {
 
                   <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
                     <span style={{ color: '#64748b' }}>{activeBook.pages.concept.footer}</span>
-                    <span style={{ color: '#64748b' }}>2 / 4 페이지 (개념 설명)</span>
+                    <span style={{ color: '#64748b' }}>{activeBook.pages.concept.pageNumber || (activeBook.pages.promptGuide ? '2 / 5 페이지 (개념 설명)' : '2 / 4 페이지 (개념 설명)')}</span>
                   </div>
                 </div>
 
-                {/* ── 3. 이미지 + 도표 (Page 3) ── */}
+                {/* ── 3. 마스터 프롬프트 & 캐릭터 앵커링 (Page 3 - 있는 경우) ── */}
+                {activeBook.pages.promptGuide && (
+                  <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
+                    <div>
+                      <span className="sb-page-pill-badge" style={{ background: '#7c3aed', color: '#ffffff' }}>제 2 장: 마스터 프롬프트 & 앵커링</span>
+                      <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
+                        {activeBook.pages.promptGuide.title}
+                      </h1>
+
+                      <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7, margin: '14px 0' }}>
+                        {activeBook.pages.promptGuide.lead}
+                      </p>
+
+                      {/* 캐릭터 앵커링 3단계 워크플로우 */}
+                      {activeBook.pages.promptGuide.anchorWorkflow && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '14px 0' }}>
+                          {activeBook.pages.promptGuide.anchorWorkflow.map((wf, idx) => (
+                            <div key={idx} style={{ background: '#f5f3ff', borderLeft: '4px solid #7c3aed', borderRadius: '0 8px 8px 0', padding: '12px 16px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                                <span style={{ background: '#7c3aed', color: '#fff', fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 4 }}>{wf.tag}</span>
+                                <strong style={{ fontSize: 13.5, color: '#4c1d95' }}>{wf.title}</strong>
+                              </div>
+                              <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{wf.desc}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 마스터 프롬프트 표준 템플릿 코드 박스 */}
+                      {activeBook.pages.promptGuide.promptTemplate && (
+                        <div style={{ margin: '16px 0' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1e1b4b', padding: '8px 14px', borderRadius: '8px 8px 0 0' }}>
+                            <span style={{ color: '#c7d2fe', fontSize: 12, fontWeight: 800 }}>📋 마스터 프롬프트 5대 표준 구조 (원문 공식 복사본)</span>
+                            <button
+                              className="sb-btn sb-btn-sm"
+                              style={{ background: '#4338ca', color: '#fff', fontSize: 11, padding: '2px 8px', borderRadius: 4 }}
+                              onClick={() => {
+                                navigator.clipboard.writeText(activeBook.pages.promptGuide.promptTemplate);
+                                showToast('📋 마스터 프롬프트가 클립보드에 복사되었습니다!');
+                              }}
+                            >
+                              프롬프트 복사
+                            </button>
+                          </div>
+                          <pre style={{
+                            background: '#0f172a',
+                            color: '#38bdf8',
+                            padding: 14,
+                            borderRadius: '0 0 8px 8px',
+                            fontSize: 12.5,
+                            lineHeight: 1.6,
+                            margin: 0,
+                            overflowX: 'auto',
+                            fontFamily: 'monospace',
+                            whiteSpace: 'pre-wrap'
+                          }}>
+                            {activeBook.pages.promptGuide.promptTemplate}
+                          </pre>
+                        </div>
+                      )}
+
+                      {/* 3대 스타일 프리셋 박스 */}
+                      {activeBook.pages.promptGuide.presets && (
+                        <div style={{ margin: '14px 0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14 }}>
+                          <div style={{ fontWeight: 800, fontSize: 13, color: '#0f172a', marginBottom: 8 }}>🎨 추천 3대 화풍(Style) 프리셋 프롬프트 키워드:</div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {activeBook.pages.promptGuide.presets.map((ps, idx) => (
+                              <div key={idx} style={{ fontSize: 12.5, color: '#334155' }}>
+                                <strong style={{ color: '#0284c7' }}>{ps.name}:</strong> <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: 4, fontSize: 11.5, color: '#0f172a' }}>{ps.code}</code>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {activeBook.pages.promptGuide.callout && (
+                        <div className="sb-callout-gold" style={{ background: '#fef3c7', borderLeft: '4px solid #d97706', padding: '12px 16px', margin: '14px 0', borderRadius: '0 6px 6px 0' }}>
+                          <p style={{ color: '#0f172a', fontWeight: 700, margin: 0, fontSize: 13.5 }}>{activeBook.pages.promptGuide.callout}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
+                      <span style={{ color: '#64748b' }}>{activeBook.pages.promptGuide.footer || activeBook.pages.concept.footer}</span>
+                      <span style={{ color: '#64748b' }}>{activeBook.pages.promptGuide.pageNumber || '3 / 5 페이지 (마스터 프롬프트 & 앵커링)'}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── 4. 이미지 + 도표 및 씬 콘티 (Page 4) ── */}
                 <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
                   <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>제 2 장: 구조 분석 및 비교</span>
+                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>
+                      {activeBook.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}
+                    </span>
                     <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
                       {activeBook.pages.tableDiagram.title}
                     </h1>
@@ -2517,24 +2697,60 @@ export default function StudyBookStudio() {
                       {activeBook.pages.tableDiagram.lead}
                     </p>
 
-                    <table className="sb-table" style={{ margin: '14px 0', width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr style={{ background: '#f8fafc' }}>
-                          <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>핵심 판단 요소</th>
-                          <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>적중 확률</th>
-                          <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>기대 효용 및 결과</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {activeBook.pages.tableDiagram.rows.map((row, idx) => (
-                          <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                            <td style={{ padding: '10px 14px', color: '#0f172a' }}><strong style={{ color: '#0f172a' }}>{row.action}</strong></td>
-                            <td style={{ padding: '10px 14px' }}><strong style={{ color: '#0369a1', fontWeight: 800 }}>{row.prob}</strong></td>
-                            <td style={{ padding: '10px 14px', color: '#334155' }}>{row.effect}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    {/* 실전 4-씬 콘티표 (있는 경우) */}
+                    {activeBook.pages.tableDiagram.storyboard && (
+                      <div style={{ margin: '16px 0' }}>
+                        <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 8 }}>🎬 60초 AI 단편 영화 실전 씬 바이 씬(Scene-by-Scene) 콘티표:</div>
+                        <div style={{ overflowX: 'auto' }}>
+                          <table className="sb-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                            <thead>
+                              <tr style={{ background: '#f1f5f9' }}>
+                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800, width: '22%' }}>씬 / 단계</th>
+                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>시각 연출 & 카메라 워크</th>
+                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>AI 음성 나레이션</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {activeBook.pages.tableDiagram.storyboard.map((sb, idx) => (
+                                <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                  <td style={{ padding: '8px 10px' }}>
+                                    <div style={{ fontWeight: 800, color: '#0284c7' }}>{sb.scene}</div>
+                                    <span style={{ fontSize: 10.5, background: '#e0f2fe', color: '#0369a1', padding: '1px 5px', borderRadius: 3 }}>{sb.phase}</span>
+                                  </td>
+                                  <td style={{ padding: '8px 10px', color: '#334155', lineHeight: 1.5 }}>{sb.visual}</td>
+                                  <td style={{ padding: '8px 10px', color: '#0f172a', fontStyle: 'italic', lineHeight: 1.5 }}>{sb.narration}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AI 영상 생성기 비교표 */}
+                    <div style={{ margin: '16px 0' }}>
+                      <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 8 }}>📊 주요 AI 영상 생성기 4사 실전 스펙 비교:</div>
+                      <div style={{ overflowX: 'auto' }}>
+                        <table className="sb-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <thead>
+                            <tr style={{ background: '#f8fafc' }}>
+                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>모델 / 플랫폼</th>
+                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>비용 / 크레딧</th>
+                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>핵심 스펙 & 효용</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {activeBook.pages.tableDiagram.rows.map((row, idx) => (
+                              <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                                <td style={{ padding: '10px 14px', color: '#0f172a' }}><strong style={{ color: '#0f172a' }}>{row.action}</strong></td>
+                                <td style={{ padding: '10px 14px' }}><strong style={{ color: '#0369a1', fontWeight: 800 }}>{row.prob}</strong></td>
+                                <td style={{ padding: '10px 14px', color: '#334155' }}>{row.effect}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
 
                     <div className="sb-callout-black" style={{ background: '#f1f5f9', borderLeft: '4px solid #0f172a', padding: '14px 18px', margin: '16px 0', borderRadius: '0 6px 6px 0' }}>
                       <p style={{ color: '#0f172a', margin: 0, fontSize: 13.5 }}>{activeBook.pages.tableDiagram.insight}</p>
@@ -2543,17 +2759,40 @@ export default function StudyBookStudio() {
 
                   <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
                     <span style={{ color: '#64748b' }}>{activeBook.pages.tableDiagram.footer}</span>
-                    <span style={{ color: '#64748b' }}>3 / 4 페이지 (구조 도표)</span>
+                    <span style={{ color: '#64748b' }}>{activeBook.pages.tableDiagram.pageNumber || (activeBook.pages.promptGuide ? '4 / 5 페이지 (구조 도표)' : '3 / 4 페이지 (구조 도표)')}</span>
                   </div>
                 </div>
 
-                {/* ── 4. 워크북 및 정답 (Page 4) ── */}
+                {/* ── 5. 워크북 및 정답 & 실천 체크리스트 (Page 5) ── */}
                 <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
                   <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#16a34a', color: '#ffffff' }}>제 3 장: 복습 워크북 & 액션 플랜</span>
+                    <span className="sb-page-pill-badge" style={{ background: '#16a34a', color: '#ffffff' }}>
+                      {activeBook.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}
+                    </span>
                     <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
                       {activeBook.pages.workbook.title}
                     </h1>
+
+                    {activeBook.pages.workbook.lead && (
+                      <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7, margin: '12px 0' }}>
+                        {activeBook.pages.workbook.lead}
+                      </p>
+                    )}
+
+                    {/* 포스트 프로덕션 3단계 가이드 (있는 경우) */}
+                    {activeBook.pages.workbook.postProduction && (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, margin: '14px 0' }}>
+                        {activeBook.pages.workbook.postProduction.map((pp, idx) => (
+                          <div key={idx} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 12 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                              <span style={{ background: '#16a34a', color: '#fff', fontSize: 11, fontWeight: 800, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{pp.step}</span>
+                              <strong style={{ fontSize: 13, color: '#166534' }}>{pp.title}</strong>
+                            </div>
+                            <div style={{ fontSize: 12, color: '#334155', lineHeight: 1.5 }}>{pp.desc}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div style={{ margin: '16px 0', color: '#0f172a' }}>
                       <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 8, color: '#0f172a' }}>
@@ -2579,6 +2818,23 @@ export default function StudyBookStudio() {
                         💡 <strong style={{ color: '#0f172a' }}>실천 가이드:</strong> {activeBook.pages.workbook.a2}
                       </div>
 
+                      {/* 6대 실천 체크리스트 (있는 경우) */}
+                      {activeBook.pages.workbook.checklist && (
+                        <div style={{ margin: '18px 0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14 }}>
+                          <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 10 }}>
+                            ✅ 오늘 밤 30분 숏폼 완성 6대 액션 체크리스트:
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {activeBook.pages.workbook.checklist.map((item, idx) => (
+                              <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#334155' }}>
+                                <span style={{ color: '#16a34a', fontWeight: 800, marginTop: 1 }}>✔</span>
+                                <span>{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="sb-workbook-card" style={{ marginTop: 16 }}>
                         <div style={{ fontWeight: 800, fontSize: 13, color: '#047857' }}>✏️ 대표님 전용 액션 플랜 필기 노트</div>
                         <div className="sb-note-lines" />
@@ -2588,7 +2844,7 @@ export default function StudyBookStudio() {
 
                   <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
                     <span style={{ color: '#64748b' }}>{activeBook.pages.workbook.footer}</span>
-                    <span style={{ color: '#64748b' }}>4 / 4 페이지 (실천 워크북)</span>
+                    <span style={{ color: '#64748b' }}>{activeBook.pages.workbook.pageNumber || (activeBook.pages.promptGuide ? '5 / 5 페이지 (실천 워크북)' : '4 / 4 페이지 (실천 워크북)')}</span>
                   </div>
                 </div>
 
