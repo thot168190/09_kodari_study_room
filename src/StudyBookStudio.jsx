@@ -754,15 +754,15 @@ export function buildEbookFromSource(source) {
     }
   };
 }
-// 🌟 대표님 지정 최신 핵심 유튜브 전자책 (Seedance 2.5 무료 무제한 AI 영상 생성기 완벽 조판)
+// 🌟 대표님 지정 최신 핵심 유튜브 전자책 (Seedance 2.5 × Dola AI 실전 강의 완벽 조판)
 export const SEEDANCE_EBOOK = {
   id: 'book_seedance_25',
   sourceId: 'src_yt_ERQArI7K-Jw',
   type: 'web',
   isYoutube: true,
   youtubeVideoId: 'ERQArI7K-Jw',
-  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
-  subtitle: 'Seedance 2.5를 활용한 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 제작 실전 가이드',
+  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
+  subtitle: 'Dola AI 확장과 마스터 프롬프트로 완성하는 씬 바이 씬(Scene-by-Scene) AI 장편 영화 제작 가이드',
   author: 'Ai Lockup 지음 · 대표님 감수',
   sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
   badge: '유튜브 실전 강의 완벽 조판본',
@@ -773,47 +773,48 @@ export const SEEDANCE_EBOOK = {
   chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
   pages: {
     cover: {
-      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5',
-      subtitle: 'FREE & UNLIMITED Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
+      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
+      subtitle: 'Free & Unlimited Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
       author: 'Ai Lockup 지음 · 대표님 감수',
       footer: '공부방 스튜디오 · 개인 학습책 시리즈',
       pageNumber: '1 / 4 페이지 (표지)'
     },
     chapterStart: {
       number: '1',
-      title: '구독료와 길이 한계를 깬 차세대 AI 영상 혁명',
-      subtitle: 'Seedance 2.5로 구축하는 1인 AI 비디오 스튜디오',
+      title: 'Dola AI와 Seedance 2.5가 여는 크레딧 제로 AI 영화 제작',
+      subtitle: '마스터 프롬프트와 참조 에셋으로 완성하는 1인 AI 스튜디오',
       footer: '공부방 스튜디오 · 개인 학습책',
       pageNumber: '2 / 4 페이지'
     },
     concept: {
-      title: '제 1 장: Seedance 2.5 기반 무료 무제한 비디오 생성 원리',
-      body1: '기존의 Text-to-Video 툴들은 비싼 월 구독료와 4~5초 짧은 생성 시간, 워터마크라는 치명적인 한계가 있었습니다. Seedance 2.5는 텍스트 프롬프트와 참조 이미지(Image-to-Video)를 결합하여 일관된 캐릭터와 배경을 유지한 채 긴 호흡의 영상을 무료·무제한으로 생성할 수 있는 혁신적인 도구입니다.',
-      calloutGold: '💡 핵심 원리: 프롬프트 한 줄 또는 고화질 참조 이미지 한 장으로 캐릭터의 얼굴과 화풍을 고정한 채, 자연스러운 모션과 카메라 앵글을 무제한 렌더링한다.',
-      body2: '유튜브 롱폼 다큐멘터리, 스토리텔링 쇼츠, 광고 B-roll 제작 등 고비용 외주 영상 제작을 1인 AI 파이프라인으로 완전히 대체할 수 있는 실전 영상 생성 체계를 완성합니다.',
-      calloutBlack: '⚡ 실천 포인트: 비싼 GPU 장비나 촬영 인력 없이, 시나리오 기획과 프롬프트 제어만으로 1인 기업의 영상 콘텐츠 대량 양산이 가능해집니다.',
+      title: '제 1 장: Dola AI × Seedance 2.5 무료 무제한 영상 생성 원리',
+      body1: '대부분의 상용 AI 영상 생성기는 짧은 영상에도 막대한 유료 크레딧을 요구합니다. 이 영상에서는 Dola AI 플랫폼과 Seedance 2.5 전용 애드온(Extension)을 활용하여 크레딧 결제 없이 텍스트(Text-to-Video)와 이미지(Image-to-Video)를 무료·무제한으로 생성하는 실전 파이프라인을 다룹니다.',
+      calloutGold: '💡 핵심 원리: 1) Dola 확장 설치 ➔ 2) 마스터 프롬프트와 화풍(3D, 지브리 등) 고정 ➔ 3) 무료 AI 툴로 캐릭터·장소 참조 에셋 생성 ➔ 4) 참조 이미지를 주입해 씬 바이 씬(Scene-by-Scene) 클립을 생성한다.',
+      body2: '영상 전체의 시각적 일관성을 유지하기 위해, 먼저 주인공과 주요 장소의 키 이미지를 고정한 뒤 마스터 프롬프트와 결합하여 씬별 클립을 연속 렌더링하고 이를 이어 붙여 긴 호흡의 완성형 AI 영화(Long AI Film)를 완성합니다.',
+      calloutBlack: '⚡ 실천 포인트: 값비싼 외주나 크레딧 충전 없이, 1인 제작자가 직접 시나리오를 바탕으로 6단계 영상 제작 파이프라인을 자율 구동할 수 있습니다.',
       footer: '공부방 스튜디오 · 개인 학습책',
       pageNumber: '2 / 4 페이지 (핵심 개념)'
     },
     tableDiagram: {
-      title: '제 2 장: 기존 영상 제작 vs Seedance 2.5 AI 비디오 제작 비교',
-      lead: '전통적 촬영/외주 및 기존 유료 AI 툴 대비 Seedance 2.5의 제작 비용, 속도, 연속성을 정밀 비교합니다.',
+      title: '제 2 장: [타임라인 분석] Seedance 2.5 영상 제작 6단계 실전 비교표',
+      lead: '영상 원본(00:00~05:46)에서 설명하는 단계별 작업 내용과 기존 제작 방식의 한계 극복 포인트를 비교합니다.',
       rows: [
-        { action: '1. 영상 렌더링 및 제작 시간', prob: '95% 단축', effect: '시나리오 입력 후 5분 내 고화질 씬 렌더링 완성' },
-        { action: '2. 소프트웨어 및 외주 비용', prob: '100% 절감', effect: '무료 무제한 생성 옵션으로 영상 제작 단가 0원화' },
-        { action: '3. 롱폼 콘텐츠 캐릭터 일관성', prob: '85% 향상', effect: 'Image-to-Video 참조로 씬 간 인물 외모 완벽 유지' }
+        { action: '1단계: Dola AI & 확장 설치 (00:41, 05:18)', prob: '100% 무료화', effect: '브라우저 애드온 연결로 크레딧 제한 우회 및 무제한 생성 환경 구축' },
+        { action: '2단계: 마스터 프롬프트 & 스타일 (02:14, 02:44)', prob: '화풍 일관성 확보', effect: '3D 애니메이션, 지브리 등 원하는 시각적 톤앤매너를 프롬프트로 고정' },
+        { action: '3단계: 캐릭터·장소 참조 생성 (03:22, 04:16)', prob: '캐릭터 얼굴 보존', effect: '무료 AI 이미지 툴로 주인공 에셋을 먼저 뽑아 Image-to-Video에 주입' },
+        { action: '4단계: 씬 바이 씬 롱폼 조판 (04:36, 05:46)', prob: '장편 영화 완성', effect: '씬별 클립을 연속 렌더링하여 완전한 하나의 AI 단편/롱폼 필름 완성' }
       ],
-      insight: '영상 제작의 진입 장벽과 제작 비용이 0으로 수렴했습니다. 이제 승부처는 툴 사용법이 아니라, 시청자의 시선을 사로잡는 기획력과 대본의 흡인력입니다.',
+      insight: '영상 제작의 본질은 툴에 종속되는 것이 아니라, 마스터 프롬프트와 참조 이미지를 활용해 일관된 스토리를 씬 단위로 구축하는 파이프라인에 있습니다.',
       footer: '공부방 스튜디오 · 개인 학습책',
       pageNumber: '3 / 4 페이지 (구조 비교 도표)'
     },
     workbook: {
-      title: '제 3 장: 1인 AI 영상 제작 파이프라인 실천 워크북 & 과제',
-      q1: 'Q1. [Seedance 2.5]가 1인 크리에이터에게 제공하는 가장 결정적인 경쟁 우위는?',
-      a1: '워터마크와 생성 횟수 제한 없이 대량의 영상 씬을 마음껏 렌더링할 수 있어, 리스크 없이 다양한 썸네일과 쇼츠 후킹 컷을 A/B 테스트할 수 있는 점입니다.',
-      refText: '[출처: https://www.youtube.com/watch?v=ERQArI7K-Jw]',
-      q2: 'Q2. 나의 비즈니스 채널에 당장 적용할 1대 영상 제작 실행 계획은?',
-      a2: '1) 60초 숏폼 시나리오를 4개 씬으로 분할, 2) Seedance 2.5로 각 씬별 5초 컷 생성, 3) 무료 BGM과 AI 나레이션을 결합하여 오늘 밤 즉시 유튜브 쇼츠에 업로드합니다.',
+      title: '제 3 장: 씬 바이 씬 AI 필름메이킹 실천 워크북 & 과제',
+      q1: 'Q1. [Seedance 2.5 × Dola AI]에서 캐릭터가 바뀌지 않게 만드는 핵심 기법은?',
+      a1: '03:22에 설명하듯, 영상을 바로 뽑지 않고 무료 AI 이미지 툴로 캐릭터의 정면/측면 참조 이미지를 먼저 확보한 후 Image-to-Video 슬롯에 넣어 마스터 프롬프트와 함께 돌리는 것입니다.',
+      refText: '[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw (타임코드: 02:14~04:36)]',
+      q2: 'Q2. 오늘 당장 실행할 나의 첫 AI 숏폼/롱폼 제작 액션 플랜은?',
+      a2: '1) 마스터 프롬프트 문서 확인, 2) Dola 애드온 설치, 3) 4개 씬(도입-전개-위기-결말)별 참조 이미지 1장씩 준비 후 씬 바이 씬으로 5초 클립 4개를 렌더링합니다.',
       footer: '공부방 스튜디오 · 복습 워크북',
       pageNumber: '4 / 4 페이지 (실천 워크북)'
     }
