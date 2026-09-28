@@ -819,9 +819,12 @@ export default function StudyBookStudio() {
   const initialStep = queryParams.get('step') ? parseInt(queryParams.get('step')) : 7; // 기본적으로 전자책 뷰어(7단계)로 바로 진입!
   const initialStyle = queryParams.get('style') || 'A';
   const initialPage = queryParams.get('page') || 'cover';
+  // 🚀 대표님 맞춤 모드: 'read' (기본 전자책 즉시 읽기) | 'library' (내 서재) | 'create' (새 링크 넣기) | 'studio' (고급 9단계 스튜디오 & JEV 실험실)
+  const initialMode = queryParams.get('mode') || (queryParams.get('step') && parseInt(queryParams.get('step')) !== 7 && parseInt(queryParams.get('step')) !== 9 ? 'studio' : 'read');
 
   // 1. 학습책 프로젝트 상태
   const [sources, setSources] = useState(DEFAULT_PRESET_SOURCES);
+  const [studioMode, setStudioMode] = useState(initialMode);
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [selectedStyle, setSelectedStyle] = useState(initialStyle);
   const [previewPageType, setPreviewPageType] = useState(initialPage);
@@ -931,6 +934,7 @@ export default function StudyBookStudio() {
 
       // 📚 대표님 요청: 링크 넣고 완성된 진짜 전자책(이북)으로 직행!
       setCurrentStep(7);
+      setStudioMode('read');
       setIsGenerating(false);
       showToast('📖 링크 분석 완료! 1개념 1페이지 전자책(이북)이 완성되었습니다.');
     }, 700);
@@ -975,6 +979,7 @@ export default function StudyBookStudio() {
         setActiveBookMode('custom');
         saveToLibrary(HERMES_EBOOK);
         setCurrentStep(7);
+        setStudioMode('read');
         setIsGenerating(false);
         showToast('📖 대표님 링크(Hermes × DeskRPG)의 전자책이 완벽하게 조판되었습니다!');
       }, 500);
@@ -1195,9 +1200,12 @@ export default function StudyBookStudio() {
         <div className="sb-header-right">
           {/* 📚 나의 전자책 도서관 바로가기 버튼 */}
           <button
-            className={`sb-btn sb-btn-sm ${currentStep === 9 ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-            style={{ background: currentStep === 9 ? '#16a34a' : '#fff', color: currentStep === 9 ? '#fff' : '#16a34a', borderColor: '#16a34a', fontWeight: 800 }}
-            onClick={() => setCurrentStep(9)}
+            className={`sb-btn sb-btn-sm ${studioMode === 'library' ? 'sb-btn-primary' : 'sb-btn-outline'}`}
+            style={{ background: studioMode === 'library' ? '#16a34a' : '#fff', color: studioMode === 'library' ? '#fff' : '#16a34a', borderColor: '#16a34a', fontWeight: 800 }}
+            onClick={() => {
+              setStudioMode('library');
+              setCurrentStep(9);
+            }}
           >
             <Library size={15} /> 📚 전자책 도서관 ({libraryBooks.length}권)
           </button>
@@ -1233,14 +1241,118 @@ export default function StudyBookStudio() {
         </div>
       </header>
 
+      {/* 🚀 대표님 맞춤 4대 모드 셀렉터 (원클릭 뷰어 전환) */}
+      <div className="sb-mode-selector-bar" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: '#ffffff',
+        padding: '12px 16px',
+        borderRadius: 12,
+        marginBottom: 16,
+        border: '1px solid #e2e8f0',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+        flexWrap: 'wrap',
+        gap: 10
+      }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            type="button"
+            className="sb-btn"
+            style={{
+              background: studioMode === 'read' ? '#0284c7' : '#f8fafc',
+              color: studioMode === 'read' ? '#ffffff' : '#334155',
+              fontWeight: 800,
+              fontSize: 14,
+              padding: '9px 18px',
+              borderRadius: 8,
+              border: studioMode === 'read' ? 'none' : '1px solid #cbd5e1',
+              boxShadow: studioMode === 'read' ? '0 4px 12px rgba(2, 132, 199, 0.3)' : 'none',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              setStudioMode('read');
+              setCurrentStep(7);
+            }}
+          >
+            <BookOpen size={16} /> 📖 전자책 즉시 읽기 (뷰어)
+          </button>
+
+          <button
+            type="button"
+            className="sb-btn"
+            style={{
+              background: studioMode === 'library' ? '#16a34a' : '#f8fafc',
+              color: studioMode === 'library' ? '#ffffff' : '#334155',
+              fontWeight: 800,
+              fontSize: 14,
+              padding: '9px 18px',
+              borderRadius: 8,
+              border: studioMode === 'library' ? 'none' : '1px solid #cbd5e1',
+              boxShadow: studioMode === 'library' ? '0 4px 12px rgba(22, 163, 74, 0.3)' : 'none',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              setStudioMode('library');
+              setCurrentStep(9);
+            }}
+          >
+            <Library size={16} /> 📚 내 서재 도서관 ({libraryBooks.length}권)
+          </button>
+
+          <button
+            type="button"
+            className="sb-btn"
+            style={{
+              background: studioMode === 'create' ? '#f59e0b' : '#f8fafc',
+              color: studioMode === 'create' ? '#ffffff' : '#334155',
+              fontWeight: 800,
+              fontSize: 14,
+              padding: '9px 18px',
+              borderRadius: 8,
+              border: studioMode === 'create' ? 'none' : '1px solid #cbd5e1',
+              boxShadow: studioMode === 'create' ? '0 4px 12px rgba(245, 158, 11, 0.3)' : 'none',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              setStudioMode('create');
+            }}
+          >
+            <Plus size={16} /> ➕ 새 링크로 책 만들기
+          </button>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            className="sb-btn sb-btn-outline sb-btn-sm"
+            style={{
+              fontSize: 12,
+              color: studioMode === 'studio' ? '#b45309' : '#64748b',
+              borderColor: studioMode === 'studio' ? '#b45309' : '#cbd5e1',
+              background: studioMode === 'studio' ? '#fef3c7' : '#fff'
+            }}
+            onClick={() => {
+              const next = studioMode === 'studio' ? 'read' : 'studio';
+              setStudioMode(next);
+              if (next === 'studio') setCurrentStep(1);
+              else setCurrentStep(7);
+            }}
+          >
+            <Zap size={13} /> {studioMode === 'studio' ? '✖️ 스튜디오 닫고 책 읽기' : '🔬 9단계 제작실 & JEV 판정실'}
+          </button>
+        </div>
+      </div>
+
       {/* ==========================================================================
-          🚀 최우선 배치: [학습 자료 즉시 투입기]
+          🚀 최우선 배치: [학습 자료 즉시 투입기] (create 모드일 때만 노출)
           ========================================================================== */}
+      {studioMode === 'create' && (
       <section className="sb-hero-dropzone-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#0369a1' }}>
-              📥 1. 지금 학습할 링크(URL)나 자료를 넣어주세요
+              📥 지금 학습할 링크(URL)나 자료를 넣어주세요
             </h2>
             <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#64748b' }}>
               유튜브 링크나 블로그 URL을 넣으면 <strong>썸네일 이미지와 함께 전자책이 만들어져 도서관으로 쏙 들어갑니다.</strong>
@@ -1571,6 +1683,7 @@ export default function StudyBookStudio() {
           </button>
         </div>
       </section>
+      )}
 
       {/* 로딩 인디케이터 오버레이 */}
       {isGenerating && (
@@ -1589,39 +1702,41 @@ export default function StudyBookStudio() {
         </div>
       )}
 
-      {/* 2. 스텝 네비게이션 바 (1~9단계) */}
-      <div className="sb-step-bar-container">
-        <div className="sb-step-bar">
-          {[
-            { num: 1, label: '1. 자료 수집' },
-            { num: 2, label: '2. 목적·분량' },
-            { num: 3, label: '3. 목차 편집' },
-            { num: 4, label: '4. 본문 초안' },
-            { num: 5, label: '5. 이미지 설계' },
-            { num: 6, label: '6. 워크북·정답' },
-            { num: 7, label: '7. 스타일 뷰어 (A·B·C) ⭐' },
-            { num: 8, label: '8. PDF 인쇄' },
-            { num: 9, label: '📚 전자책 도서관 (내 서재) 🔥' },
-          ].map(s => (
-            <button
-              key={s.num}
-              className={`sb-step-item ${currentStep === s.num ? 'active' : ''} ${currentStep > s.num ? 'completed' : ''}`}
-              onClick={() => setCurrentStep(s.num)}
-            >
-              <span className="sb-step-num">{s.num === 9 ? '📚' : s.num}</span>
-              <span>{s.label}</span>
-            </button>
-          ))}
+      {/* 2. 스텝 네비게이션 바 (1~9단계): studio 모드에서만 표시 */}
+      {studioMode === 'studio' && (
+        <div className="sb-step-bar-container">
+          <div className="sb-step-bar">
+            {[
+              { num: 1, label: '1. 자료 수집' },
+              { num: 2, label: '2. 목적·분량' },
+              { num: 3, label: '3. 목차 편집' },
+              { num: 4, label: '4. 본문 초안' },
+              { num: 5, label: '5. 이미지 설계' },
+              { num: 6, label: '6. 워크북·정답' },
+              { num: 7, label: '7. 스타일 뷰어 (A·B·C) ⭐' },
+              { num: 8, label: '8. PDF 인쇄' },
+              { num: 9, label: '📚 전자책 도서관 (내 서재) 🔥' },
+            ].map(s => (
+              <button
+                key={s.num}
+                className={`sb-step-item ${currentStep === s.num ? 'active' : ''} ${currentStep > s.num ? 'completed' : ''}`}
+                onClick={() => setCurrentStep(s.num)}
+              >
+                <span className="sb-step-num">{s.num === 9 ? '📚' : s.num}</span>
+                <span>{s.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 3. 메인 작업 레이아웃 (사이드바 군더더기 제거로 시원한 풀와이드 뷰) */}
       <div className="sb-workspace" style={{ display: 'block', width: '100%', maxWidth: 1100, margin: '0 auto' }}>
 
         {/* 우측 메인 패널 (단계별 뷰) */}
         <main className="sb-main-panel">
-          {/* ================= STEP 1: JEV 실험실 ================= */}
-          {currentStep === 1 && (
+          {/* ================= STEP 1: JEV 실험실 (스튜디오 모드에서만 노출) ================= */}
+          {studioMode === 'studio' && currentStep === 1 && (
             <div className="sb-card">
               <div className="sb-card-title">
                 <span>⚡ JEV 실시간 대화형 판정 실험실 (Live Inference Lab)</span>
@@ -1849,7 +1964,7 @@ export default function StudyBookStudio() {
           )}
 
           {/* ================= STEP 7: 책 전체 미리보기 & 스타일 비교 (A/B/C) ================= */}
-          {currentStep === 7 && (
+          {((studioMode === 'read' || studioMode === 'create') || (studioMode === 'studio' && currentStep === 7)) && (
             <div className="sb-card">
               {/* ✨ 뷰어 최상단: [출력] & [다운로드] & [도서관 보관] 컨트롤 바 */}
               <div style={{
@@ -1897,6 +2012,7 @@ export default function StudyBookStudio() {
                     style={{ background: '#16a34a', color: '#fff', fontWeight: 900, padding: '8px 14px' }}
                     onClick={() => {
                       saveToLibrary(activeBook);
+                      setStudioMode('library');
                       setCurrentStep(9);
                       showToast('📚 [전자책 도서관]으로 안전하게 다운로드(보관)되었습니다!');
                     }}
@@ -1927,7 +2043,7 @@ export default function StudyBookStudio() {
                   <button
                     className="sb-btn sb-btn-primary sb-btn-sm"
                     style={{ background: '#0284c7', color: '#fff', fontWeight: 800 }}
-                    onClick={() => setCurrentStep(1)}
+                    onClick={() => setStudioMode('create')}
                   >
                     <Plus size={14} /> ➕ 새 링크 넣기
                   </button>
@@ -1950,7 +2066,10 @@ export default function StudyBookStudio() {
                   <button
                     className="sb-btn sb-btn-outline sb-btn-sm"
                     style={{ borderColor: '#16a34a', color: '#16a34a', fontWeight: 700 }}
-                    onClick={() => setCurrentStep(9)}
+                    onClick={() => {
+                      setStudioMode('library');
+                      setCurrentStep(9);
+                    }}
                   >
                     📚 전자책 도서관 ({libraryBooks.length}권)
                   </button>
@@ -2206,7 +2325,7 @@ export default function StudyBookStudio() {
           )}
 
           {/* ================= STEP 9: 📚 전자책 도서관 (내 서재) ================= */}
-          {currentStep === 9 && (
+          {(studioMode === 'library' || (studioMode === 'studio' && currentStep === 9)) && (
             <div className="sb-card">
               <div className="sb-card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -2217,7 +2336,7 @@ export default function StudyBookStudio() {
                   <button
                     className="sb-btn sb-btn-primary sb-btn-sm"
                     style={{ background: '#0284c7', color: '#fff', fontWeight: 800 }}
-                    onClick={() => setCurrentStep(1)}
+                    onClick={() => setStudioMode('create')}
                   >
                     <Plus size={15} /> ➕ 새 링크로 전자책 만들기
                   </button>
@@ -2320,6 +2439,7 @@ export default function StudyBookStudio() {
                               setActiveBookMode('custom');
                             }
                             setCurrentStep(7);
+                            setStudioMode('read');
                             setPreviewPageType('cover');
                           }}
                         >

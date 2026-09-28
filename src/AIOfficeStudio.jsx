@@ -285,67 +285,67 @@ export default function AIOfficeStudio({ onExit }) {
     }
   ]);
 
-  // AI 팀원 데이터 (Hermes × DeskRPG 공식 편제)
+  // AI 팀원 데이터 (Hermes 연결 상태 명시)
   const [agents, setAgents] = useState([
+    {
+      id: 'alex',
+      name: '알렉스 수석 개발관',
+      title: 'Full-Stack & Python Dev (Hermes 프로필 #1)',
+      avatar: '💻',
+      color: '#38bdf8',
+      bgGlow: '#38bdf8',
+      status: '⚡ Hermes Gateway 연동 대상 (127.0.0.1:8642)',
+      isConnected: true,
+      isWorking: false,
+      currentTask: '공식 Hermes Agent Gateway 명령 수신 대기 중',
+      deskLocation: '엔지니어링 랩',
+      skills: ['파이썬 스크립트', '파일 생성', 'Hermes Tool Call'],
+      quote: '에러 0개, 공식 Hermes Agent 백엔드로 실제 파일을 집행합니다.'
+    },
     {
       id: 'kodari',
       name: '코다리 총괄부장',
-      title: 'Head of Operations & AI 사령탑',
+      title: 'Head of Operations',
       avatar: '🐟',
-      color: '#a855f7',
-      bgGlow: '#a855f7',
-      status: '사령탑 실시간 감리 중',
-      isWorking: true,
-      currentTask: '대표님 지시 실시간 조율 및 24시간 파이프라인 모니터링',
+      color: '#64748b',
+      bgGlow: '#334155',
+      status: '🚫 미연결 (alex 1차 검증 완료 후 연결 예정)',
+      isConnected: false,
+      isWorking: false,
+      currentTask: '연결 승인 대기 중',
       deskLocation: '사령탑 메인 데스크',
-      skills: ['총괄 조율', '비즈니스 감리', '긴급 회의 주재', '파이프라인 통제'],
-      quote: '대표님의 1원짜리 시간도 아끼는 것이 제 사명입니다! 충성!',
-      deliverableKey: 'sop_pipeline'
+      skills: ['총괄 조율'],
+      quote: '대표님의 지침에 따라 alex 검증 완료 후 가동됩니다.'
     },
     {
       id: 'hermes',
       name: '헤르메스 기획관',
-      title: 'Lead Content & Niche Planner',
+      title: 'Content Planner',
       avatar: '💡',
-      color: '#f59e0b',
-      bgGlow: '#f59e0b',
-      status: '숏폼 트렌드 기획 중',
-      isWorking: true,
-      currentTask: '유튜브 떡상 Lo-Fi 키워드 및 후킹 스크립트 작성',
+      color: '#64748b',
+      bgGlow: '#334155',
+      status: '🚫 미연결 (alex 1차 검증 완료 후 연결 예정)',
+      isConnected: false,
+      isWorking: false,
+      currentTask: '연결 승인 대기 중',
       deskLocation: '크리에이티브 기획존',
-      skills: ['틈새 시장 발굴', '숏폼 대본 작성', '카피라이팅', '비즈니스 모델링'],
-      quote: '거대 경쟁사 밀집지를 피해 벡터 거리를 극대화하는 뾰족한 아이디어를 만듭니다.',
-      deliverableKey: 'script_lofi'
-    },
-    {
-      id: 'alex',
-      name: '알렉스 수석 개발관',
-      title: 'Full-Stack & Python Automation Dev',
-      avatar: '💻',
-      color: '#38bdf8',
-      bgGlow: '#38bdf8',
-      status: '웹 크롤러 빌드 중',
-      isWorking: true,
-      currentTask: '유튜브 Lo-Fi 꿀통 채널 수집 파이썬 스크립트 배포',
-      deskLocation: '엔지니어링 랩',
-      skills: ['파이썬 스크립트', 'React/Vite 프론트', '유튜브 API 자동화', '강화학습 튜닝'],
-      quote: '에러 0개, 0.5초 컷 배포 번들로 오늘 밤 바로 돌아가게 만듭니다.',
-      deliverableKey: 'code_crawler'
+      skills: ['기획'],
+      quote: 'alex 프로필 검증 후 순차 연결됩니다.'
     },
     {
       id: 'victor',
       name: '빅터 데이터 분석관',
-      title: 'Growth & YouTube Metric Analyst',
+      title: 'Metric Analyst',
       avatar: '📊',
-      color: '#10b981',
-      bgGlow: '#10b981',
-      status: '조회수 이상치 탐지 중',
-      isWorking: true,
-      currentTask: '구독자 9명 대비 조회수 2.5만 터진 이상치 채널 역분석',
+      color: '#64748b',
+      bgGlow: '#334155',
+      status: '🚫 미연결 (alex 1차 검증 완료 후 연결 예정)',
+      isConnected: false,
+      isWorking: false,
+      currentTask: '연결 승인 대기 중',
       deskLocation: '데이터 센서 존',
-      skills: ['유튜브 메트릭 분석', '이상치 감지', '전환율 최적화', '수익성 시뮬레이션'],
-      quote: '감(Feeling)에 의존하지 않고 100% 실측 숫자로 승부합니다.',
-      deliverableKey: 'metric_report'
+      skills: ['분석'],
+      quote: 'alex 프로필 검증 후 순차 연결됩니다.'
     }
   ]);
 
@@ -589,10 +589,10 @@ export default function AIOfficeStudio({ onExit }) {
       {/* Top Header */}
       <header className="aioffice-header">
         <div className="aioffice-brand">
-          <div className="aioffice-badge">
-            <Sparkles size={12} /> Hermes × DeskRPG
+          <div className="aioffice-badge" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
+            ⚠️ [프로토타입] 자체 제작 React 화면 (공식 DeskRPG 아님)
           </div>
-          <h1 className="aioffice-title">🏢 나만의 3D AI 가상 오피스</h1>
+          <h1 className="aioffice-title">🏢 나만의 AI 가상 오피스 (Alex 프로필 단일 검증)</h1>
         </div>
 
         {/* Navigation Tabs */}
@@ -610,16 +610,10 @@ export default function AIOfficeStudio({ onExit }) {
             <Kanban size={15} /> 실무 칸반 ({tasks.length})
           </button>
           <button 
-            className={`aioffice-nav-btn ${activeTab === 'meeting' ? 'active' : ''}`}
-            onClick={() => setActiveTab('meeting')}
-          >
-            <MessageSquare size={15} /> 올핸즈 회의실
-          </button>
-          <button 
             className={`aioffice-nav-btn ${activeTab === 'team' ? 'active' : ''}`}
             onClick={() => setActiveTab('team')}
           >
-            <Users size={15} /> 팀원 명부 (4)
+            <Users size={15} /> 팀원 명부 (1/4 연결)
           </button>
         </div>
 
@@ -650,36 +644,24 @@ export default function AIOfficeStudio({ onExit }) {
       {/* CEO Command Bar */}
       <div className="ceo-command-bar">
         <div className="ceo-command-title">
-          <Award size={18} color="#f59e0b" />
-          <span>대표님 실무 하달 센터 (실제 산출물이 즉시 쏟아집니다)</span>
+          <Award size={18} color="#38bdf8" />
+          <span>대표님 실무 하달 센터 (Alex 단일 에이전트 ➔ Hermes Gateway 127.0.0.1:8642)</span>
         </div>
 
-        {/* 1-Click Quick Action Chips */}
+        {/* 1-Click Quick Action Chips (Alex 전용) */}
         <div className="quick-orders-row">
-          <span className="quick-label">⚡ 즉시 산출 퀵 오더:</span>
+          <span className="quick-label">⚡ Alex 전용 오더:</span>
           <button 
             className="quick-chip"
-            onClick={() => triggerQuickOrder('hermes', 'Lo-Fi 숏폼 풀 대본 3편 즉시 집필', 'script_lofi')}
+            onClick={() => triggerQuickOrder('alex', '오늘 날짜와 시스템 사양을 기록한 alex_spec.md 파일을 생성하라', 'spec')}
           >
-            💡 숏폼 대본 3편
+            💻 시스템 사양 파일 생성
           </button>
           <button 
             className="quick-chip"
-            onClick={() => triggerQuickOrder('alex', '유튜브 꿀통 채널 수집 파이썬 코드 배포', 'code_crawler')}
+            onClick={() => triggerQuickOrder('alex', '유튜브 이상치 채널 수집 파이썬 스크립트 작성 및 문법 검사', 'code')}
           >
-            💻 파이썬 크롤러 코드
-          </button>
-          <button 
-            className="quick-chip"
-            onClick={() => triggerQuickOrder('victor', '니치 채널 실측 RPM 및 수익 시뮬레이션', 'metric_report')}
-          >
-            📊 수익 & RPM 표
-          </button>
-          <button 
-            className="quick-chip"
-            onClick={() => triggerQuickOrder('kodari', '1인 기업 24시간 자율 AX 파이프라인 수립', 'sop_pipeline')}
-          >
-            🐟 24H 파이프라인
+            🐍 파이썬 스크립트 작성
           </button>
         </div>
 
@@ -688,14 +670,15 @@ export default function AIOfficeStudio({ onExit }) {
           <input 
             type="text"
             className="ceo-input"
-            placeholder="대표님, 원하시는 업무를 입력하세요 (예: 숏폼 대본 써줘, 파이썬 코드 짜줘, 수익 분석해줘)"
+            placeholder="대표님, 알렉스(Hermes Gateway)에게 하달할 임의의 업무를 자유롭게 입력하세요"
             value={ceoInput}
             onChange={(e) => setCeoInput(e.target.value)}
           />
           <button type="submit" className="ceo-submit-btn" disabled={isProcessing}>
-            <Send size={15} /> {isProcessing ? '작업 중...' : '지시 하달'}
+            <Send size={15} /> {isProcessing ? 'Hermes 호출 중...' : '지시 하달'}
           </button>
         </form>
+
 
         {/* Real-time Progress Bar */}
         {isProcessing && (
@@ -829,60 +812,113 @@ export default function AIOfficeStudio({ onExit }) {
         {activeTab === 'kanban' && (
           <div className="kanban-wrapper">
             <div className="kanban-board">
-              {/* Column 1: Done (실제 결과물이 들어있는 핵심 컬럼) */}
+              {/* Column 1: Done & Failed (실제 실행 기록) */}
               <div className="kanban-column" style={{ gridColumn: 'span 3' }}>
-                <div className="kanban-col-header" style={{ color: '#10b981' }}>
-                  <span>✅ 완성된 실무 산출물 (클릭하여 즉시 복사 & 다운로드)</span>
+                <div className="kanban-col-header" style={{ display: 'flex', justifyContent: 'space-between', color: '#e2e8f0' }}>
+                  <span>📋 에이전트 실제 실행 기록 (Hermes Gateway 127.0.0.1:8642)</span>
                   <span className="kanban-count-badge">{tasks.length}</span>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
-                  {tasks.map(task => (
-                    <div 
-                      key={task.id} 
-                      className="kanban-card" 
-                      style={{ 
-                        border: '1px solid rgba(16, 185, 129, 0.4)', 
-                        background: 'rgba(15, 23, 42, 0.9)',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        if (REAL_DELIVERABLES[task.deliverableKey]) {
-                          setSelectedDeliverable(REAL_DELIVERABLES[task.deliverableKey]);
-                        }
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                        <span style={{ fontSize: 11, background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
-                          {task.tag}
-                        </span>
-                        <span style={{ fontSize: 11, color: '#38bdf8' }}>📄 실물 산출물 완비</span>
+                  {tasks.map(task => {
+                    const isFailed = task.status === 'failed';
+                    const isUnconnected = task.status === 'unconnected';
+                    const isSuccess = task.status === 'done';
+
+                    return (
+                      <div 
+                        key={task.id} 
+                        className="kanban-card" 
+                        style={{ 
+                          border: isFailed 
+                            ? '1px solid rgba(239, 68, 68, 0.6)' 
+                            : (isUnconnected ? '1px solid rgba(100, 116, 139, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)'), 
+                          background: isFailed ? 'rgba(30, 15, 15, 0.9)' : 'rgba(15, 23, 42, 0.9)',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                          if (task.fileContent) {
+                            setSelectedDeliverable({
+                              id: task.id,
+                              type: 'code',
+                              title: `[실제 산출물] ${task.title}`,
+                              author: task.assignee,
+                              authorAvatar: task.assigneeAvatar,
+                              date: task.createdAt,
+                              fileExt: task.outputFile ? task.outputFile.split('.').pop() : 'txt',
+                              fileName: task.outputFile ? task.outputFile.split('/').pop() : 'output.txt',
+                              content: task.fileContent
+                            });
+                          }
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                          <span style={{ 
+                            fontSize: 11, 
+                            background: isFailed ? 'rgba(239, 68, 68, 0.2)' : (isUnconnected ? 'rgba(100, 116, 139, 0.2)' : 'rgba(16, 185, 129, 0.2)'), 
+                            color: isFailed ? '#f87171' : (isUnconnected ? '#94a3b8' : '#10b981'), 
+                            padding: '2px 8px', 
+                            borderRadius: 4, 
+                            fontWeight: 700 
+                          }}>
+                            {isFailed ? '❌ 실행 실패' : (isUnconnected ? '🚫 미연결' : `✅ ${task.tag}`)}
+                          </span>
+                          <span style={{ fontSize: 10, color: '#94a3b8' }}>
+                            {task.createdAt}
+                          </span>
+                        </div>
+
+                        <h5 className="kanban-card-title" style={{ fontSize: 14, color: isFailed ? '#fca5a5' : '#f8fafc', marginBottom: 6 }}>
+                          {task.title}
+                        </h5>
+                        <p className="kanban-card-desc" style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
+                          {task.desc}
+                        </p>
+
+                        {/* 실행 로그 표시 */}
+                        {task.executionLog && (
+                          <div style={{ 
+                            margin: '8px 0', 
+                            padding: '6px 8px', 
+                            borderRadius: 6, 
+                            background: 'rgba(0,0,0,0.4)', 
+                            border: `1px solid ${isFailed ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                            fontSize: 11, 
+                            color: isFailed ? '#fca5a5' : '#38bdf8',
+                            fontFamily: 'monospace',
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-all'
+                          }}>
+                            {task.executionLog}
+                          </div>
+                        )}
+
+                        <div className="kanban-card-footer" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <span className="assignee-chip" style={{ color: '#e2e8f0', fontSize: 11 }}>
+                            {task.assigneeAvatar} {task.assignee}
+                          </span>
+                          {isSuccess && task.outputFile && (
+                            <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>
+                              📁 {task.outputFile}
+                            </span>
+                          )}
+                          {isFailed && (
+                            <span style={{ fontSize: 11, color: '#ef4444', fontWeight: 700 }}>
+                              실행 실패 (failed)
+                            </span>
+                          )}
+                        </div>
+                        {task.metrics && (
+                          <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px dashed rgba(255,255,255,0.08)', fontSize: 10, color: '#94a3b8', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                            <span>🤖 {task.metrics.model}</span>
+                            <span>🪙 {task.metrics.inputTokens + task.metrics.outputTokens} 토큰 (in {task.metrics.inputTokens} / out {task.metrics.outputTokens})</span>
+                            <span style={{ color: '#fbbf24' }}>💵 추정 비용: ${task.metrics.costUsd} (청구 전)</span>
+                            {task.metrics.toolUsed && <span style={{ color: '#34d399', fontWeight: 700 }}>🛠️ write_file 도구 사용</span>}
+                          </div>
+                        )}
                       </div>
-                      <h5 className="kanban-card-title" style={{ fontSize: 14, color: '#f8fafc', marginBottom: 6 }}>
-                        {task.title}
-                      </h5>
-                      <p className="kanban-card-desc" style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
-                        {task.desc}
-                      </p>
-                      <div className="kanban-card-footer" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                        <span className="assignee-chip" style={{ color: '#e2e8f0', fontSize: 11 }}>
-                          {task.assigneeAvatar} {task.assignee}
-                        </span>
-                        <button 
-                          className="desk-action-btn"
-                          style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', borderColor: '#10b981' }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (REAL_DELIVERABLES[task.deliverableKey]) {
-                              setSelectedDeliverable(REAL_DELIVERABLES[task.deliverableKey]);
-                            }
-                          }}
-                        >
-                          결과물 열람 →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
