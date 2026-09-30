@@ -844,6 +844,29 @@
   background: #1e293b;
 }
 
+.mv-btn-voice-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: #10b981;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.mv-btn-voice-download:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+}
+
 /* YuE2 허깅페이스 임베디드 스튜디오 */
 .mv-yue2-embedded-section {
   background: #ffffff;

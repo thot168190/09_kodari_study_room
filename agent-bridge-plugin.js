@@ -607,6 +607,68 @@ Respond ONLY with a valid JSON object (no markdown code fences) matching this st
           return;
         }
       });
+
+      // 4. 🎙️ Supertonic 3 일레븐랩스급 고음질 한국어 TTS 실시간 합성 엔드포인트
+      server.middlewares.use('/api/tts/synthesize', (req, res) => {
+        if (req.method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const data = JSON.parse(body || '{}');
+              const { text = '', voice = 'M1', speed = 0.92, steps = 6, pause = 0.6 } = data;
+              if (!text.trim()) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                res.end(JSON.stringify({ success: false, error: '대본 텍스트가 비어 있습니다.' }));
+                return;
+              }
+
+              const filename = `supertonic_${voice}_${Date.now()}.wav`;
+              const genDir = path.join(WORKSPACE_ROOT, 'public', 'audio', 'generated');
+              if (!fs.existsSync(genDir)) fs.mkdirSync(genDir, { recursive: true });
+              const outPath = path.join(genDir, filename);
+
+              // 텍스트 파일로 임시 저장하여 셸 인젝션 및 특수문자 안전 처리
+              const tempScriptPath = path.join(genDir, `script_${Date.now()}.txt`);
+              fs.writeFileSync(tempScriptPath, text.trim(), 'utf-8');
+
+              const pyBin = '/Users/mihyunlee/Desktop/야담라디오/venv/bin/python3';
+              const scriptPy = path.join(WORKSPACE_ROOT, 'scripts', 'synthesize_supertonic.py');
+              const cmd = `"${pyBin}" "${scriptPy}" --text "$(cat '${tempScriptPath}')" --voice "${voice}" --speed ${speed} --steps ${steps} --pause ${pause} --out "${outPath}"`;
+
+              exec(cmd, { cwd: WORKSPACE_ROOT, timeout: 60000 }, (error, stdout, stderr) => {
+                // 임시 대본 파일 삭제
+                try { fs.unlinkSync(tempScriptPath); } catch (e) {}
+
+                if (error || !fs.existsSync(outPath)) {
+                  console.error('[TTS Supertonic Error]', error, stderr);
+                  res.statusCode = 500;
+                  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                  res.end(JSON.stringify({ success: false, error: stderr || error?.message }));
+                  return;
+                }
+
+                const audioUrl = `/09_kodari_study_room/audio/generated/${filename}`;
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                res.end(JSON.stringify({
+                  success: true,
+                  audioUrl,
+                  filename,
+                  sampleRate: 44100,
+                  engine: 'Supertonic 3 Neural High-Definition'
+                }));
+              });
+            } catch (err) {
+              console.error('[TTS Synthesize Exception]', err);
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json; charset=utf-8');
+              res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+          });
+          return;
+        }
+      });
     }
   };
 }

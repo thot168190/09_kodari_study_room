@@ -60,8 +60,7 @@ const SUPERTONIC_VOICES = [
     desc: '공부방 대표님의 생생한 실제 육성 클론 모델. 진정성 있고 설득력 넘치는 총괄 브리핑 및 영상 나레이션 전용.',
     tags: ['대표님', '실제육성', '오리지널', '24kHz'],
     refAudio: `${import.meta.env.BASE_URL}daepyo_ref.wav`,
-    isVip: true,
-    pitch: 1.05
+    isVip: true
   },
   {
     id: 'CHEOLMAN',
@@ -70,19 +69,53 @@ const SUPERTONIC_VOICES = [
     desc: '철만이 일기 시즌2 공식 주인공 목소리. 따뜻하고 정감 있는 남편분의 중저음 스토리텔러 톤.',
     tags: ['철만이', '남편목소리', '스토리텔러', '시즌2'],
     refAudio: `${import.meta.env.BASE_URL}cheolman_ref.wav`,
-    isVip: true,
-    pitch: 0.88
+    isVip: true
   },
-  { id: 'M1', name: 'M1 (조선 야담 낭독자)', gender: 'male', desc: '중저음의 편안하고 그윽한 목소리. 수면용 야담 낭독에 가장 최적화된 시그니처 보이스.', tags: ['수면용', '야담', '중저음'], pitch: 0.85 },
-  { id: 'M2', name: 'M2 (역사 다큐 나레이터)', gender: 'male', desc: '무게감과 신뢰감이 느껴지는 정통 다큐멘터리 성우 톤. 몰입감 극대화.', tags: ['다큐', '신뢰감', '중후함'], pitch: 0.85 },
-  { id: 'M3', name: 'M3 (비즈니스 브리퍼)', gender: 'male', desc: '지적이고 명쾌한 딕션의 남성 음성. 테크 뉴스 및 핵심 요약 전달에 최적.', tags: ['뉴스', '브리핑', '명쾌함'], pitch: 0.9 },
-  { id: 'M4', name: 'M4 (동네 이야기꾼 삼촌)', gender: 'male', desc: '자연스럽고 편안한 대화체. 민담, 전래동화, 친근한 설화 전달에 적합.', tags: ['구어체', '친근함', '스토리'], pitch: 0.88 },
-  { id: 'M5', name: 'M5 (서스펜스 미스터리)', gender: 'male', desc: '낮고 서늘하며 긴장감을 유발하는 미스터리/스릴러 스토리 전문 보이스.', tags: ['공포', '미스터리', '긴장감'], pitch: 0.8 },
-  { id: 'F1', name: 'F1 (심야 라디오 DJ)', gender: 'female', desc: '따뜻하고 나긋나긋하게 말을 건네는 힐링 감성 목소리. 수면 유도 최적.', tags: ['라디오', '힐링', '감성'], pitch: 1.05 },
-  { id: 'F2', name: 'F2 (오디오북 에세이스트)', gender: 'female', desc: '맑고 또렷하면서도 지적인 낭독 톤. 자기계발서, 문학 에세이에 최적.', tags: ['에세이', '맑음', '또렷함'], pitch: 1.05 },
-  { id: 'F3', name: 'F3 (전문 뉴스 앵커)', gender: 'female', desc: '단호하고 정확한 발음의 아나운서 스타일. 정형화된 안내 및 해설.', tags: ['아나운서', '정확함', '안내'], pitch: 1.1 },
-  { id: 'F4', name: 'F4 (포근한 동화 구연)', gender: 'female', desc: '다정하고 온화한 어머니 톤. 어린이 전래동화 및 따스한 교훈 이야기.', tags: ['동화', '포근함', '온화'], pitch: 1.12 },
-  { id: 'F5', name: 'F5 (드라마틱 감성 액터)', gender: 'female', desc: '감정의 진폭이 풍부하고 호소력 있는 사극/드라마 독백 전용 목소리.', tags: ['연기', '호소력', '사극'], pitch: 1.0 }
+  { 
+    id: 'M1', 
+    name: 'M1 (조선 야담 낭독자)', 
+    gender: 'male', 
+    desc: '중저음의 편안하고 그윽한 목소리. 수면용 야담 낭독에 가장 최적화된 시그니처 보이스.', 
+    tags: ['수면용', '야담', '중저음', 'Supertonic 3'], 
+    refAudio: `${import.meta.env.BASE_URL}audio/테스트_2분_M1.mp3` 
+  },
+  { 
+    id: 'M2', 
+    name: 'M2 (역사 다큐 나레이터)', 
+    gender: 'male', 
+    desc: '무게감과 신뢰감이 느껴지는 정통 다큐멘터리 성우 톤. 몰입감 극대화.', 
+    tags: ['다큐', '신뢰감', '중후함', 'Supertonic 3'], 
+    refAudio: `${import.meta.env.BASE_URL}audio/테스트_2분_M2.mp3` 
+  },
+  { 
+    id: 'M3', 
+    name: 'M3 (비즈니스 브리퍼)', 
+    gender: 'male', 
+    desc: '지적이고 명쾌한 딕션의 남성 음성. 테크 뉴스 및 핵심 요약 전달에 최적.', 
+    tags: ['뉴스', '브리핑', '명쾌함', 'Supertonic 3'], 
+    refAudio: `${import.meta.env.BASE_URL}audio/테스트_2분_M3.mp3` 
+  },
+  { 
+    id: 'F1', 
+    name: 'F1 (심야 라디오 DJ)', 
+    gender: 'female', 
+    desc: '따뜻하고 나긋나긋하게 말을 건네는 힐링 감성 목소리. 수면 유도 최적.', 
+    tags: ['라디오', '힐링', '감성', 'Supertonic 3'], 
+    refAudio: `${import.meta.env.BASE_URL}audio/테스트_2분_F1.mp3` 
+  },
+  { 
+    id: 'F2', 
+    name: 'F2 (오디오북 에세이스트)', 
+    gender: 'female', 
+    desc: '맑고 또렷하면서도 지적인 낭독 톤. 자기계발서, 문학 에세이에 최적.', 
+    tags: ['에세이', '맑음', '또렷함', 'Supertonic 3'], 
+    refAudio: `${import.meta.env.BASE_URL}audio/테스트_2분_F2.mp3` 
+  },
+  { id: 'M4', name: 'M4 (동네 이야기꾼 삼촌)', gender: 'male', desc: '자연스럽고 편안한 대화체. 민담, 전래동화, 친근한 설화 전달에 적합.', tags: ['구어체', '친근함', '스토리'] },
+  { id: 'M5', name: 'M5 (서스펜스 미스터리)', gender: 'male', desc: '낮고 서늘하며 긴장감을 유발하는 미스터리/스릴러 스토리 전문 보이스.', tags: ['공포', '미스터리', '긴장감'] },
+  { id: 'F3', name: 'F3 (전문 뉴스 앵커)', gender: 'female', desc: '단호하고 정확한 발음의 아나운서 스타일. 정형화된 안내 및 해설.', tags: ['아나운서', '정확함', '안내'] },
+  { id: 'F4', name: 'F4 (포근한 동화 구연)', gender: 'female', desc: '다정하고 온화한 어머니 톤. 어린이 전래동화 및 따스한 교훈 이야기.', tags: ['동화', '포근함', '온화'] },
+  { id: 'F5', name: 'F5 (드라마틱 감성 액터)', gender: 'female', desc: '감정의 진폭이 풍부하고 호소력 있는 사극/드라마 독백 전용 목소리.', tags: ['연기', '호소력', '사극'] }
 ];
 
 export default function MusicVoiceStudio() {
@@ -384,10 +417,13 @@ export default function MusicVoiceStudio() {
   };
 
   // --------------------------------------------------------------------------
-  // 목소리 낭독 재생 (Web Speech API 즉시 낭독 & 실제 레퍼런스 음원 재생)
+  // 목소리 낭독 재생 (Supertonic 3 일레븐랩스급 44.1kHz 실시간 신경망 합성)
   // --------------------------------------------------------------------------
   const [playingRefId, setPlayingRefId] = useState(null);
+  const [isSynthesizingVoice, setIsSynthesizingVoice] = useState(false);
+  const [generatedAudioUrl, setGeneratedAudioUrl] = useState(null);
   const audioPlayerRef = useRef(null);
+  const voicePlayerRef = useRef(null);
 
   const handlePlayRefAudio = (vc, e) => {
     e?.stopPropagation();
@@ -414,47 +450,90 @@ export default function MusicVoiceStudio() {
     };
     audio.play();
     setPlayingRefId(vc.id);
-    showToast(`🎵 [${vc.name}] 실제 고음질 참조 육성(24kHz)을 재생합니다.`);
+    showToast(`🎵 [${vc.name}] 실제 고음질 참조 육성(Supertonic 3)을 재생합니다.`);
   };
 
-  const handlePlayVoice = () => {
-    if (!('speechSynthesis' in window)) {
-      alert('브라우저 음성 재생을 지원하지 않습니다.');
-      return;
-    }
-
+  const handlePlayVoice = async () => {
     if (isPlayingVoice) {
-      window.speechSynthesis.cancel();
+      if (voicePlayerRef.current) {
+        voicePlayerRef.current.pause();
+      }
       setIsPlayingVoice(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
-    
-    // "###" 장면 전환을 긴 침묵으로 변환
-    const cleanText = scriptText.replace(/###/g, '. . . . . .');
-    const utter = new SpeechSynthesisUtterance(cleanText);
-    utter.rate = speed;
-    utter.pitch = selectedVoice.pitch || (selectedVoice.gender === 'male' ? 0.85 : 1.05);
-    utter.lang = 'ko-KR';
+    // 이미 같은 대본으로 합성된 고음질 음원이 있고 오디오 객체가 살아있다면 즉시 재생
+    if (generatedAudioUrl && voicePlayerRef.current && !voicePlayerRef.current.ended) {
+      voicePlayerRef.current.play();
+      setIsPlayingVoice(true);
+      return;
+    }
 
-    // 한국어 보이스 매칭
-    const voices = window.speechSynthesis.getVoices();
-    const koVoice = voices.find(v => v.lang.includes('ko') || v.lang.includes('KR'));
-    if (koVoice) utter.voice = koVoice;
+    if (!scriptText.trim()) {
+      showToast('⚠️ 낭독할 대본을 입력해 주세요.');
+      return;
+    }
 
-    utter.onend = () => setIsPlayingVoice(false);
-    utter.onerror = () => setIsPlayingVoice(false);
+    setIsSynthesizingVoice(true);
+    showToast(`🎙️ Supertonic 3 신경망 엔진으로 [${selectedVoice.name}] 낭독을 실시간 합성 중입니다...`);
 
-    setSynthUtterance(utter);
-    window.speechSynthesis.speak(utter);
-    setIsPlayingVoice(true);
-    showToast(`🎙️ [${selectedVoice.name}] 보이스로 실시간 낭독을 시작합니다.`);
+    try {
+      // 목소리 스타일 키 결정 (M1~M5, F1~F5)
+      let voiceKey = 'M1';
+      if (selectedVoice.id.startsWith('M') || selectedVoice.id.startsWith('F')) {
+        voiceKey = selectedVoice.id;
+      } else if (selectedVoice.gender === 'female') {
+        voiceKey = 'F1';
+      }
+
+      const res = await fetch('/api/tts/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: scriptText,
+          voice: voiceKey,
+          speed: speed,
+          steps: 6,
+          pause: pauseDuration
+        })
+      });
+
+      const data = await res.json();
+      if (!data.success || !data.audioUrl) {
+        throw new Error(data.error || '음성 합성 응답 오류');
+      }
+
+      const audioUrl = `${data.audioUrl}?t=${Date.now()}`;
+      setGeneratedAudioUrl(data.audioUrl);
+
+      if (voicePlayerRef.current) {
+        voicePlayerRef.current.pause();
+      }
+
+      const audio = new Audio(audioUrl);
+      voicePlayerRef.current = audio;
+      audio.onended = () => setIsPlayingVoice(false);
+      audio.onerror = () => {
+        setIsPlayingVoice(false);
+        showToast('⚠️ 오디오 스트리밍 실패');
+      };
+
+      await audio.play();
+      setIsPlayingVoice(true);
+      showToast(`🎉 Supertonic 3 고음질 낭독 시작! (44.1kHz 스튜디오 마스터링)`);
+    } catch (err) {
+      console.error('Supertonic 합성 실패:', err);
+      showToast(`⚠️ Supertonic 합성 오류: ${err.message}`);
+      setIsPlayingVoice(false);
+    } finally {
+      setIsSynthesizingVoice(false);
+    }
   };
 
   const handleStopVoice = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    if (voicePlayerRef.current) {
+      voicePlayerRef.current.pause();
+      voicePlayerRef.current.currentTime = 0;
     }
     setIsPlayingVoice(false);
     if (audioPlayerRef.current) {
@@ -854,12 +933,39 @@ export default function MusicVoiceStudio() {
             <div className="mv-voice-actions-bar">
               <button
                 type="button"
-                className={`mv-btn-voice-play ${isPlayingVoice ? 'playing' : ''}`}
+                className={`mv-btn-voice-play ${isPlayingVoice ? 'playing' : ''} ${isSynthesizingVoice ? 'loading' : ''}`}
                 onClick={handlePlayVoice}
+                disabled={isSynthesizingVoice}
               >
-                {isPlayingVoice ? <Pause size={17} /> : <Play size={17} />}
-                <span>{isPlayingVoice ? '낭독 일시정지' : `🎧 [${selectedVoice.id}] 실시간 즉시 낭독`}</span>
+                {isSynthesizingVoice ? (
+                  <>
+                    <RefreshCw size={17} className="animate-spin" />
+                    <span>⚡ Supertonic 3 일레븐랩스급 신경망 합성 중...</span>
+                  </>
+                ) : isPlayingVoice ? (
+                  <>
+                    <Pause size={17} />
+                    <span>낭독 일시정지</span>
+                  </>
+                ) : (
+                  <>
+                    <Play size={17} />
+                    <span>{generatedAudioUrl ? `▶️ [${selectedVoice.name}] 고음질 낭독 듣기` : `⚡ [${selectedVoice.id}] Supertonic 3 실시간 낭독 합성`}</span>
+                  </>
+                )}
               </button>
+
+              {generatedAudioUrl && (
+                <a
+                  href={generatedAudioUrl}
+                  download={`supertonic_reading_${selectedVoice.id}.wav`}
+                  className="mv-btn-voice-download"
+                  title="합성된 44.1kHz 고음질 WAV 다운로드"
+                >
+                  <Download size={15} />
+                  <span>📥 44.1kHz WAV 다운로드</span>
+                </a>
+              )}
 
               <button
                 type="button"
