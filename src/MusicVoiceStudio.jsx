@@ -623,10 +623,45 @@ export default function MusicVoiceStudio() {
                 disabled={isGeneratingSong}
               >
                 {isGeneratingSong ? <RefreshCw size={17} className="animate-spin" /> : <Sparkles size={17} />}
-                <span>{isGeneratingSong ? '프롬프트 & 가사 조판 중...' : '⚡ 1초만에 YuE2 / Suno 프롬프트 생성'}</span>
+                <span>{isGeneratingSong ? '가사 & 스타일 조판 중...' : '⚡ 가사 & 스타일 자동 조립하기'}</span>
               </button>
             </div>
           </form>
+
+          {/* 🌟 대표님 특별 탑재: 진짜 노래가 나오는 YuE2 공식 Hugging Face ZeroGPU 내장 스튜디오 */}
+          <div className="mv-yue2-embedded-section">
+            <div className="mv-yue2-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className="cv-status-dot green"></span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900, color: '#0f172a' }}>
+                    ⚡ [YuE2-3B] 공식 허깅페이스 무료 GPU 실시간 음악 생성기
+                  </h3>
+                  <p style={{ margin: '3px 0 0 0', fontSize: 12, color: '#64748b' }}>
+                    허깅페이스 고성능 ZeroGPU 클러스터 연동 · 아래 생성기에서 바로 가사를 넣고 <strong>[Generate]</strong>를 누르면 진짜 노래 음원이 생성됩니다!
+                  </p>
+                </div>
+              </div>
+              <a
+                href="https://huggingface.co/spaces/mrfakename/yue2-3b"
+                target="_blank"
+                rel="noreferrer"
+                className="mv-yue2-ext-btn"
+              >
+                새 탭에서 열기 <ExternalLink size={13} />
+              </a>
+            </div>
+
+            <div className="mv-yue2-iframe-container">
+              <iframe
+                src="https://mrfakename-yue2-3b.hf.space"
+                title="YuE2-3B Music Generator"
+                className="mv-yue2-iframe"
+                allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+                sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
+              />
+            </div>
+          </div>
 
           {/* 출력 결과: 6단 콤보 프롬프트 & 구조화 가사 2분할 */}
           <div className="mv-output-split-grid">
@@ -685,41 +720,6 @@ export default function MusicVoiceStudio() {
                 rows={9}
                 value={generatedLyrics}
                 onChange={(e) => setGeneratedLyrics(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* 🌟 대표님 특별 탑재: 진짜 노래가 나오는 YuE2 공식 Hugging Face ZeroGPU 내장 스튜디오 */}
-          <div className="mv-yue2-embedded-section">
-            <div className="mv-yue2-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span className="cv-status-dot green"></span>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900, color: '#0f172a' }}>
-                    ⚡ [YuE2-3B] 공식 허깅페이스 무료 GPU 실시간 음악 생성기
-                  </h3>
-                  <p style={{ margin: '3px 0 0 0', fontSize: 12, color: '#64748b' }}>
-                    허깅페이스 고성능 ZeroGPU 클러스터 연동 · 창을 벗어나지 않고 가사를 넣어 <strong>진짜 노래 음원</strong>을 즉시 생성 및 다운로드합니다!
-                  </p>
-                </div>
-              </div>
-              <a
-                href="https://huggingface.co/spaces/mrfakename/yue2-3b"
-                target="_blank"
-                rel="noreferrer"
-                className="mv-yue2-ext-btn"
-              >
-                새 탭에서 열기 <ExternalLink size={13} />
-              </a>
-            </div>
-
-            <div className="mv-yue2-iframe-container">
-              <iframe
-                src="https://mrfakename-yue2-3b.hf.space"
-                title="YuE2-3B Music Generator"
-                className="mv-yue2-iframe"
-                allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-                sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
               />
             </div>
           </div>
