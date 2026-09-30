@@ -30,6 +30,7 @@ import OxAlphaStudio from './OxAlphaStudio';
 import Motion3DStudio from './Motion3DStudio';
 import JarvisStudio from './JarvisStudio';
 import StudyBookStudio from './StudyBookStudio';
+import MusicVoiceStudio from './MusicVoiceStudio';
 import SmallMusicFinder from './SmallMusicFinder';
 import HomeDashboard from './HomeDashboard';
 import AIOfficeStudio from './AIOfficeStudio';
@@ -961,6 +962,14 @@ ${selectedNote.content}`
               📚 전자책·워크북
             </button>
 
+            {/* 3-1. AI 노래 & 목소리 스튜디오 */}
+            <button
+              className={`cat-pill highlight-purple ${activeTab === 'musicvoice' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('biz'); setActiveTab('musicvoice'); }}
+            >
+              🎧 AI 노래·목소리
+            </button>
+
             {/* 4. AI 팀 자비스 */}
             <button
               className={`cat-pill highlight-cyan ${activeTab === 'jarvis' ? 'active' : ''}`}
@@ -1041,6 +1050,7 @@ ${selectedNote.content}`
                   <div className="drawer-section-title">🎵 꿀통 & 단기 트랙</div>
                   <div className="drawer-grid">
                     <button onClick={() => { setActiveTab('musicfinder'); setMobileMenuOpen(false); }}>🔥 꿀통 음악 채널 발굴기</button>
+                    <button onClick={() => { setActiveTab('musicvoice'); setMobileMenuOpen(false); }}>🎧 AI 노래·목소리 스튜디오</button>
                     <button onClick={() => { setShowNicheSaaS(true); setMobileMenuOpen(false); }}>🎯 틈새진단기</button>
                     <button onClick={() => { setActiveTab('travellog'); setMobileMenuOpen(false); }}>✈️ 1초 여행로그</button>
                     <button onClick={() => { setShowHubPortal(true); setMobileMenuOpen(false); }}>🌐 채널포털</button>
@@ -1300,9 +1310,9 @@ ${selectedNote.content}`
             );
             const season1List = notes.filter(n => !season2List.some(s => s.id === n.id));
 
-            const renderNoteItem = (note) => (
+            const renderNoteItem = (note, idx) => (
               <div 
-                key={note.id} 
+                key={`${note.id}-${idx}`} 
                 className={`note-item ${selectedNote?.id === note.id ? 'active' : ''}`}
                 onClick={() => { setSelectedNote(note); setIsAddingNote(false); }}
                 style={{ position: 'relative', paddingRight: note.id.startsWith('custom-') ? '40px' : '12px' }}
@@ -1471,6 +1481,10 @@ ${selectedNote.content}`
         ) : activeTab === 'studybook' ? (
           <div className="studybook-fullscreen-mount">
             <StudyBookStudio />
+          </div>
+        ) : activeTab === 'musicvoice' ? (
+          <div className="musicvoice-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <MusicVoiceStudio />
           </div>
         ) : activeTab === 'jarvis' ? (
           <div className="jarvis-fullscreen-mount" style={{ width: '100%', padding: '8px 14px', boxSizing: 'border-box' }}>

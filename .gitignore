@@ -12,9 +12,24 @@ dist
 dist-ssr
 *.local
 
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -34,3 +49,35 @@ dist-ssr
 .env.production.local
 .env.workspace
 
+# Python Virtual Environments
+.venv/
+fast_env/
+duckenv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ML Experiment logs, checkpoints & large scratch files
+runs/
+checkpoints_*/
+experiment*/
+backups_safe/
+outputs/
+science-skills/
+scratch/
+benchmark_log.json
+experiment3_sniper_log.json
+brain_*.json
+!brain.json
+
+# Temporary images and base64 scratch
+*.b64
+clean_hd_qr.*
+crop_qr_section.png
+desktop_pdf_page_*.png
+extracted_page6_img.png
+new_clean_page_*.png
+page_*_fixed_final.png
+test_qr.png

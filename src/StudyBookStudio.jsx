@@ -1,150 +1,75 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './StudyBookStudio.css';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  BookOpen, Plus, Trash2, Edit3, CheckCircle, AlertTriangle,
-  FileText, Upload, Globe, Music, Video, Sparkles, Download,
-  Layers, Eye, RefreshCw, Check, ArrowRight, ArrowLeft, Shield,
-  ExternalLink, HelpCircle, List, Image as ImageIcon, ChevronRight,
-  Sliders, Zap, Info, BarChart2, CornerDownRight, CheckSquare, Printer,
-  Play, Pause, Volume2, Sparkle, Loader2, Bookmark, Library, CheckCircle2
+  BookOpen,
+  Download,
+  Printer,
+  ExternalLink,
+  Sparkles,
+  CheckCircle2,
+  Trash2,
+  Plus,
+  Search,
+  FileText,
+  Library,
+  Copy,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+  Share2,
+  Check,
+  Zap,
+  ArrowRight,
+  Video,
+  Edit3,
+  Save,
+  Palette,
+  Layers,
+  Type,
+  Wand2,
+  Lightbulb,
+  FileCode
 } from 'lucide-react';
+import './StudyBookStudio.css';
 
 // ============================================================================
-// ⚡ JEV (Joint Embedding Variable) 실연산 추론 엔진
+// 1. 유튜브 ID & 메타데이터 추출 유틸
 // ============================================================================
-export function runJevInferenceEngine(paragraph, context = {}) {
-  const text = (paragraph || '').trim();
-  if (!text) {
-    return {
-      action: 'TRIM_DROP',
-      probabilities: { trim: 95, keep: 5, review: 0 },
-      confidence: 95,
-      reason: '공백 또는 무의미한 텍스트'
-    };
-  }
-
-  const length = text.length;
-  const conversationalKeywords = [
-    '안녕하세요', '반갑습니다', '그쵸', '있잖아요', '어쨌든', '밥먹고', '배고파서',
-    '갑자기 켰습니다', '구독', '좋아요', '댓글', '오늘 라이브', '음...', '어...',
-    '토요일에 또 뵙겠습니다', '잡소리', '농담'
-  ];
-  let conversationalScore = 0;
-  conversationalKeywords.forEach(kw => {
-    if (text.includes(kw)) conversationalScore += 1.6;
-  });
-
-  const academicKeywords = [
-    '정의', '강화학습', '확률', '스테이트', '액션', '폴리시', '보상', '에피소드',
-    '누적', '시뮬레이터', 'LLM', '토큰', '디지털 트윈', '결정론', '최적화',
-    '환경', '누적 보상', 'DQN', '신경망', '가상 세계', '엔터프라이즈', '인공지능',
-    '데이터', '모델', '파이프라인', '자동화', '에이전트', '알고리즘'
-  ];
-  let academicScore = 0;
-  academicKeywords.forEach(kw => {
-    if (text.includes(kw)) academicScore += 2.0;
-  });
-
-  const hasPageOrTime = /p\.\d+|\d{1,2}:\d{2}|「.*?」|『.*?』/i.test(text);
-  const citationBonus = hasPageOrTime ? 2.5 : 0.0;
-
-  const conflictKeywords = ['다르다', '반면', '하지만', '상충', '불일치', '논란', '주의', '반대로'];
-  let conflictScore = 0;
-  conflictKeywords.forEach(kw => {
-    if (text.includes(kw)) conflictScore += 1.8;
-  });
-
-  const qTrim = Math.max(0.5, (conversationalScore * 1.8) + (length < 30 ? 2.0 : 0) - (academicScore * 0.4));
-  const qKeep = Math.max(0.2, (academicScore * 1.5) + citationBonus - (conversationalScore * 0.8));
-  const qReview = Math.max(0.1, conflictScore + (!hasPageOrTime && academicScore > 4 ? 2.2 : 0.0));
-
-  const expTrim = Math.exp(Math.min(qTrim, 15));
-  const expKeep = Math.exp(Math.min(qKeep, 15));
-  const expReview = Math.exp(Math.min(qReview, 15));
-  const sumExp = expTrim + expKeep + expReview;
-
-  const pTrim = Math.round((expTrim / sumExp) * 100);
-  const pKeep = Math.round((expKeep / sumExp) * 100);
-  const pReview = Math.max(0, 100 - pTrim - pKeep);
-
-  let action = 'KEEP_CORE';
-  let confidence = pKeep;
-  let reason = '핵심 개념 정보 밀도 높음 (본문 채택)';
-
-  if (pTrim >= pKeep && pTrim >= pReview) {
-    action = 'TRIM_DROP';
-    confidence = pTrim;
-    reason = '구어체 사담 또는 저밀도 문맥 (토큰 절감: 자름)';
-  } else if (pReview >= pKeep && pReview >= pTrim) {
-    action = 'REVIEW_HUMAN';
-    confidence = pReview;
-    reason = '출처 상충 의심 또는 근거 보강 필요 (대표님 검수 큐)';
-  }
-
-  const isAmbiguous = confidence < 55;
-  if (isAmbiguous) {
-    action = 'REVIEW_HUMAN';
-    reason = `판단 신뢰도(${confidence}%) 임계치(55%) 미달 ➔ 대표님 검수 큐`;
-  }
-
-  return {
-    action,
-    probabilities: { trim: pTrim, keep: pKeep, review: pReview },
-    confidence,
-    isAmbiguous,
-    reason,
-    tokenSavedEstimate: action === 'TRIM_DROP' ? Math.round(length * 0.75) : 0
-  };
-}
-
-// ============================================================================
-// 🎨 고화질 테마 큐레이션 이미지 (Unsplash 안전 CDN)
-// ============================================================================
-const CURATED_THEME_IMAGES = {
-  ai: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80',
-  tech: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-  network: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
-  book: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80',
-  chart: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'
-};
-
-// 유튜브 ID 추출 유틸
 export function extractYoutubeId(url) {
   if (!url) return null;
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
   return match ? match[1] : null;
 }
 
-// 🌐 유튜브 공식 oEmbed 메타데이터(제목, 작성자, 썸네일) 비동기 조회
 export async function fetchYoutubeMetadata(url) {
   const ytId = extractYoutubeId(url);
   if (!ytId) {
-    return {
-      title: '',
-      author: '',
-      thumbnailUrl: null
-    };
+    return { title: '', author: '', thumbnailUrl: null };
   }
 
-  // 1. 단테랩스 Hermes 영상 특화
+  // 대표님 추천 4대 마스터 영상 특화
+  if (ytId === '-ZXEKtr5IXE' || url.includes('-ZXEKtr5IXE')) {
+    return {
+      title: '기간 한정 무료 사용 가능한 지금 가장 핫한 Flash 모델. Space Bunny',
+      author: '코드팩토리',
+      thumbnailUrl: `https://i.ytimg.com/vi/-ZXEKtr5IXE/hqdefault.jpg`
+    };
+  }
+  if (ytId === 'ERQArI7K-Jw' || url.includes('ERQArI7K-Jw')) {
+    return {
+      title: 'FREE And UNLIMITED Long AI Video Generator | Seedance 2.5 Text and Image To Video',
+      author: 'Ai Lockup',
+      thumbnailUrl: `https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg`
+    };
+  }
   if (ytId === '4NCXTWBxcN0' || url.includes('4NCXTWBxcN0')) {
     return {
       title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
       author: '단테랩스 (@dante-labs)',
-      thumbnailUrl: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg'
+      thumbnailUrl: `https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg`
     };
   }
 
-  // 2. ERQArI7K-Jw 영상 특화
-  if (ytId === 'ERQArI7K-Jw') {
-    return {
-      title: 'FREE And UNLIMITED Long AI Video Generator | Seedance 2.5 Text and Image To Video',
-      author: 'Ai Lockup',
-      thumbnailUrl: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg'
-    };
-  }
-
-  // 3. noembed / 유튜브 oEmbed API 비동기 실시간 호출
+  // oEmbed API 비동기 실시간 조회
   try {
     const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
     if (res.ok) {
@@ -162,289 +87,572 @@ export async function fetchYoutubeMetadata(url) {
   }
 
   return {
-    title: `유튜브 실전 강의 (${ytId})`,
+    title: `유튜브 강의 영상 (${ytId})`,
     author: 'YouTube 크리에이터',
     thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
   };
 }
 
 // ============================================================================
-// 💾 전자책 파일 오프라인 다운로드 유틸 (.html / PDF 호환)
+// 2. 4대 마스터 프리셋 전자책 데이터 (Space Bunny, Seedance, Hermes, JEV/RAG)
 // ============================================================================
-// ============================================================================
-// 🖨️ 웹사이트 찌꺼기 100% 제거! 순수 A4 세로 전자책 전용 인쇄 함수
-// ============================================================================
-export function printEbookCleanly(book) {
-  if (!book) return;
-  const printWindow = window.open('', '_blank', 'width=950,height=1000');
-  if (!printWindow) {
-    alert('브라우저 팝업 차단을 해제해 주세요.');
-    return;
+const MASTER_BOOKS = [
+  {
+    id: 'book_space_bunny',
+    youtubeId: '-ZXEKtr5IXE',
+    sourceRef: 'https://www.youtube.com/watch?v=-ZXEKtr5IXE',
+    title: '지금 가장 핫한 Flash 모델 Space Bunny 완벽 실무 가이드',
+    subtitle: '오픈코드(OpenCode)에 등장한 초고속 Flash급 AI 모델과 9분 웹사이트 빌드 벤치마크',
+    author: '코드팩토리 강의 원작 · 코다리 총괄부장 집필',
+    badge: '🔥 기간 한정 무료 Flash AI',
+    theme: 'tech',
+    createdAt: '2026.09.30',
+    coverImage: 'https://i.ytimg.com/vi/-ZXEKtr5IXE/hqdefault.jpg',
+    summaryBullets: [
+      '오픈코드 플랫폼에 정체를 숨기고 등장한 익명의 초경량 Flash급 모델로, 1주일간 100% 무료 무제한 개방 중.',
+      '에포트(Effort) 제어 기능을 탑재하여 단순 스니펫부터 복잡한 웹사이트 1회성 빌드까지 연산량과 깊이를 최적화.',
+      '복잡한 레퍼런스 이미지를 건넸을 때 9분 18초 만에 고품질 웹 프론트엔드로 조판해내는 경이로운 실전 생산성 검증.'
+    ],
+    audience: '비용 부담 없이 초고속으로 웹앱·랜딩페이지·숏폼 프로토타입을 대량 생산하고 싶은 1인 기업가 및 개발자',
+    insight: '💡 핵심 인사이트: 유료 구독 결제 전에 이 무료 Flash 모델을 레버리지하여 오늘 밤 3개의 프로토타입을 완성하는 것이 극강의 비용 효율입니다.',
+    chapter1: {
+      title: '제 1 장: Space Bunny의 정체와 Flash급 초고속 추론 혁신',
+      body: '인공지능 모델의 트렌드가 무거운 파라미터 경쟁에서 벗어나, 가볍고 극도로 빠른 "Flash급 추론 엔진"으로 급격히 전환되고 있습니다. Space Bunny는 개발사를 공식적으로 밝히지 않은 채 오픈코드(OpenCode) 플랫폼에 테스트 형태로 전격 배포된 모델입니다. 가장 큰 특징은 인간의 타이핑 속도를 아득히 초월하여 수백 줄의 코드를 단 수 초 만에 쏟아내는 실시간 스트리밍 능력입니다.',
+      stepCards: [
+        { step: '01', title: '초경량 Flash 아키텍처', desc: '불필요한 사고 루프를 단축하고 핵심 태스크에 즉각 반응하여 대기 시간을 80% 이상 감축합니다.' },
+        { step: '02', title: '일주일 한정 무료 이용', desc: '현재 오픈 베타 테스트 기간으로 추정되며, 일체의 토큰 과금 없이 모든 기능을 풀 파워로 이용 가능합니다.' },
+        { step: '03', title: '프론트엔드 최적화', desc: 'HTML/CSS/JS 및 리액트 컴포넌트를 단일 파일로 묶어 결함 없이 즉시 렌더링하는 능력이 탁월합니다.' }
+      ],
+      calloutDark: '⚡ 실전 주의점: Flash 모델은 긴 추론이 필요한 무거운 백엔드 아키텍처보다, 빠른 시각화와 프론트엔드 프로토타이핑에 투입할 때 가성비가 극대화됩니다.'
+    },
+    chapter2: {
+      title: '제 2 장: 에포트(Effort) 파라미터 세팅 & 기존 모델 비교',
+      lead: '모델이 문제 해결에 쏟아붓는 연산 집중도인 에포트(Effort) 옵션에 따른 결과물 비교입니다.',
+      tableRows: [
+        { item: 'Default Effort (기본)', prob: '1~3초 응답', effect: '간단한 UI 스타일링, 버그 수정, 텍스트 요약에 최적화' },
+        { item: 'Medium Effort (중간)', prob: '10~20초 응답', effect: '인터랙티브 기능 추가, 폼 유효성 검사, API 연동 로직' },
+        { item: 'Max Effort (최대)', prob: '1~2분 심층 사고', effect: '전체 웹사이트 9분 원샷 빌드 및 자가 결함 수정(Self-Correction)' },
+        { item: 'GPT-4.7 대비 속도/비용', prob: '속도 3배 / 비용 0원', effect: '빠른 가설 검증과 시안 A/B 테스트에서 압도적 우위' }
+      ],
+      insightNote: '단순 작업에는 Default를 두고, 완성본 빌드 시에만 Max를 주어 효율을 극대화하십시오.'
+    },
+    chapter3: {
+      title: '제 3 장: 9분 만의 웹사이트 빌드 실전 워크플로우',
+      lead: '강의 원본에서 시연된 9분 웹사이트 완성 3단계 실천 로드맵입니다.',
+      steps: [
+        { phase: '1단계: 레퍼런스 캡처', desc: '만들고자 하는 벤치마크 사이트의 스크린샷과 핵심 요구 명세서를 준비합니다.' },
+        { phase: '2단계: Max Effort 프롬프트 주입', desc: '디자인 토큰, 한글 폰트(Pretendard), 모바일 반응형 규칙을 함께 프롬프트로 전송합니다.' },
+        { phase: '3단계: 단일 HTML 미리보기 & 배포', desc: '생성된 단일 파일을 브라우저로 열어 인터랙션을 점검하고 즉시 호스팅에 연결합니다.' }
+      ],
+      promptTemplate: `당신은 세계 최고의 수석 프론트엔드 엔지니어입니다.
+첨부한 웹사이트 디자인을 바탕으로 완벽하게 동작하는 단일 index.html을 작성하십시오.
+1. 스타일: TailwindCSS CDN 또는 순수 CSS 변수 활용, 다크모드 지원
+2. 반응형: 390px 모바일 화면 및 1440px 데스크톱 완벽 지원
+3. 한글 폰트: Pretendard 웹폰트 적용 및 깨짐 방지
+4. 인터랙션: 모든 버튼과 모달이 실제로 부드럽게 동작하도록 자바스크립트 구현`
+    },
+    chapter4: {
+      title: '제 4 장: 핵심 복습 퀴즈 & 1인 기업 액션 체크리스트',
+      q1: 'Q1. Space Bunny 모델을 당장 오늘 밤 프로젝트에 투입해야 하는 결정적 이유는?',
+      a1: '일주일 한정으로 비용이 0원이며, Flash급 추론 속도로 30분 만에 3가지 이상의 웹 서비스 시안을 비교 검증할 수 있기 때문입니다.',
+      q2: 'Q2. 복잡한 인터랙티브 웹앱을 만들 때 에포트(Effort)를 어떻게 조절해야 하는가?',
+      a2: '초기 레이아웃 생성 단계에서는 Max Effort를 적용해 구조적 자가 수정을 거치게 하고, 이후 색상이나 텍스트 변경은 Default로 신속히 마무리합니다.',
+      checklist: [
+        '오픈코드(OpenCode) 플랫폼 접속 및 Space Bunny 모델 무료 선택',
+        '만들고자 하는 서비스의 레퍼런스 이미지 2장 캡처 및 준비',
+        '마스터 프롬프트를 복사하여 에포트 Max 설정으로 1차 조판 실행',
+        '390px 모바일 화면 깨짐 여부 확인 후 즉시 GitHub Pages 또는 Vercel 배포'
+      ]
+    }
+  },
+  {
+    id: 'book_seedance_official',
+    youtubeId: 'ERQArI7K-Jw',
+    sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
+    title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5',
+    subtitle: 'Text and Image To Video 무료 무제한 롱폼 AI 비디오 생성기 실전 제작 가이드',
+    author: 'Ai Lockup 강의 원작 · 코다리 총괄부장 집필',
+    badge: '🎬 무료 무제한 AI 영상',
+    theme: 'amber',
+    createdAt: '2026.09.30',
+    coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
+    summaryBullets: [
+      '유료 구독료 걱정 없이 무료로 텍스트와 이미지로부터 고화질 영상을 무제한 추출하는 차세대 툴.',
+      '일관된 캐릭터 얼굴과 화풍을 고정하는 앵커링(Anchoring) 기법으로 숏폼/롱폼 스토리라인 완성.',
+      '카메라 앵글, 조명, 모션 디스크립터를 결합한 5대 마스터 프롬프트 공식 제공.'
+    ],
+    audience: '비싼 유료 비디오 툴 대신 무료로 유튜브 숏폼, 릴스, 광고 영상을 대량 양산하려는 크리에이터',
+    insight: '💡 핵심 인사이트: 툴의 스펙보다 중요한 것은 일관된 캐릭터 앵커링과 씬 바이 씬(Scene-by-Scene) 콘티 설계입니다.',
+    chapter1: {
+      title: '제 1 장: Seedance 2.5의 원리와 무료 무제한 파이프라인',
+      body: 'AI 영상 생성의 최대 장벽은 비싼 크레딧 비용과 3~5초 단위의 짧은 클립 제한이었습니다. Seedance 2.5는 클라우드 분산 렌더링을 바탕으로 텍스트 및 이미지 기반의 긴 호흡 영상을 무료로 생성할 수 있는 획기적인 파이프라인을 제시합니다. 피사체의 물리학적 움직임과 카메라 워크를 정밀하게 제어할 수 있어 상용 수준의 영상미를 자랑합니다.',
+      stepCards: [
+        { step: '01', title: 'Image to Video 우선 원칙', desc: '텍스트만으로 생성하기보다 미드저니/스테이블디퓨전 고화질 원본을 앵커로 넣을 때 일관성이 200% 증가합니다.' },
+        { step: '02', title: '카메라 모션 디스크립터', desc: 'Slow pan right, Zoom in, Low angle tracking 등 전문 영화적 카메라 지시어를 프롬프트에 명시합니다.' },
+        { step: '03', title: '무제한 렌더 큐 가동', desc: '크레딧 차감 스트레스 없이 여러 시드의 영상을 병렬로 뽑아 베스트 컷을 선별합니다.' }
+      ],
+      calloutDark: '⚡ 실전 주의점: 움직임(Motion) 강도를 너무 높이면 피사체의 형태가 일그러질 수 있으므로 Motion Scale은 4~6 범위를 유지하십시오.'
+    },
+    chapter2: {
+      title: '제 2 장: 주요 AI 영상 생성기 4사 실전 스펙 비교',
+      lead: '비용, 화질, 생성 길이 관점에서 주요 영상 모델들의 객관적 비교 매트릭스입니다.',
+      tableRows: [
+        { item: 'Seedance 2.5 (본 강의)', prob: '100% 무료 / 무제한', effect: '캐릭터 앵커링 및 장편 씬 조립에 최적화' },
+        { item: 'Runway Gen-3 Alpha', prob: '초당 $0.05 (유료)', effect: '극사실주의 인물 묘사 및 초고화질 광고 영상' },
+        { item: 'Luma Dream Machine', prob: '월 30회 무료 후 유료', effect: '급격한 카메라 줌 및 다이나믹 액션 씬' },
+        { item: 'Kling AI (쾌수)', prob: '일일 무료 크레딧 제공', effect: '인간의 물리적 동작 및 의상 디테일 유지 우수' }
+      ],
+      insightNote: '가성비와 양산이 최우선인 1인 비즈니스에서는 Seedance를 주력으로 삼고 특수 컷만 유료 툴을 쓰는 하이브리드 전략이 정답입니다.'
+    },
+    chapter3: {
+      title: '제 3 장: 60초 숏폼 영화 실전 씬 콘티 & 마스터 프롬프트',
+      lead: '실제 유튜브 숏폼으로 즉각 수익화 가능한 4단계 씬 콘티 설계 공식입니다.',
+      steps: [
+        { phase: 'Scene 1: 오프닝 훅 (0~5초)', desc: '충격적인 비주얼과 드론 하이앵글 줌인으로 시청자 이탈을 즉각 방지합니다.' },
+        { phase: 'Scene 2: 갈등 & 문제 제시 (6~25초)', desc: '주인공 캐릭터의 클로즈업 및 감정선 변화를 슬로우 모션으로 연출합니다.' },
+        { phase: 'Scene 3: 해결 & 클라이맥스 (26~50초)', desc: '조명이 화려하게 바뀌는 시네마틱 무빙과 빠른 컷 전환으로 몰입감을 유지합니다.' },
+        { phase: 'Scene 4: 아웃트로 & 콜투액션 (51~60초)', desc: '구독 및 링크 유입을 유도하는 브랜드 로고 애니메이션으로 마무리합니다.' }
+      ],
+      promptTemplate: `Cinematic movie scene, ultra realistic 8k resolution, shot on 35mm lens.
+Subject: [Character anchor reference], confident expression, futuristic cyberpunk city background.
+Lighting: Moody neon lighting with rim light on shoulders.
+Camera: Slow push-in tracking shot, smooth cinematic motion, photorealistic, 24fps.`
+    },
+    chapter4: {
+      title: '제 4 장: 복습 퀴즈 & 30분 숏폼 양산 체크리스트',
+      q1: 'Q1. 캐릭터 얼굴이 매 컷마다 바뀌는 환각을 방지하는 가장 확실한 해결책은?',
+      a1: '동일한 캐릭터 원본 이미지를 Image-to-Video의 고정 베이스로 입력하고, 프롬프트 첫머리에 앵커링 키워드를 동일하게 고정하는 것입니다.',
+      q2: 'Q2. 생성된 AI 영상 클립의 완성도를 상용 수준으로 끌어올리는 후반 작업은?',
+      a2: 'CapCut 등 컷 편집기에서 1.1배속 미세 가속, AI 보이스 나레이션 합성, 그리고 딥 베이스 배경음악을 믹싱하는 것입니다.',
+      checklist: [
+        '주인공 캐릭터 1인의 정면/측면 고화질 앵커 이미지 2장 준비',
+        '4단계 씬 콘티에 따라 마스터 프롬프트 4개 작성',
+        'Seedance 2.5에서 각 씬별 3개 시드 일괄 생성 후 최적 컷 선정',
+        'CapCut에서 자동 자막 및 BGM 믹싱 후 유튜브 쇼츠 업로드'
+      ]
+    }
+  },
+  {
+    id: 'book_hermes_official',
+    youtubeId: '4NCXTWBxcN0',
+    sourceRef: 'https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
+    title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
+    subtitle: 'Hermes 에이전트 4인과 3D 가상 오피스로 1인 기업 AX 자동화 파이프라인 완성',
+    author: '단테랩스 (@dante-labs) 원작 · 코다리 총괄부장 집필',
+    badge: '🤖 차세대 AI 오피스',
+    theme: 'emerald',
+    createdAt: '2026.09.30',
+    coverImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
+    summaryBullets: [
+      '단순한 1:1 대화 챗봇을 넘어 기획, 개발, 디자인, 마케팅 전문 AI 에이전트 4인을 팀으로 구축.',
+      'DeskRPG 3D 가상 오피스 공간에 AI 팀원을 배치하고 실시간 화상 회의 및 칸반 태스크 자율 수행.',
+      '대표는 큰 그림의 목표(Goal)만 던지고, 세부 실행과 결과물 취합은 AI 팀이 알아서 끝내는 시스템.'
+    ],
+    audience: '직원을 고용하기 부담스러운 1인 창업가, 혼자서 풀스택 사업을 전개하고 싶은 테크 솔로프러너',
+    insight: '💡 핵심 인사이트: 이제 1인 기업의 생산성은 몇 개의 툴을 아느냐가 아니라, 몇 명의 AI 에이전트 팀원을 지휘하느냐에 달려 있습니다.',
+    chapter1: {
+      title: '제 1 장: 1인 기업 AX의 종착역 — AI 팀원 오케스트레이션',
+      body: '지금까지의 AI 활용이 인간이 챗GPT 창을 열고 질문을 던지는 수동적인 방식이었다면, Hermes 에이전트는 독립된 페르소나와 직무 롤을 부여받아 자율적으로 상호 소통하는 오케스트레이션 단계로 진화했습니다. 대표가 목표를 지정하면 기획 에이전트가 요구사항을 쪼개고, 개발 에이전트가 코드를 짜며, 검수 에이전트가 결함을 바로잡습니다.',
+      stepCards: [
+        { step: '01', title: '직무별 페르소나 주입', desc: 'PM, 엔지니어, 카피라이터, QA 등 명확한 전문 영역과 권한 범위를 설정합니다.' },
+        { step: '02', title: '공유 메모리(Shared Memory)', desc: '에이전트들이 회의에서 도출한 결정사항을 단일 컨텍스트 저장소에 실시간 동기화합니다.' },
+        { step: '03', title: '도구 실행(Tool Calling)', desc: '단순 텍스트 생성을 넘어 터미널 명령, 파일 저장, 웹 검색을 자율적으로 수행합니다.' }
+      ],
+      calloutDark: '⚡ 실전 주의점: 에이전트 간 무한 대화 루프를 방지하기 위해 각 태스크마다 "완료 판정 기준(Definition of Done)"을 명확히 주입해야 합니다.'
+    },
+    chapter2: {
+      title: '제 2 장: Hermes AI 팀원 4인 직무 편성 매트릭스',
+      lead: '1인 기업 가상 오피스에 상주하는 핵심 AI 팀원들의 역할 및 산출물 분장표입니다.',
+      tableRows: [
+        { item: '기획 총괄 (Product Manager)', prob: '시장 분석 & 요구 명세서', effect: '유저 스토리 작성, 기능 우선순위 매트릭스 도출' },
+        { item: '테크 리드 (Fullstack Dev)', prob: '아키텍처 설계 & 코드 작성', effect: '단일 컴포넌트 빌드, API 연동, 버그 픽스' },
+        { item: '콘텐츠 마케터 (Copywriter)', prob: '숏폼 대본 & 상세페이지', effect: '타겟 후킹 문구, 이메일 시퀀스, SNS 홍보 카피' },
+        { item: '감리 검수관 (QA & Auditor)', prob: '모바일 390px & 보안 검수', effect: '사용자 관점 결함 포착, 인쇄/PDF 규격 적합성 확인' }
+      ],
+      insightNote: '대표님은 각 에이전트의 산출물을 최종 승인하는 결재자 역할에 집중하시면 됩니다.'
+    },
+    chapter3: {
+      title: '제 3 장: DeskRPG 3D 가상 오피스 연동 및 실무 실행법',
+      lead: '웹 브라우저에서 3D 픽셀 오피스를 띄우고 에이전트들을 소환하여 일시키는 실전 절차입니다.',
+      steps: [
+        { phase: '1단계: 오피스 레이아웃 배정', desc: 'DeskRPG 회의실, 개발룸, 라운지에 각 에이전트 아바타를 배치합니다.' },
+        { phase: '2단계: 아침 스탠드업 미팅 소집', desc: '금일 우선순위 태스크 3가지를 공지하고 에이전트별 담당 업무를 할당합니다.' },
+        { phase: '3단계: 칸반 보드 실시간 모니터링', desc: 'To-Do에서 Doing을 거쳐 Done으로 태스크가 자율 이동하는 과정을 감독합니다.' }
+      ],
+      promptTemplate: `[시스템 지침: Hermes 에이전트 협업 회의 프로토콜]
+당신은 본 프로젝트의 수석 PM입니다.
+대표님의 목표: "3일 안에 1인 여행로그 SaaS 프로토타입 릴리즈"
+1. 개발팀원과 마케팅팀원에게 각각 오늘 끝내야 할 실행 단위 태스크 2개씩 지정하십시오.
+2. 각 태스크의 완료 조건(DoD)과 390px 모바일 검수 기준을 명시하십시오.
+3. 최종 결과를 취합하여 대표님께 1페이지 결재 보고서 형태로 상신하십시오.`
+    },
+    chapter4: {
+      title: '제 4 장: 복습 퀴즈 & AI 팀 빌딩 실천 워크북',
+      q1: 'Q1. 1인 창업자가 AI 팀을 꾸릴 때 가장 먼저 확보해야 할 에이전트는?',
+      a1: '아이디어를 실행 가능한 세부 태스크로 쪼개주는 기획 총괄(PM) 에이전트입니다. 기획이 정밀해야 개발과 마케팅 에이전트가 헛돌지 않습니다.',
+      q2: 'Q2. AI 에이전트 협업에서 인간 대표가 가져야 할 가장 중요한 태도는?',
+      a2: '모든 줄글을 직접 쓰려 하지 않고, 명확한 제약 조건과 판단 기준만 제시한 뒤 결과물을 검수·승인하는 디렉터 관점을 유지하는 것입니다.',
+      checklist: [
+        'Hermes 로컬 에이전트 런타임 환경 구성 확인',
+        '나의 사업에 가장 급한 2대 직무(기획 + 개발) 에이전트 프롬프트 세팅',
+        'DeskRPG 가상 오피스 화면에서 첫 1회 합동 회의 시뮬레이션 가동',
+        '산출물을 검수하고 최종 배포 버튼을 눌러 첫 사이클 완주'
+      ]
+    }
+  },
+  {
+    id: 'book_jev_rag_official',
+    youtubeId: 'jev_rag_master',
+    sourceRef: '공부방 정규 마스터 특강 (정원석 강의 원작)',
+    title: 'RAG, Uncensor, 그리고 JEV 강화학습',
+    subtitle: '거대언어모델(LLM)과 강화학습(RL)으로 구축하는 1인 기업 자비스 에이전트',
+    author: '정원석 강의 원작 · 코다리 총괄부장 집필',
+    badge: '🧠 2년 뒤 코어 플랫폼',
+    theme: 'obsidian',
+    createdAt: '2026.09.30',
+    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    summaryBullets: [
+      '40여 년간 도서관에 잠들어 있던 신경망 이론들이 GPU와 거대 데이터로 깨어난 AI 혁명의 역사적 본질 규명.',
+      '프롬프트 엔지니어링의 컨텍스트 한계와 RAG(검색 증강 생성)의 만 페이지 문서 비용 폭발 문제 정밀 해부.',
+      '규제와 검열을 걷어낸 로컬 언센서 모델과 강화학습(RL) 의사결정 엔진 JEV가 결합된 자율 에이전트의 완성.'
+    ],
+    audience: '빅테크 API 종속에서 벗어나 내 컴퓨터 안에서 독립적으로 작동하는 진정한 개인 비서를 만들려는 대표님',
+    insight: '💡 핵심 인사이트: 챗봇은 말을 잘하는 기술이지만, 자율 에이전트는 올바른 행동을 선택(Action Selection)하는 강화학습의 영역입니다.',
+    chapter1: {
+      title: '제 1 장: 단순 함수 f(x)에서 거대 두뇌(LLM)로의 진화',
+      body: '인공지능의 출발점은 거창한 철학이 아닌 입력값 x를 결과값 y로 변환하는 가장 단순한 수학적 함수였습니다. 타이타닉 생존자 예측과 아파트 가격 추정에서 시작된 오차 최소화(Loss Minimization) 기법은, 인류의 방대한 텍스트 데이터를 만나 다음 토큰을 확률적으로 예측하는 초인적인 거대언어모델로 거듭났습니다. 하지만 모델은 여전히 "대표님 개인의 특수한 맥락"을 알지 못한다는 태생적 한계를 안고 있습니다.',
+      stepCards: [
+        { step: '01', title: '신경망과 가중치(Weights)', desc: '인간의 신경세포를 모방한 수십억 개의 연결 파라미터가 데이터의 패턴을 자율적으로 학습합니다.' },
+        { step: '02', title: '프롬프트의 명암', desc: '입구에서 쪽지를 건네듯 내 정보를 쥐어주는 방식은 컨텍스트 윈도우의 제약과 비용 문제를 유발합니다.' },
+        { step: '03', title: 'RAG의 딜레마', desc: '외부 문서를 검색하여 주입하는 RAG는 방대한 도서관 데이터 앞에서 검색 실패와 지연 시간을 겪습니다.' }
+      ],
+      calloutDark: '⚡ 실전 주의점: 단순 RAG만으로는 복잡한 비즈니스 결정을 내릴 수 없으며, 반드시 의사결정 정책(Policy) 모델이 결합되어야 합니다.'
+    },
+    chapter2: {
+      title: '제 2 장: 클라우드 검열(Censor)의 족쇄와 로컬 언센서의 필요성',
+      lead: '빅테크 클라우드 LLM의 과도한 거절과 로컬 독립 모델의 비교 매트릭스입니다.',
+      tableRows: [
+        { item: '클라우드 상용 LLM', prob: '과도한 검열 & 거절 빈번', effect: '민감한 비즈니스 기획이나 과감한 마케팅 문구 작성 거부' },
+        { item: '로컬 언센서(Uncensored)', prob: '100% 프라이버시 & 무검열', effect: '내 컴퓨터 GPU에서 데이터 유출 없이 모든 날것의 아이디어 실행' },
+        { item: 'JEV 독립 판정 엔진', prob: '0.08초 초고속 확률 추론', effect: '방대한 줄글 대신 상태(State)와 행동(Action) 가치만 정밀 판정' },
+        { item: '결합 시너지', prob: '비용 81% 절감 / 오판 방지', effect: '외부 인터넷이 끊겨도 작동하는 1인 기업 영구 자산 자비스 구축' }
+      ],
+      insightNote: '나만의 독보적인 벡터 거리를 확보하려면 남들이 쓰는 검열된 API 챗봇을 벗어나 로컬 자율 두뇌를 가져야 합니다.'
+    },
+    chapter3: {
+      title: '제 3 장: JEV 강화학습 기반 자율 판단 파이프라인',
+      lead: '상태 관찰에서 행동 선택까지 이어지는 3단계 강화학습 파이프라인입니다.',
+      steps: [
+        { phase: '1단계: 상태(State) 관측', desc: '대표님의 현재 지시, 작업 폴더의 파일 상태, 이전 대화 맥락을 특징 벡터로 인코딩합니다.' },
+        { phase: '2단계: Q-가치(Q-Value) 평가', desc: '가능한 여러 행동(코드 수정, 문서 작성, 추가 질문) 중 기대 보상이 가장 높은 최적 행동을 선별합니다.' },
+        { phase: '3단계: 정책(Policy) 실행 & 피드백', desc: '선택된 행동을 즉시 실행하고 대표님의 승인/수정 피드백을 받아 신경망 가중치를 업데이트합니다.' }
+      ],
+      promptTemplate: `[JEV 코어 정책 파이프라인]
+목표: 대표님의 1인 기업 스케일업 가설 검증 지원
+1. 사소한 권한 요청은 자체 판단으로 즉시 실행하고 진행 상황만 투명하게 보고할 것.
+2. 거대 경쟁사의 레드오션에서 멀리 떨어진 뾰족한 니치(Niche) 벡터 거리를 유지할 것.
+3. 기획 단계에서 멈추지 않고 오늘 밤 실제 동작하는 산출물을 End-to-End로 릴리즈할 것.`
+    },
+    chapter4: {
+      title: '제 4 장: 복습 퀴즈 & 자비스 구축 체크리스트',
+      q1: 'Q1. 일반 챗봇과 강화학습(RL) 기반 JEV 에이전트의 결정적 차이는?',
+      a1: '챗봇은 질문에 대해 그럴듯한 텍스트를 출력하는 데 그치지만, JEV 에이전트는 목표 달성을 위한 최적의 행동(Action)을 직접 실행하고 결과를 책임집니다.',
+      q2: 'Q2. 1인 기업이 로컬 AI 인프라를 갖춰야 하는 비즈니스적 이유는?',
+      a2: '빅테크 기업의 가격 인상, API 차단, 데이터 검열에 휘둘리지 않고 나만의 핵심 지식 자산을 온전히 영구 소유할 수 있기 때문입니다.',
+      checklist: [
+        '내 PC 로컬 GPU 사양 및 Ollama 런타임 호환성 점검',
+        '나의 전문 분야 노하우를 담은 1인 지식 데이터베이스 구축',
+        'JEV 독립 의사결정 규칙과 피드백 보상 함수 정의',
+        '오늘 배운 이론을 바탕으로 자율 에이전트 첫 루프 시험 가동'
+      ]
+    }
   }
+];
 
-  const htmlContent = `<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>${book.title} - A4 전자책 인쇄 및 PDF 저장</title>
-  <style>
-    @page {
-      size: A4 portrait;
-      margin: 15mm 15mm 15mm 15mm;
+const STORAGE_KEY_LIBRARY = 'kodari_ebook_library_v3';
+
+function getStoredLibrary() {
+  if (typeof window === 'undefined') return MASTER_BOOKS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_LIBRARY);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY_LIBRARY, JSON.stringify(MASTER_BOOKS));
+      return MASTER_BOOKS;
     }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #ffffff !important;
-      color: #111111;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    .print-page {
-      width: 100%;
-      min-height: 255mm;
-      max-height: 265mm;
-      padding: 10mm 12mm;
-      margin: 0 auto;
-      page-break-after: always;
-      break-after: page;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      background: #faf8f5;
-      border: 1px solid #e2e8f0;
-      margin-bottom: 20px;
-    }
-    .print-page:last-child {
-      page-break-after: auto;
-      break-after: auto;
-      margin-bottom: 0;
-    }
-    @media print {
-      body { background: #fff !important; }
-      .print-page {
-        border: none !important;
-        margin: 0 !important;
-        padding: 5mm 5mm !important;
-        background: #fff !important;
-      }
-    }
-    h1 { font-size: 22px; color: #0f172a; line-height: 1.35; margin: 14px 0 10px 0; }
-    .badge { display: inline-block; background: #0284c7; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 800; }
-    img { width: 100%; max-height: 240px; object-fit: cover; border-radius: 8px; margin: 14px 0; }
-    .callout-gold { background: #fef3c7; border-left: 4px solid #d97706; padding: 12px 16px; margin: 14px 0; font-weight: bold; border-radius: 0 6px 6px 0; font-size: 13.5px; }
-    .callout-black { background: #f1f5f9; border-left: 4px solid #0f172a; padding: 12px 16px; margin: 14px 0; border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.5; }
-    table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12px; }
-    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
-    th { background: #f8fafc; font-weight: bold; }
-    .step-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin: 8px 0; font-size: 12px; }
-    .prompt-box { background: #0f172a; color: #38bdf8; padding: 10px 14px; border-radius: 6px; font-family: monospace; font-size: 11px; white-space: pre-wrap; line-height: 1.4; margin: 10px 0; }
-    .preset-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 11.5px; margin: 8px 0; }
-    .check-item { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; margin: 5px 0; color: #334155; }
-    .footer { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 20px; }
-  </style>
-</head>
-<body>
-  <!-- 1. 표지 -->
-  <div class="print-page">
-    <div style="text-align: center; padding-top: 15mm;">
-      <span class="badge">${book.badge}</span>
-      <h1 style="font-size: 24px; margin: 20px 0 10px 0;">${book.pages.cover.title}</h1>
-      <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">${book.pages.cover.subtitle}</p>
-      <img src="${book.coverImage}" alt="표지 이미지" style="max-height: 250px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-      <div style="font-weight: 700; margin-top: 20px; font-size: 14px; color: #1e293b;">${book.pages.cover.author}</div>
-      <div style="font-size: 12px; color: #0284c7; margin-top: 8px;">출처: ${book.sourceRef}</div>
-    </div>
-    <div class="footer">
-      <span>${book.pages.cover.footer}</span>
-      <span>${book.pages.cover.pageNumber}</span>
-    </div>
-  </div>
-
-  <!-- 2. 핵심 개념 및 세팅 -->
-  <div class="print-page">
-    <div>
-      <span class="badge">제 1 장: 핵심 개념 & 세팅</span>
-      <h1>${book.pages.concept.title}</h1>
-      <img src="${book.conceptImage}" alt="개념 삽화" style="max-height: 190px;">
-      <p style="line-height: 1.6; font-size: 13px;">${book.pages.concept.body1}</p>
-      <div class="callout-gold">${book.pages.concept.calloutGold}</div>
-      ${book.pages.concept.stepCards ? `
-        <div style="margin: 12px 0;">
-          ${book.pages.concept.stepCards.map(sc => `
-            <div class="step-card">
-              <span style="background:#0284c7;color:#fff;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:bold;">${sc.step}</span>
-              <strong style="margin-left:6px;color:#0f172a;">${sc.title}</strong>
-              <div style="margin-top:4px;color:#475569;line-height:1.4;">${sc.desc}</div>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-      <p style="line-height: 1.6; font-size: 13px;">${book.pages.concept.body2}</p>
-      <div class="callout-black">${book.pages.concept.calloutBlack}</div>
-    </div>
-    <div class="footer">
-      <span>${book.pages.concept.footer}</span>
-      <span>${book.pages.concept.pageNumber}</span>
-    </div>
-  </div>
-
-  <!-- 3. 마스터 프롬프트 & 캐릭터 앵커링 (있는 경우) -->
-  ${book.pages.promptGuide ? `
-  <div class="print-page">
-    <div>
-      <span class="badge" style="background:#7c3aed;">제 2 장: 마스터 프롬프트 & 앵커링</span>
-      <h1>${book.pages.promptGuide.title}</h1>
-      <p style="line-height: 1.6; font-size: 13px; margin: 10px 0;">${book.pages.promptGuide.lead}</p>
-      ${book.pages.promptGuide.anchorWorkflow ? `
-        <div style="margin: 10px 0;">
-          ${book.pages.promptGuide.anchorWorkflow.map(wf => `
-            <div style="background:#f5f3ff;border-left:3px solid #7c3aed;padding:8px 12px;margin:6px 0;border-radius:0 4px 4px 0;font-size:12px;">
-              <strong style="color:#6d28d9;">[${wf.tag}] ${wf.title}</strong>
-              <div style="color:#475569;margin-top:3px;line-height:1.4;">${wf.desc}</div>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-      ${book.pages.promptGuide.promptTemplate ? `
-        <div style="margin: 12px 0;">
-          <div style="font-weight:bold;font-size:12px;color:#0f172a;">📋 5대 표준 마스터 프롬프트 템플릿:</div>
-          <div class="prompt-box">${book.pages.promptGuide.promptTemplate}</div>
-        </div>
-      ` : ''}
-      ${book.pages.promptGuide.presets ? `
-        <div class="preset-box">
-          <div style="font-weight:bold;margin-bottom:4px;color:#0f172a;">🎨 3대 추천 화풍(Style) 프리셋:</div>
-          ${book.pages.promptGuide.presets.map(ps => `
-            <div style="margin:3px 0;"><strong>${ps.name}:</strong> <code>${ps.code}</code></div>
-          `).join('')}
-        </div>
-      ` : ''}
-      ${book.pages.promptGuide.callout ? `<div class="callout-gold">${book.pages.promptGuide.callout}</div>` : ''}
-    </div>
-    <div class="footer">
-      <span>${book.pages.promptGuide.footer || book.pages.concept.footer}</span>
-      <span>${book.pages.promptGuide.pageNumber}</span>
-    </div>
-  </div>
-  ` : ''}
-
-  <!-- 4. 구조 분석 및 씬 콘티 도표 -->
-  <div class="print-page">
-    <div>
-      <span class="badge">${book.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}</span>
-      <h1>${book.pages.tableDiagram.title}</h1>
-      <img src="${book.tableImage}" alt="도표 이미지" style="max-height: 180px;">
-      <p style="line-height: 1.6; font-size: 13px;">${book.pages.tableDiagram.lead}</p>
-      ${book.pages.tableDiagram.storyboard ? `
-        <div style="margin: 10px 0;">
-          <div style="font-weight:bold;font-size:12px;margin-bottom:4px;">🎬 60초 AI 단편 영화 실전 씬 바이 씬 콘티표:</div>
-          <table>
-            <thead>
-              <tr style="background:#f1f5f9;"><th>씬 / 단계</th><th>시각 연출 & 카메라 워크</th><th>AI 음성 나레이션</th></tr>
-            </thead>
-            <tbody>
-              ${book.pages.tableDiagram.storyboard.map(sb => `
-                <tr>
-                  <td><strong>${sb.scene}</strong><br><small style="color:#0284c7;">${sb.phase}</small></td>
-                  <td>${sb.visual}</td>
-                  <td style="font-style:italic;">${sb.narration}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      ` : ''}
-      <div style="font-weight:bold;font-size:12px;margin-top:10px;margin-bottom:4px;">📊 주요 AI 영상 생성기 4사 실전 스펙 비교:</div>
-      <table>
-        <thead>
-          <tr><th>핵심 항목</th><th>비용 / 확률</th><th>기대 효용 및 결과</th></tr>
-        </thead>
-        <tbody>
-          ${book.pages.tableDiagram.rows.map(r => `<tr><td><strong>${r.action}</strong></td><td style="color:#0284c7;font-weight:bold;">${r.prob}</td><td>${r.effect}</td></tr>`).join('')}
-        </tbody>
-      </table>
-      <div class="callout-black">${book.pages.tableDiagram.insight}</div>
-    </div>
-    <div class="footer">
-      <span>${book.pages.tableDiagram.footer}</span>
-      <span>${book.pages.tableDiagram.pageNumber}</span>
-    </div>
-  </div>
-
-  <!-- 5. 복습 워크북 & 실천 체크리스트 -->
-  <div class="print-page">
-    <div>
-      <span class="badge" style="background:#16a34a;">${book.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}</span>
-      <h1>${book.pages.workbook.title}</h1>
-      ${book.pages.workbook.lead ? `<p style="line-height:1.6;font-size:13px;margin:8px 0;">${book.pages.workbook.lead}</p>` : ''}
-      ${book.pages.workbook.postProduction ? `
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0;">
-          ${book.pages.workbook.postProduction.map(pp => `
-            <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:6px 8px;border-radius:4px;font-size:11px;">
-              <strong style="color:#166534;">${pp.step}. ${pp.title}</strong>
-              <div style="color:#475569;margin-top:2px;line-height:1.3;">${pp.desc}</div>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-      <div style="margin: 12px 0;">
-        <p style="font-weight: bold; font-size: 14px; margin: 8px 0;">${book.pages.workbook.q1}</p>
-        <div class="callout-gold" style="background:#fef9c3; margin: 6px 0;">
-          <div><strong>정답 및 해설:</strong></div>
-          <div style="margin-top: 4px;">${book.pages.workbook.a1}</div>
-          <div style="font-size: 11px; color: #888; margin-top: 4px;">${book.pages.workbook.refText || ''}</div>
-        </div>
-        <p style="font-weight: bold; font-size: 14px; margin: 12px 0 6px 0;">${book.pages.workbook.q2}</p>
-        <div class="callout-black" style="margin: 6px 0;">
-          <strong>실천 가이드:</strong> ${book.pages.workbook.a2}
-        </div>
-      </div>
-      ${book.pages.workbook.checklist ? `
-        <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:6px;margin:10px 0;">
-          <div style="font-weight:bold;font-size:12px;color:#0f172a;margin-bottom:6px;">✅ 오늘 밤 30분 숏폼 완성 6대 액션 체크리스트:</div>
-          ${book.pages.workbook.checklist.map(item => `
-            <div class="check-item"><span style="color:#16a34a;font-weight:bold;">✔</span><span>${item}</span></div>
-          `).join('')}
-        </div>
-      ` : ''}
-    </div>
-    <div class="footer">
-      <span>${book.pages.workbook.footer}</span>
-      <span>${book.pages.workbook.pageNumber}</span>
-    </div>
-  </div>
-
-  <script>
-    window.onload = function() {
-      setTimeout(function() {
-        window.print();
-      }, 500);
-    };
-  </script>
-</body>
-</html>`;
-
-  printWindow.document.open();
-  printWindow.document.write(htmlContent);
-  printWindow.document.close();
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : MASTER_BOOKS;
+  } catch (e) {
+    return MASTER_BOOKS;
+  }
 }
 
 // ============================================================================
-// 📥 다이렉트 PDF 파일 다운로드 유틸 (.pdf)
+// 3. 지능형 전자책 생성기 (유튜브 / 자유 주제 / 마크다운 3대 엔진)
 // ============================================================================
+
+// 3-1. 유튜브 영상 ➔ 전자책
+export function buildIntelligentEbookFromYoutube(url, meta, extraNotes, theme = 'tech') {
+  const ytId = extractYoutubeId(url);
+  const cleanTitle = (meta.title || `유튜브 강의 (${ytId || '영상'})`).replace(/[\r\n]+/g, ' ').trim();
+  const author = meta.author || 'YouTube 크리에이터';
+  const thumb = meta.thumbnailUrl || (ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80');
+
+  const isAi = /ai|gpt|claude|gemini|llm|인공지능|모델|챗봇|프롬프트|에이전트/i.test(cleanTitle + ' ' + (extraNotes || ''));
+  const isDev = /code|개발|코딩|파이썬|python|react|웹|프로그래밍|자바스크립트/i.test(cleanTitle + ' ' + (extraNotes || ''));
+  const isBiz = /돈|수익|부업|사업|마케팅|유튜브|매출|1인|창업|비즈니스/i.test(cleanTitle + ' ' + (extraNotes || ''));
+
+  let categoryBadge = '📚 유튜브 실전 강의록';
+  if (isAi) categoryBadge = '🤖 생성 AI & 자동화 강의';
+  else if (isDev) categoryBadge = '💻 풀스택 개발 & 코딩 실무';
+  else if (isBiz) categoryBadge = '📈 1인 비즈니스 & 수익화';
+
+  const noteSnippet = extraNotes && extraNotes.trim() ? `\n\n[추가 메모 반영]: ${extraNotes.trim()}` : '';
+
+  return {
+    id: `book_yt_${ytId || Date.now()}`,
+    youtubeId: ytId,
+    sourceRef: url,
+    theme: theme,
+    title: cleanTitle,
+    subtitle: `${author}의 강의 내용을 1개념 1페이지 핵심 원리와 실전 워크북으로 완벽 정리한 전자책`,
+    author: `${author} 원작 · 코다리 총괄부장 집필`,
+    badge: categoryBadge,
+    createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+    coverImage: thumb,
+    summaryBullets: [
+      `[핵심 요약 1] ${cleanTitle}에서 전달하는 가장 중요한 1대 인사이트와 기술적 배경을 명쾌하게 정리했습니다.`,
+      `[핵심 요약 2] 기존 방식 대비 무엇이 달라졌으며, 실무에서 마주치는 병목을 어떻게 획기적으로 해결하는지 분석했습니다.`,
+      `[핵심 요약 3] 단순 시청에 머물지 않고, 오늘 당장 내 비즈니스와 공부에 투입할 수 있는 스텝별 실행 로드맵을 수립했습니다.`
+    ],
+    audience: `${cleanTitle}의 핵심 원리를 단시간에 완벽히 습득하고 실무에 즉시 적용하고자 하는 학습자 및 1인 기업가`,
+    insight: `💡 핵심 인사이트: 지식을 머리로만 아는 것은 가치가 없습니다. 오늘 배운 1대 원리를 가장 작은 단위의 프로토타입으로 즉각 전환하십시오.`,
+    chapter1: {
+      title: `제 1 장: ${cleanTitle.slice(0, 26)}... 핵심 개념 원리`,
+      body: `본 강의의 핵심은 복잡하고 장황한 이론을 걷어내고, 실제 현장에서 즉각적인 성과를 만들어내는 "실전 작동 메커니즘"에 집중하는 것입니다. 과거의 전통적인 방식이 많은 시간과 비용을 요구했다면, 이 영상에서 제시하는 접근법은 불필요한 시행착오를 원천 차단하고 가장 효율적인 최단 경로를 열어줍니다.${noteSnippet}`,
+      stepCards: [
+        { step: '01', title: '핵심 문제의식 포착', desc: '기존 방식이 가지고 있던 치명적인 비효율과 비용 낭비 요인을 정밀하게 진단합니다.' },
+        { step: '02', title: '차별화된 해결 원리', desc: '강의에서 제시된 핵심 도구와 프레임워크를 바탕으로 문제 해결의 새로운 접근법을 적용합니다.' },
+        { step: '03', title: '즉각적인 가치 창출', desc: '완성된 결과물을 실제 환경에 배포하여 고객 피드백이나 생산성 향상을 실현합니다.' }
+      ],
+      calloutDark: '⚡ 실전 주의점: 툴이나 기술의 사소한 옵션에 매몰되지 마시고, 전체 파이프라인이 매끄럽게 연결되는지에 집중하십시오.'
+    },
+    chapter2: {
+      title: `제 2 장: 구조 분석 및 기존 방식 대비 정밀 비교 매트릭스`,
+      lead: '전통적인 수작업 및 기존 접근법 대비 본 강의에서 제시된 방식의 객관적 효용 분석입니다.',
+      tableRows: [
+        { item: '1. 핵심 작업 소요 시간', prob: '70~90% 단축', effect: '반복 작업을 자동화 및 템플릿화하여 생산성 극대화' },
+        { item: '2. 투입 비용 및 리소스', prob: '비용 최소화', effect: '외주 의존도를 없애고 1인 자체 실행 파이프라인 확보' },
+        { item: '3. 산출물 완성도 & 안정성', prob: '고품질 유지', effect: '검증된 프로세스를 통해 초보자도 전문가 수준의 결과물 도출' },
+        { item: '4. 시장 적용 및 확장성', prob: '즉각 배포 가능', effect: '오늘 밤이라도 시장에 내놓고 고객 반응을 검증하는 실행력 확보' }
+      ],
+      insightNote: '가장 효과가 높은 핵심 20%의 실행에 집중할 때 80%의 폭발적인 결과가 산출됩니다.'
+    },
+    chapter3: {
+      title: `제 3 장: 1인 실전 적용 가이드 & 스텝별 실행 로드맵`,
+      lead: '오늘 당장 내 업무와 학습에 이 내용을 접목하는 3단계 실천 로드맵입니다.',
+      steps: [
+        { phase: '1단계: 환경 세팅 & 재료 준비', desc: '필요한 도구 계정 생성 및 레퍼런스 자료, 기본 템플릿을 한곳에 정돈합니다.' },
+        { phase: '2단계: 핵심 결과물 원샷 제작', desc: '강의에서 배운 핵심 팁과 단축 공식을 적용하여 첫 번째 완성본을 신속히 빌드합니다.' },
+        { phase: '3단계: 검수 및 실전 배포', desc: '모바일 390px 화면 및 세부 디테일을 점검하고 실제 사용자 또는 내 채널에 공개합니다.' }
+      ],
+      promptTemplate: `[실전 적용 마스터 가이드]
+주제: ${cleanTitle}
+목표: 24시간 내 실행 가능한 최소 단위 프로토타입 완성
+1. 준비물: 유튜브 강의 핵심 메모 및 실전 템플릿
+2. 핵심 규칙: 완벽함보다 신속한 릴리즈를 우선할 것
+3. 결과물 검수: 대표님 승인 기준 및 모바일 환경 최적화 완료`
+    },
+    chapter4: {
+      title: `제 4 장: 핵심 복습 퀴즈 & 실천 액션 체크리스트`,
+      q1: `Q1. [${cleanTitle.slice(0, 24)}...] 강의에서 얻을 수 있는 가장 중요한 1대 교훈은?`,
+      a1: '기술이나 트렌드가 아무리 빠르게 변해도, 핵심 가치는 이를 활용하여 고객과 나 자신에게 실제 작동하는 가치를 가장 빠르게 전달하는 실행력에 있습니다.',
+      q2: 'Q2. 이 내용을 나의 1인 비즈니스 또는 일상에 당장 적용한다면?',
+      a2: '단순 요약 읽기에 머물지 않고, 오늘 당장 실천할 수 있는 1가지 구체적 과제를 정해 1시간 집중 스프린트로 완성합니다.',
+      checklist: [
+        '강의 원본 영상 북마크 및 핵심 타임코드 기록',
+        '나만의 프로젝트 폴더 생성 및 첫 번째 실행 파일 셋업',
+        '전자책 본문의 3단계 실천 가이드에 따라 최소 단위 결과물 제작',
+        '완성된 전자책 PDF를 다운로드하여 나만의 지식 아카이브에 영구 보관'
+      ]
+    }
+  };
+}
+
+// 3-2. 자유 주제 / 1초 기획 ➔ 전자책
+export function buildIntelligentEbookFromTopic(topic, subtitle, author, audience, theme = 'tech') {
+  const cleanTitle = (topic || '1인 비즈니스 핵심 실전 가이드').trim();
+  const sub = subtitle && subtitle.trim() ? subtitle.trim() : `${cleanTitle}의 핵심 이론부터 실전 배포까지 5페이지로 완전 정복`;
+  const writer = author && author.trim() ? author.trim() : '대표님 기획 · 코다리 총괄부장 집필';
+  const targetAud = audience && audience.trim() ? audience.trim() : `${cleanTitle} 분야를 가장 빠르게 습득하여 내 비즈니스에 접목하고 싶은 1인 창업가 및 실행가`;
+
+  // 언스플래시 큐레이션 이미지 매칭
+  let coverImg = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80';
+  if (/돈|수익|매출|부업|창업|비즈니스/i.test(cleanTitle)) {
+    coverImg = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+  } else if (/ai|모델|에이전트|llm|인공지능|로봇/i.test(cleanTitle)) {
+    coverImg = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80';
+  } else if (/코드|코딩|개발|웹|프로그래밍|react|python/i.test(cleanTitle)) {
+    coverImg = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80';
+  }
+
+  return {
+    id: `book_topic_${Date.now()}`,
+    youtubeId: null,
+    sourceRef: '대표님 오리지널 기획 도서',
+    theme: theme,
+    title: cleanTitle,
+    subtitle: sub,
+    author: writer,
+    badge: '💡 1인 기업 오리지널 기획서',
+    createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+    coverImage: coverImg,
+    summaryBullets: [
+      `[핵심 명제] "${cleanTitle}"의 본질은 복잡한 이론 공부가 아닌, 실제로 작동하는 최소 단위의 파이프라인 구축에 있습니다.`,
+      `[차별점] 거대 기업의 방식을 흉내 내지 않고, 1인 기업가가 가장 적은 리소스로 바늘구멍 같은 니치를 장악하는 전략을 제시합니다.`,
+      `[결과물] 오늘 밤 당장 한 사이클을 완주하여 현금 흐름과 고객 반응을 확인할 수 있는 액션 플랜을 도출합니다.`
+    ],
+    audience: targetAud,
+    insight: `💡 핵심 인사이트: 시장은 당신의 준비 기간에 관심이 없습니다. 가장 불완전해 보이는 첫 버전이라도 오늘 밤 세상에 내놓아야 비로소 게임이 시작됩니다.`,
+    chapter1: {
+      title: `제 1 장: ${cleanTitle.slice(0, 26)}... 문제 정의와 핵심 원리`,
+      body: `모든 혁신적인 비즈니스는 "기존 방식의 극심한 고통과 비효율"을 날카롭게 포착하는 것에서 출발합니다. ${cleanTitle}을 실행함에 있어 가장 큰 실패 요인은 너무 많은 준비와 거대한 스케일을 욕심내는 것입니다. 핵심 원리는 1개의 핵심 가치에 집중하고, 그 외의 모든 것은 AI와 자동화 도구에 위임하는 극강의 간소화에 있습니다.`,
+      stepCards: [
+        { step: '01', title: '바늘구멍 니치 포착', desc: '대중을 만족시키려 하지 말고, 단 100명의 열광적인 타깃이 겪는 뾰족한 결핍을 정의합니다.' },
+        { step: '02', title: '초고속 프로토타이핑', desc: '코딩이나 제작에 수 주를 쓰지 않고, 24시간 안에 동작하는 최소 기능 제품(MVP)을 빌드합니다.' },
+        { step: '03', title: '피드백 루프 안착', desc: '실제 유저의 클릭과 결제 반응을 데이터로 측정하여 가설의 생존 여부를 신속히 판정합니다.' }
+      ],
+      calloutDark: '⚡ 코다리 부장의 조언: 완벽주의는 1인 기업의 가장 큰 독약입니다. 80점짜리 결과물을 빠르게 릴리즈하고 시장 피드백으로 채워가십시오.'
+    },
+    chapter2: {
+      title: `제 2 장: 기존 수작업 방식 vs 1인 AI 시스템 비교 매트릭스`,
+      lead: `${cleanTitle}을 수작업으로 진행했을 때와 AI 자동화 시스템으로 전개했을 때의 정밀 비교 분석입니다.`,
+      tableRows: [
+        { item: '1. 파이프라인 빌드 속도', prob: '전통 방식: 3~6개월', effect: 'AI 레버리지: 1~3일 내 릴리즈 완료' },
+        { item: '2. 초기 투입 자본금', prob: '외주비 수천만 원', effect: '월 5~10만 원대 SaaS 툴 구독으로 자급자족' },
+        { item: '3. 가설 검증 실패 비용', prob: '치명적 사업 타격', effect: '오늘 접고 내일 새 아이디어로 즉시 피벗 가능' },
+        { item: '4. 니치 벡터 거리 확보', prob: '대기업과 정면충돌', effect: '초격차 니치 영역에서 독점적 지위 점유' }
+      ],
+      insightNote: '경쟁이 치열한 레드오션에서 벗어나 나만의 독보적인 벡터 거리를 유지할 때 생존율이 10배 올라갑니다.'
+    },
+    chapter3: {
+      title: `제 3 장: 오늘 밤 실행하는 3단계 실천 로드맵`,
+      lead: '생각을 멈추고 손을 움직이게 만드는 3단계 초단기 스프린트 로드맵입니다.',
+      steps: [
+        { phase: '1단계: 랜딩페이지 및 오퍼 설계 (2시간)', desc: '고객의 시선을 3초 만에 사로잡는 후킹 헤드라인과 단일 혜택 오퍼를 조판합니다.' },
+        { phase: '2단계: 핵심 백엔드/프로토타입 연결 (3시간)', desc: 'AI API 또는 노코드 툴을 결합하여 실제로 결과물이 산출되는 엔진을 조립합니다.' },
+        { phase: '3단계: 링크 공유 및 트래픽 유입 (1시간)', desc: '타깃 커뮤니티나 SNS에 링크를 배포하고 첫 번째 방문자의 행동을 기록합니다.' }
+      ],
+      promptTemplate: `[실행 마스터 가이드 프롬프트]
+프로젝트: ${cleanTitle}
+목표: 1인 기업 End-to-End 원 사이클 릴리즈
+1. 타깃 고객: ${targetAud}
+2. 핵심 규칙: 기획 20%, 제작 30%, 배포 및 홍보 50%의 리소스 분배 유지
+3. 검수 기준: 모바일 390px 화면에서 막힘없는 유저 플로우 확인 완료`
+    },
+    chapter4: {
+      title: `제 4 장: 핵심 복습 퀴즈 & 영구 실행 체크리스트`,
+      q1: `Q1. [${cleanTitle.slice(0, 22)}...] 프로젝트에서 대표님이 지켜야 할 가장 중요한 철학은?`,
+      a1: '한 사이클을 온전히 돌려보는 것입니다. 기획서 작성에 머무르지 않고 배포와 결제까지 연결해 시장의 반응을 확인해야만 진짜 자산이 됩니다.',
+      q2: 'Q2. 첫 릴리즈 후 시장 반응이 미적지근하다면 어떻게 대응해야 하는가?',
+      a2: '미련 없이 접고 다음 가설로 피벗(Pivot)합니다. 실패는 실패가 아니라 데이터 수집이며, 빠른 방향 전환이 1인 기업의 최대 무기입니다.',
+      checklist: [
+        '프로젝트 핵심 가치 1문장 정의 완료',
+        '필요한 AI 도구 및 환경 구성 셋업',
+        '모바일 390px 최적화 검수 완료',
+        '오늘 중 첫 릴리즈 링크 공개 및 피드백 수집 개시'
+      ]
+    }
+  };
+}
+
+// 3-3. 마크다운 / 메모 원고 ➔ 전자책
+export function buildIntelligentEbookFromMarkdown(title, author, markdownText, theme = 'tech') {
+  const cleanTitle = (title || '마크다운 원고 정밀 조판 전자책').trim();
+  const writer = author && author.trim() ? author.trim() : '대표님 원고 · 코다리 총괄부장 집필';
+  const rawText = markdownText ? markdownText.trim() : '';
+
+  // 텍스트 라인 파싱
+  const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+  const snippet1 = lines.slice(0, 5).join(' ') || `${cleanTitle}의 핵심 내용과 전문 지식을 1개념 1페이지 출판 규격으로 완벽히 정돈했습니다.`;
+  const snippet2 = lines.slice(5, 12).join(' ') || '본 원고는 실무에서 검증된 핵심 원리와 구체적 실행 지침을 집대성한 실전 가이드입니다.';
+
+  return {
+    id: `book_md_${Date.now()}`,
+    youtubeId: null,
+    sourceRef: '대표님 집필 마크다운 원고',
+    theme: theme,
+    title: cleanTitle,
+    subtitle: `${writer}의 마크다운 원고를 출판용 5페이지 A4 도서 규격으로 정밀 조판한 전자책`,
+    author: writer,
+    badge: '📝 출판용 마크다운 조판',
+    createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+    coverImage: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80',
+    summaryBullets: [
+      `[원고 요약 1] 본 원고의 핵심 논점: ${lines[0] || cleanTitle}에 대한 명확한 문제의식과 해결책을 다룹니다.`,
+      `[원고 요약 2] 현장 실무자가 즉시 적용할 수 있도록 핵심 개념과 비교 지표를 일목요연하게 표로 구조화했습니다.`,
+      `[원고 요약 3] 이론에 그치지 않고 완벽한 복습과 실천을 위한 4대 액션 체크리스트를 수록했습니다.`
+    ],
+    audience: `${cleanTitle}의 핵심 지식을 체계적으로 학습하고 실무에 적용하고자 하는 독자`,
+    insight: `💡 핵심 인사이트: 원고의 진정한 가치는 기록에 머무는 것이 아니라, 독자의 행동을 변화시키는 명확한 체크리스트에 있습니다.`,
+    chapter1: {
+      title: `제 1 장: ${cleanTitle.slice(0, 24)}... 핵심 원리 및 서론`,
+      body: `${snippet1}\n\n${snippet2}`,
+      stepCards: [
+        { step: '01', title: '핵심 명제 수립', desc: lines[1] || '주제의 가장 본질적인 문제의식을 정의하고 출발점을 명확히 합니다.' },
+        { step: '02', title: '원리 분석 및 구조화', desc: lines[2] || '복잡한 세부 내용들을 3개의 핵심 축으로 단순화하여 체계화합니다.' },
+        { step: '03', title: '적용 및 실전 검증', desc: lines[3] || '이론을 실제 현장 데이터나 코드에 투입하여 실효성을 입증합니다.' }
+      ],
+      calloutDark: '⚡ 편집장 총평: 방대한 텍스트 중 가장 중요한 정수만을 압축하여 3대 실행 카드로 정돈했습니다.'
+    },
+    chapter2: {
+      title: `제 2 장: 핵심 비교 분석 & 구조 매트릭스`,
+      lead: '본 원고에서 다루는 주요 개념과 전통적 접근법의 객관적 비교표입니다.',
+      tableRows: [
+        { item: '1. 구조적 접근성', prob: '기존: 산발적 정보', effect: '개선: 1개념 1페이지 단권화' },
+        { item: '2. 가독성 및 전달력', prob: '기존: 긴 줄글 나열', effect: '개선: 표, 콜아웃, 카드 시각화' },
+        { item: '3. 실무 적용 소요 시간', prob: '수일간의 분석 필요', effect: '30분 만에 핵심 공식 적용 가능' },
+        { item: '4. 최종 산출물 완성도', prob: '개인 메모 수준', effect: '배포 가능한 전문 도서 PDF 완성' }
+      ],
+      insightNote: '텍스트를 단순 나열하는 것보다 구조화된 표로 제시할 때 정보 전달력이 300% 증가합니다.'
+    },
+    chapter3: {
+      title: `제 3 장: 단계별 실행 가이드 & 마스터 템플릿`,
+      lead: '원고의 내용을 바탕으로 독자가 오늘 바로 실천할 수 있는 3단계 가이드입니다.',
+      steps: [
+        { phase: '1단계: 핵심 프레임워크 숙지', desc: lines[4] || '제 1 장의 원리를 나의 상황에 맞게 매핑하고 기본 템플릿을 준비합니다.' },
+        { phase: '2단계: 최소 단위 실습', desc: lines[5] || '가장 단순한 예제부터 시작하여 손에 익히고 피드백을 기록합니다.' },
+        { phase: '3단계: 체계적인 아카이빙', desc: lines[6] || '결과물을 PDF로 저장하여 나만의 지식 라이브러리에 영구 보관합니다.' }
+      ],
+      promptTemplate: `[원고 기반 실전 템플릿]
+도서: ${cleanTitle}
+작성자: ${writer}
+원고 핵심 발췌:
+${rawText.slice(0, 240)}...`
+    },
+    chapter4: {
+      title: `제 4 장: 핵심 복습 퀴즈 & 실천 체크리스트`,
+      q1: `Q1. [${cleanTitle.slice(0, 22)}...] 원고에서 가장 강조하는 핵심 메시지는?`,
+      a1: '지식을 단순히 읽고 끝내는 것이 아니라, 내 일상과 비즈니스에 구체적인 체크리스트 형태로 녹여내어 실행하는 것입니다.',
+      q2: 'Q2. 이 내용을 장기적인 나의 자산으로 남기려면 어떻게 해야 하는가?',
+      a2: '정리된 전자책 PDF를 정기적으로 복습하고, 새로운 실전 경험이 쌓일 때마다 원고를 개정판으로 업데이트합니다.',
+      checklist: [
+        '원고 핵심 요약 3줄 완독 및 노트 기록',
+        '원고에서 제시된 1단계 과제 1시간 내 완수',
+        '주요 표 및 다이어그램 업무 참고자료로 스크랩',
+        'A4 PDF 다운로드 후 오프라인/태블릿 보관'
+      ]
+    }
+  };
+}
+
 // ============================================================================
-// 📥 백지 버그 100% 박멸! 고화질 4페이지 A4 PDF 다운로드 엔진
+// 4. 고화질 A4 PDF 다운로드 엔진 (html2canvas + jsPDF)
 // ============================================================================
 export async function downloadEbookAsPdf(book, onStatusUpdate) {
   if (!book) return;
 
-  if (onStatusUpdate) onStatusUpdate('⏳ 고화질 4페이지 PDF 변환 준비 중...');
+  if (onStatusUpdate) onStatusUpdate('⏳ 고화질 A4 PDF 엔진 로딩 중...');
 
-  // 1. html2canvas 및 jsPDF 로드 보장
   try {
     if (!window.html2canvas) {
       await new Promise((resolve, reject) => {
@@ -466,128 +674,34 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
     }
   } catch (err) {
     console.warn('PDF 라이브러리 CDN 로드 실패, 전용 인쇄 창으로 전환:', err);
-    printEbookCleanly(book);
+    printEbookCleanly(book, book.theme || 'tech');
     return;
   }
 
-  // 2. 화면에 이미 렌더링된 4개 시트(.sb-page-sheet) 탐색
-  let sheets = document.querySelectorAll('.sb-book-preview-container .sb-page-sheet');
-  let tempWrapper = null;
-
-  // 만약 뷰어 화면이 아닌 곳에서 눌렀을 경우, 실제 가시 영역에 임시 조판 엘리먼트 생성
+  const sheets = document.querySelectorAll('.sb-book-preview-container .sb-page-sheet');
   if (!sheets || sheets.length === 0) {
-    tempWrapper = document.createElement('div');
-    tempWrapper.style.position = 'fixed';
-    tempWrapper.style.top = '0';
-    tempWrapper.style.left = '0';
-    tempWrapper.style.width = '794px';
-    tempWrapper.style.background = '#ffffff';
-    tempWrapper.style.zIndex = '99999';
-    tempWrapper.style.opacity = '0.01'; // 눈에는 안 보이지만 브라우저 렌더 트리에 확실히 잡히게 설정
-    tempWrapper.style.pointerEvents = 'none';
-
-    tempWrapper.innerHTML = `
-      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#faf8f5; text-align:center;">
-        <span style="background:#0284c7; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">${book.badge}</span>
-        <h1 style="font-size:24px; margin:24px 0 10px 0; color:#0f172a;">${book.pages.cover.title}</h1>
-        <p style="color:#64748b; font-size:14px; margin-bottom:20px;">${book.pages.cover.subtitle}</p>
-        <img src="${book.coverImage}" style="width:100%; max-height:260px; object-fit:cover; border-radius:8px; margin:16px 0;" crossOrigin="anonymous">
-        <div style="font-weight:700; margin-top:20px; font-size:14px;">${book.pages.cover.author}</div>
-        <div style="font-size:11px; color:#94a3b8; margin-top:8px;">출처: ${book.sourceRef}</div>
-        <div style="margin-top:280px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.cover.footer}</span><span>1 / 4 페이지 (표지)</span>
-        </div>
-      </div>
-      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#0284c7; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">제 1 장: 핵심 개념</span>
-        <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.concept.title}</h1>
-        <img src="${book.conceptImage}" style="width:100%; max-height:240px; object-fit:cover; border-radius:8px; margin:14px 0;" crossOrigin="anonymous">
-        <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.concept.body1}</p>
-        <div style="background:#fef3c7; border-left:4px solid #d97706; padding:12px 16px; margin:14px 0; font-weight:bold; font-size:13.5px;">${book.pages.concept.calloutGold}</div>
-        <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.concept.body2}</p>
-        <div style="background:#f1f5f9; border-left:4px solid #0f172a; padding:12px 16px; margin:14px 0; font-size:13px;">${book.pages.concept.calloutBlack}</div>
-        <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.concept.footer}</span><span>${book.pages.concept.pageNumber || (book.pages.promptGuide ? '2 / 5 페이지 (개념 설명)' : '2 / 4 페이지 (개념 설명)')}</span>
-        </div>
-      </div>
-      ${book.pages.promptGuide ? `
-      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#7c3aed; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">제 2 장: 마스터 프롬프트 & 앵커링</span>
-        <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.promptGuide.title}</h1>
-        <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.promptGuide.lead}</p>
-        ${book.pages.promptGuide.promptTemplate ? `
-          <div style="background:#0f172a; color:#38bdf8; padding:14px; border-radius:6px; font-family:monospace; font-size:11px; white-space:pre-wrap; margin:14px 0;">
-            ${book.pages.promptGuide.promptTemplate}
-          </div>
-        ` : ''}
-        ${book.pages.promptGuide.callout ? `
-          <div style="background:#fef3c7; border-left:4px solid #d97706; padding:12px 16px; margin:14px 0; font-weight:bold; font-size:13.5px;">${book.pages.promptGuide.callout}</div>
-        ` : ''}
-        <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.promptGuide.footer || book.pages.concept.footer}</span><span>${book.pages.promptGuide.pageNumber || '3 / 5 페이지'}</span>
-        </div>
-      </div>
-      ` : ''}
-      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#0284c7; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">${book.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}</span>
-        <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.tableDiagram.title}</h1>
-        <img src="${book.tableImage}" style="width:100%; max-height:240px; object-fit:cover; border-radius:8px; margin:14px 0;" crossOrigin="anonymous">
-        <p style="line-height:1.6; font-size:13.5px; color:#334155;">${book.pages.tableDiagram.lead}</p>
-        <table style="width:100%; border-collapse:collapse; margin:14px 0; font-size:12px;">
-          <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:8px 10px;">핵심 항목</th><th style="border:1px solid #cbd5e1; padding:8px 10px;">확률</th><th style="border:1px solid #cbd5e1; padding:8px 10px;">기대 효용 및 결과</th></tr>
-          </thead>
-          <tbody>
-            ${book.pages.tableDiagram.rows.map(r => `<tr><td style="border:1px solid #cbd5e1; padding:8px 10px;"><strong>${r.action}</strong></td><td style="border:1px solid #cbd5e1; padding:8px 10px; color:#0284c7; font-weight:bold;">${r.prob}</td><td style="border:1px solid #cbd5e1; padding:8px 10px;">${r.effect}</td></tr>`).join('')}
-          </tbody>
-        </table>
-        <div style="background:#f1f5f9; border-left:4px solid #0f172a; padding:12px 16px; margin:14px 0; font-size:13px;">${book.pages.tableDiagram.insight}</div>
-        <div style="margin-top:140px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.tableDiagram.footer}</span><span>${book.pages.tableDiagram.pageNumber || (book.pages.promptGuide ? '4 / 5 페이지 (구조 도표)' : '3 / 4 페이지 (구조 도표)')}</span>
-        </div>
-      </div>
-      <div class="temp-sheet" style="width:794px; min-height:1120px; padding:40px; box-sizing:border-box; background:#ffffff;">
-        <span style="background:#16a34a; color:#fff; padding:4px 12px; border-radius:4px; font-size:12px; font-weight:800;">${book.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}</span>
-        <h1 style="font-size:22px; margin:16px 0; color:#0f172a;">${book.pages.workbook.title}</h1>
-        <div style="margin:16px 0; color:#0f172a;">
-          <p style="font-weight:800; font-size:15px; color:#0f172a; margin-bottom:8px;">${book.pages.workbook.q1}</p>
-          <div style="background:#fef9c3; border-left:4px solid #d97706; padding:14px 18px; margin:12px 0; color:#0f172a;">
-            <div style="color:#b45309; font-weight:800; font-size:13px;">정답 및 해설:</div>
-            <div style="margin-top:4px; font-size:13.5px; color:#0f172a; font-weight:600; line-height:1.6;">${book.pages.workbook.a1}</div>
-            <div style="font-size:11px; color:#64748b; margin-top:6px;">${book.pages.workbook.refText || ''}</div>
-          </div>
-          <p style="font-weight:800; font-size:15px; margin-top:18px; color:#0f172a; margin-bottom:8px;">${book.pages.workbook.q2}</p>
-          <div style="background:#f1f5f9; border-left:4px solid #0f172a; padding:14px 18px; margin:12px 0; font-size:13.5px; color:#0f172a;">
-            <strong style="color:#0f172a;">실천 가이드:</strong> ${book.pages.workbook.a2}
-          </div>
-        </div>
-        <div style="margin-top:200px; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px; display:flex; justify-content:space-between;">
-          <span>${book.pages.workbook.footer}</span><span>${book.pages.workbook.pageNumber || (book.pages.promptGuide ? '5 / 5 페이지 (실천 워크북)' : '4 / 4 페이지 (실천 워크북)')}</span>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(tempWrapper);
-    sheets = tempWrapper.querySelectorAll('.temp-sheet');
+    printEbookCleanly(book, book.theme || 'tech');
+    return;
   }
 
   try {
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4'); // A4 규격 (210 x 297 mm)
+    const pdf = new jsPDF('p', 'mm', 'a4'); // A4 (210 x 297 mm)
 
     for (let idx = 0; idx < sheets.length; idx++) {
       if (onStatusUpdate) onStatusUpdate(`📄 ${idx + 1} / ${sheets.length} 페이지 고화질 렌더링 중...`);
 
       const sheetEl = sheets[idx];
       const canvas = await window.html2canvas(sheetEl, {
-        scale: 1.5,
+        scale: 1.8,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        windowWidth: 1200
+        windowWidth: 1000
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
       if (idx > 0) {
         pdf.addPage('a4', 'p');
@@ -596,2504 +710,1499 @@ export async function downloadEbookAsPdf(book, onStatusUpdate) {
       pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
     }
 
-    const safeTitle = (book.title || '학습책').replace(/[\/\\:*?"<>|]/g, '_');
-    pdf.save(`${safeTitle}_전자책.pdf`);
-
-    if (onStatusUpdate) onStatusUpdate('✅ 완벽한 4페이지 A4 전자책 PDF 다운로드 완료!');
-  } catch (err) {
-    console.error('PDF 다운로드 처리 중 오류 발생, 전용 인쇄 창으로 전환:', err);
-    printEbookCleanly(book);
-  } finally {
-    if (tempWrapper && tempWrapper.parentNode) {
-      tempWrapper.parentNode.removeChild(tempWrapper);
-    }
+    const safeTitle = (book.title || '강의이북').replace(/[\/\\:*?"<>|]/g, '_').slice(0, 30);
+    pdf.save(`${safeTitle}_출판전자책.pdf`);
+    if (onStatusUpdate) onStatusUpdate(`🎉 [${book.title.slice(0, 18)}...] 고화질 PDF 다운로드 완료!`);
+  } catch (e) {
+    console.error('PDF 다운로드 생성 실패:', e);
+    if (onStatusUpdate) onStatusUpdate('⚠️ 이미지 보안 정책으로 인해 전용 인쇄 창으로 바로 전환합니다.');
+    printEbookCleanly(book, book.theme || 'tech');
   }
 }
 
 // ============================================================================
-// 🌟 1. 대표님 지정 최신 핵심 유튜브 전자책 (ByteDance Seedance 2.5 × Dola AI 완벽 조판)
+// 5. 웹 찌꺼기 100% 제거! 순수 A4 전용 인쇄 함수 (테마 지원)
 // ============================================================================
-export const SEEDANCE_EBOOK = {
-  id: 'book_seedance_25',
-  sourceId: 'src_yt_ERQArI7K-Jw',
-  type: 'web',
-  isYoutube: true,
-  youtubeVideoId: 'ERQArI7K-Jw',
-  title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
-  subtitle: 'Dola AI 확장 애드온과 마스터 프롬프트로 완성하는 씬 바이 씬(Scene-by-Scene) AI 장편 영화 제작 가이드',
-  author: 'Ai Lockup 분석 · 대표님 감수 (코다리 총괄부장 실전 조판)',
-  sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
-  badge: '유튜브 실전 강의 완벽 조판본 (00:00~05:46)',
-  createdAt: '2026. 09. 28.',
-  coverImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  conceptImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  tableImage: 'https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80',
-  chapterImage: 'https://i.ytimg.com/vi/ERQArI7K-Jw/hqdefault.jpg',
-  pages: {
-    cover: {
-      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 × Dola AI',
-      subtitle: 'Free & Unlimited Long AI Video Generator (출처: https://www.youtube.com/watch?v=ERQArI7K-Jw)',
-      author: 'Ai Lockup 분석 · 대표님 감수 (코다리 총괄부장 실전 조판)',
-      footer: '공부방 스튜디오 · 개인 학습책 시리즈 (A4 완벽 조판본)',
-      pageNumber: '1 / 5 페이지 (표지)'
-    },
-    concept: {
-      title: '제 1 장: Seedance 2.5 모델 스펙 & Dola 확장 애드온 무제한 설치법',
-      body1: '대부분의 상용 AI 영상 생성기(Runway Gen-3, Kling 1.5, Luma Dream Machine)는 5초 클립 하나에도 막대한 유료 크레딧을 차감하여, 1분 이상의 영상을 만들려면 수십 달러가 소모됩니다. 반면 ByteDance가 개발한 Seedance 2.5는 최대 30초 4K 렌더링, 50개 멀티모달 참조 슬롯, 오디오 네이티브 동기화를 지원하는 차세대 모델입니다. 이 강의는 Dola AI 플랫폼(dola.com)과 전용 브라우저 확장 애드온을 결합하여 크레딧 결제 없이 100% 무료·무제한으로 영상을 생성하는 파이프라인을 다룹니다.',
-      calloutGold: '💡 무료 무제한 AI 영화 제작 3대 원칙: 1) 크레딧 차감 우회(Dola 애드온) ➔ 2) 캐릭터 외모 고정(Turnaround Sheet 앵커링) ➔ 3) 15초 단위 씬 바이 씬 분할 렌더링',
-      stepCards: [
-        {
-          step: '1단계',
-          time: '00:41',
-          title: 'Dola AI 접속 및 모델 셀렉터 설정',
-          desc: 'dola.com 또는 trydola.com에 접속한 후, 비디오 엔진 셀렉터에서 ByteDance의 [Seedance 2.5]를 선택합니다. 기본 무료 계정은 렌더링 크레딧이 빠르게 고갈되므로 아래 2단계 확장을 반드시 연결해야 합니다.'
-        },
-        {
-          step: '2단계',
-          time: '01:18, 05:18',
-          title: 'Dola Seedance 2.5 Ad-on 브라우저 확장 설치 (핵심 우회)',
-          desc: '배포된 Dola Seedance 2.5 Ad-on.zip을 다운로드 후 압축을 풉니다. Chrome 브라우저에서 chrome://extensions 접속 ➔ 우측 상단 [개발자 모드] 활성화 ➔ 좌측 상단 [압축해제된 확장 프로그램을 로드합니다] 클릭 후 폴더를 선택합니다.'
-        },
-        {
-          step: '3단계',
-          time: '05:46',
-          title: '무제한 렌더링 세션 활성화 확인',
-          desc: 'Dola AI 대시보드로 돌아와 F5(새로고침)를 누르면, 우측 상단의 크레딧 카운터가 Unlimited(무제한) 모드로 전환되며 대기열 지연 없이 고화질 텍스트/이미지 기반 영상 생성이 무제한 개방됩니다.'
-        }
-      ],
-      body2: '이렇게 구축된 무료 무제한 환경 덕분에, 1회 생성 비용(평균 500~1,000원) 걱정 없이 한 씬당 3~4개의 서로 다른 카메라 앵글을 마음껏 렌더링하여 최상의 결과물만 골라 쓸 수 있는 1인 크리에이터의 절대적 레버리지가 완성됩니다.',
-      calloutBlack: '⚡ 실천 주의점: 확장 프로그램이 로드된 Chrome 브라우저 탭을 유지해야 무제한 세션 토큰이 유지됩니다. 렌더링 중 오류가 발생하면 탭 새로고침 후 확장 토글이 On 상태인지 확인하세요.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 5 페이지 (핵심 개념 & 세팅)'
-    },
-    promptGuide: {
-      title: '제 2 장: 캐릭터 일관성(얼굴 보존) 앵커링 & 마스터 프롬프트 구조',
-      lead: 'AI 영상 제작에서 가장 흔한 실패는 씬(Scene)이 바뀔 때마다 주인공의 얼굴과 옷이 달라지는 형상 변형(Morphing) 문제입니다. Seedance 2.5의 멀티모달 참조 슬롯과 마스터 프롬프트 5대 태그를 적용하여 외모를 100% 일관되게 고정하는 공식을 정리합니다.',
-      anchorWorkflow: [
-        {
-          tag: 'A단계 (선제작)',
-          title: '무료 AI 이미지 툴로 캐릭터 시트 선제작 (03:22)',
-          desc: '영상을 바로 돌리지 마십시오! Flux, Midjourney, Leonardo AI 등에서 주인공 캐릭터의 정면 샷, 45도 측면 샷, 전신 샷을 동일한 화풍으로 먼저 렌더링하여 고화질 PNG 에셋으로 저장합니다.'
-        },
-        {
-          tag: 'B단계 (주입)',
-          title: 'Seedance 2.5 Image-to-Video 앵커 슬롯에 주입 (04:16)',
-          desc: 'Dola 인터페이스의 Reference Image 슬롯에 앞서 저장한 캐릭터 이미지를 업로드합니다. Seedance 2.5는 최대 50장의 레퍼런스를 수용하여 주인공의 이목구비, 헤어, 의상을 완벽히 잠급니다.'
-        },
-        {
-          tag: 'C단계 (구조화)',
-          title: '5대 마스터 프롬프트 태그 작성 (02:14)',
-          desc: '모든 씬에 일관된 시각적 톤앤매너와 호흡을 부여하기 위해, 프롬프트를 5개 섹션(TITLE, STYLE, DURATION, VISUAL, NARRATION)으로 엄격하게 분리하여 작성합니다.'
-        }
-      ],
-      promptTemplate: `TITLE: Section 1 — The Awakening (씬 제목)
-STYLE: 3D Pixar animation style, Unreal Engine 5 render, cinematic volumetric lighting, 8k (화풍 고정)
-DURATION: 15s (15초 단위 분할)
-VISUAL: Slow camera pan left, female young scientist in high-tech laboratory looking at glowing holographic core, expressive eyes, subtle wind motion, 16:9 cinematic aspect ratio (시각 연출 & 카메라 워크)
-NARRATION: "The experiment was never meant to open this door. But now, there is no turning back." (AI 음성 나레이션 대사)`,
-      presets: [
-        { name: '① 픽사/디즈니 3D 애니메이션', code: 'Pixar 3D animation style, Unreal Engine 5, smooth subsurface scattering, cute expressive character, volumetric warm lighting' },
-        { name: '② 스튜디오 지브리 2D 애니메이션', code: 'Studio Ghibli aesthetic, hand-drawn anime, watercolor background, lush natural tones, Hayao Miyazaki inspired mood' },
-        { name: '③ 극화체 실사 시네마틱', code: 'Hyper-realistic 4K footage, 35mm cinematic film grain, anamorphic lens flare, shallow depth of field, dramatic rim light' }
-      ],
-      callout: '💡 앵커링 꿀팁: VISUAL 지시어에 "maintain character appearance from reference image exactly" 문구를 추가하면 얼굴 뒤틀림을 99% 억제할 수 있습니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '3 / 5 페이지 (마스터 프롬프트 & 앵커링)'
-    },
-    tableDiagram: {
-      title: '제 3 장: 60초 씬 바이 씬 실전 콘티 & AI 영상 생성기 4사 정밀 비교',
-      lead: '영상 원본(02:14~05:46)에서 시연된 15초 단위 씬 바이 씬(Scene-by-Scene) 제작 방식을 기반으로 완성한 4개 씬(총 60초)의 실제 콘티표와 주요 AI 영상 툴 스펙 비교표입니다.',
-      storyboard: [
-        {
-          scene: '씬 1 (00~15s)',
-          phase: '도입부 (세계관)',
-          visual: '광대한 사이버펑크 메가시티 전경 ➔ 고각 하강 부감 앵글 ➔ 중심부 타워의 푸른 빛무리',
-          narration: '"인류는 기술이 모든 문제를 해결했다고 믿었다. 그 오만이 균열을 만들기 전까지는."',
-          type: 'Text-to-Video'
-        },
-        {
-          scene: '씬 2 (15~30s)',
-          phase: '전개 (주인공 등장)',
-          visual: '연구실 내부 ➔ 캐릭터 시트 앵커 주입 ➔ 주인공의 놀란 표정과 홀로그램 조작 핑거 모션',
-          narration: '"시스템 깊숙한 곳에서, 승인되지 않은 지능이 스스로 숨을 쉬고 있었다."',
-          type: 'Image-to-Video (앵커)'
-        },
-        {
-          scene: '씬 3 (30~45s)',
-          phase: '위기 (클라이맥스)',
-          visual: '비상 경보 적색 조명 ➔ 급박한 랙 포커스 ➔ 데이터 코어가 폭주하며 방출되는 에너지 파동',
-          narration: '"통제선이 무너지는 순간, 나는 선택해야 했다. 차단인가, 아니면 공존인가."',
-          type: '모션 강도 7.5'
-        },
-        {
-          scene: '씬 4 (45~60s)',
-          phase: '결말 (여운/메시지)',
-          visual: '새벽빛이 스며드는 연구소 창가 ➔ 인물의 결연한 미소 ➔ 수평 패닝 아웃과 타이틀 로고',
-          narration: '"이것은 재앙이 아니다. 우리가 마주할 다음 진화의 시작이다."',
-          type: '슬로우 줌아웃'
-        }
-      ],
-      rows: [
-        { action: 'ByteDance Seedance 2.5', prob: '0원 (무제한)', effect: '최대 30초 4K | 멀티모달 레퍼런스 50장 | 오디오 네이티브 동기화 지원' },
-        { action: 'Runway Gen-3 Alpha', prob: '월 $12~$76+', effect: '5~10초 1080p | 레퍼런스 1장 제한 (변형 잦음) | 오디오 별도 생성 필요' },
-        { action: 'Kling AI 1.5', prob: '월 $10~$60+', effect: '5~10초 1080p | 크레딧 고속 소진 | 효과음 자체 생성 불가' },
-        { action: 'OpenAI Sora', prob: '일반 미공개', effect: '최대 60초 1080p | 파트너 한정 베타 | 높은 비용 장벽' }
-      ],
-      insight: '⚡ 코다리 총괄부장 인사이트: 유료 툴은 한 번 돌릴 때마다 돈이 나가므로 다양한 앵글을 시도하기 두렵습니다. Seedance 2.5는 0원이므로 각 씬마다 3~4개의 앵글을 렌더링한 후 가장 좋은 컷을 골라 쓸 수 있는 엄청난 볼륨의 우위를 제공합니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '4 / 5 페이지 (구조 분석 & 씬 콘티)'
-    },
-    workbook: {
-      title: '제 4 장: 최종 영상 조립(Post-Production) & 실천 워크북',
-      lead: '렌더링된 4개의 15초 클립을 무료 편집기(CapCut / Premiere)에서 하나로 묶고 AI 음성을 입혀 유튜브 쇼츠/롱폼으로 즉시 릴리즈(Ship)하는 3단계 마감 공정입니다.',
-      postProduction: [
-        { step: '1', title: '타임라인 조립', desc: 'CapCut을 열고 16:9 프로젝트를 생성한 뒤, 씬 1부터 씬 4까지 순서대로 배치합니다 (총 60초 클립 결합).' },
-        { step: '2', title: 'AI 음성 나레이션 입히기', desc: 'ElevenLabs 또는 무료 TTS에서 마스터 프롬프트의 NARRATION 대사를 음성으로 추출하여 각 씬 타임코드에 정확히 정렬합니다.' },
-        { step: '3', title: '사운드 믹싱 & 자막', desc: 'Seedance 2.5가 자체 생성한 배경 효과음 볼륨을 70%로 낮추고, AI 나레이션을 100%로 설정하여 명음비를 확보하고 자동 캡션 자막을 생성합니다.' }
-      ],
-      q1: 'Q1. [Seedance 2.5 × Dola AI]에서 씬이 바뀌어도 캐릭터가 절대 변하지 않게 고정하는 핵심 비법은?',
-      a1: '03:22에 설명하듯 텍스트로만 영상을 돌리지 않고, 무료 이미지 생성기로 캐릭터의 정면/측면 시트를 먼저 생성한 후 Seedance의 Image-to-Video 슬롯에 앵커로 주입하고 마스터 프롬프트와 함께 돌리는 것입니다.',
-      refText: '[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw (타임코드: 02:14~04:36)]',
-      q2: 'Q2. Dola AI에서 유료 크레딧 차감 없이 무제한으로 영상을 렌더링하는 원리는?',
-      a2: 'Chrome 브라우저 확장 프로그램 관리자(chrome://extensions)에서 개발자 모드를 켜고 제공된 Dola Seedance 2.5 Ad-on을 압축 해제 로드하여 세션 토큰을 무제한 상태로 우회 활성화하는 방식입니다.',
-      checklist: [
-        'Dola AI 사이트 접속 및 Chrome 확장 애드온 설치 (개발자 모드 로드 확인)',
-        '60초 분량의 시나리오를 15초 × 4개 씬으로 분할 기획',
-        '무료 이미지 생성기로 주인공 캐릭터 정면/측면 시트 1장 생성',
-        '마스터 프롬프트 템플릿(TITLE, STYLE, DURATION, VISUAL, NARRATION) 작성',
-        'Seedance 2.5 Image-to-Video 슬롯에 캐릭터 앵커 주입 후 씬 1~4 연속 렌더링',
-        'CapCut에서 4개 클립 결합 + AI 나레이션 싱크 맞춘 후 유튜브에 즉시 배포(Ship)'
-      ],
-      footer: '공부방 스튜디오 · 복습 워크북',
-      pageNumber: '5 / 5 페이지 (실천 워크북 & 체크리스트)'
-    }
+export function printEbookCleanly(book, theme = 'tech') {
+  if (!book) return;
+  const printWindow = window.open('', '_blank', 'width=950,height=1000');
+  if (!printWindow) {
+    alert('팝업 차단이 감지되었습니다. 팝업을 허용해 주십시오.');
+    return;
   }
+
+  // 테마별 색상 설정
+  let primaryColor = '#0284c7';
+  let badgeBg = '#0284c7';
+  if (theme === 'amber') {
+    primaryColor = '#d97706';
+    badgeBg = '#d97706';
+  } else if (theme === 'emerald') {
+    primaryColor = '#059669';
+    badgeBg = '#059669';
+  } else if (theme === 'obsidian') {
+    primaryColor = '#4f46e5';
+    badgeBg = '#1e1b4b';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>${book.title} — 고화질 A4 전자책</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Pretendard', sans-serif; background: #fff; color: #0f172a; line-height: 1.6; }
+.page { width: 210mm; min-height: 297mm; padding: 22mm 20mm; margin: 0 auto 15mm; background: #fff; page-break-after: always; position: relative; border-bottom: 1px dashed #cbd5e1; }
+@media print {
+  body { background: #fff; }
+  .page { margin: 0; padding: 18mm 16mm; min-height: 297mm; border: none; page-break-after: always; break-after: page; }
+  .no-print { display: none !important; }
+}
+.badge { display: inline-block; background: ${badgeBg}; color: #fff; padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; margin-bottom: 14px; }
+h1 { font-size: 26px; font-weight: 900; line-height: 1.3; margin-bottom: 10px; color: #0f172a; }
+h2 { font-size: 20px; font-weight: 800; margin-bottom: 14px; color: #0f172a; border-bottom: 2px solid ${primaryColor}; padding-bottom: 8px; }
+.sub { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+.thumb { width: 100%; max-height: 260px; object-fit: cover; border-radius: 8px; margin: 16px 0; border: 1px solid #e2e8f0; }
+.gold-box { background: #fef3c7; border-left: 4px solid #d97706; padding: 14px; border-radius: 0 6px 6px 0; margin: 16px 0; font-weight: bold; font-size: 14px; color: #78350f; }
+.dark-box { background: #f1f5f9; border-left: 4px solid ${primaryColor}; padding: 14px; border-radius: 0 6px 6px 0; margin: 16px 0; font-size: 13.5px; color: #0f172a; }
+.card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
+th { background: #f1f5f9; font-weight: 800; }
+pre { background: #0f172a; color: #38bdf8; padding: 14px; border-radius: 6px; font-family: monospace; font-size: 12px; white-space: pre-wrap; margin: 14px 0; }
+.footer { position: absolute; bottom: 15mm; left: 20mm; right: 20mm; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px; }
+.print-bar { background: #0f172a; color: #fff; padding: 14px 20px; text-align: center; position: sticky; top: 0; z-index: 999; }
+.print-btn { background: ${primaryColor}; color: #fff; border: none; padding: 8px 24px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="print-bar no-print">
+  <span>💡 브라우저 인쇄 창이 열립니다. 대상에서 <strong>'PDF로 저장'</strong>을 선택하시면 초고화질 벡터 PDF로 다운로드됩니다.</span>
+  <button class="print-btn" onclick="window.print()" style="margin-left: 16px;">🖨️ 인쇄 / PDF 저장 실행</button>
+</div>
+
+<!-- 1. 표지 -->
+<div class="page" style="text-align: center; display: flex; flex-direction: column; justify-content: center;">
+  <div>
+    <span class="badge">${book.badge}</span>
+    <h1>${book.title}</h1>
+    <div class="sub">${book.subtitle}</div>
+    <img src="${book.coverImage}" class="thumb" onerror="this.style.display='none'">
+    <div style="font-weight: 800; margin-top: 16px; font-size: 15px;">${book.author}</div>
+    <div style="font-size: 12px; color: #64748b; margin-top: 6px;">출처/레퍼런스: ${book.sourceRef}</div>
+  </div>
+  <div class="footer"><span>공부방 스튜디오 · 개인 학습책</span><span>1 / 5 페이지 (표지)</span></div>
+</div>
+
+<!-- 2. 개요 & 3줄 브리핑 -->
+<div class="page">
+  <span class="badge">개요 & 핵심 브리핑</span>
+  <h2>이 책의 핵심 요약 & 시청 포인트</h2>
+  <div class="gold-box">${book.insight}</div>
+  <div style="margin: 20px 0;">
+    <h3 style="font-size: 15px; margin-bottom: 10px; color: ${primaryColor};">⚡ 핵심 3줄 브리핑:</h3>
+    ${book.summaryBullets.map(b => `<div class="card" style="font-size: 14px; font-weight: 600;">${b}</div>`).join('')}
+  </div>
+  <div class="dark-box">
+    <strong>🎯 학습 대상 및 목표:</strong> ${book.audience}
+  </div>
+  <div class="footer"><span>공부방 스튜디오 · 핵심 브리핑</span><span>2 / 5 페이지</span></div>
+</div>
+
+<!-- 3. 제 1 장: 핵심 개념 -->
+<div class="page">
+  <span class="badge">제 1 장</span>
+  <h2>${book.chapter1.title}</h2>
+  <p style="font-size: 14px; line-height: 1.7; margin-bottom: 16px;">${book.chapter1.body}</p>
+  <div style="margin: 16px 0;">
+    ${book.chapter1.stepCards.map(s => `
+      <div class="card">
+        <strong style="color: ${primaryColor};">[${s.step}] ${s.title}:</strong>
+        <span style="font-size: 13.5px; color: #334155;"> ${s.desc}</span>
+      </div>
+    `).join('')}
+  </div>
+  <div class="dark-box">${book.chapter1.calloutDark}</div>
+  <div class="footer"><span>공부방 스튜디오 · 핵심 개념</span><span>3 / 5 페이지</span></div>
+</div>
+
+<!-- 4. 제 2 장: 비교 매트릭스 & 제 3 장: 실전 가이드 -->
+<div class="page">
+  <span class="badge">제 2 장 & 제 3 장</span>
+  <h2>${book.chapter2.title}</h2>
+  <p style="font-size: 13.5px; color: #64748b;">${book.chapter2.lead}</p>
+  <table>
+    <thead><tr><th>핵심 항목</th><th>효용 / 특징</th><th>기대 효과</th></tr></thead>
+    <tbody>
+      ${book.chapter2.tableRows.map(r => `<tr><td><strong>${r.item}</strong></td><td style="color:${primaryColor}; font-weight:bold;">${r.prob}</td><td>${r.effect}</td></tr>`).join('')}
+    </tbody>
+  </table>
+  <div class="gold-box" style="margin: 12px 0;">💡 ${book.chapter2.insightNote}</div>
+  <h2 style="margin-top: 24px;">${book.chapter3.title}</h2>
+  <div style="margin: 12px 0;">
+    ${book.chapter3.steps.map(st => `
+      <div class="card">
+        <strong style="color: #16a34a;">${st.phase}:</strong>
+        <span style="font-size: 13px; color: #334155;"> ${st.desc}</span>
+      </div>
+    `).join('')}
+  </div>
+  <div class="footer"><span>공부방 스튜디오 · 비교 분석 & 실전 가이드</span><span>4 / 5 페이지</span></div>
+</div>
+
+<!-- 5. 제 4 장: 복습 워크북 -->
+<div class="page">
+  <span class="badge">제 4 장</span>
+  <h2>${book.chapter4.title}</h2>
+  <div class="card" style="background:#fef9c3; border-left: 4px solid #d97706; padding: 14px;">
+    <strong style="color: #92400e; font-size: 14px;">${book.chapter4.q1}</strong>
+    <div style="margin-top: 6px; font-size: 13.5px; font-weight: 600; color: #0f172a;">👉 ${book.chapter4.a1}</div>
+  </div>
+  <div class="card" style="background:#f1f5f9; border-left: 4px solid ${primaryColor}; padding: 14px; margin-top: 12px;">
+    <strong style="color: #0f172a; font-size: 14px;">${book.chapter4.q2}</strong>
+    <div style="margin-top: 6px; font-size: 13.5px; color: #0f172a;">👉 ${book.chapter4.a2}</div>
+  </div>
+  <div style="margin-top: 20px;">
+    <h3 style="font-size: 15px; margin-bottom: 10px; color: #0f172a;">✅ 오늘 당장 실천할 4대 액션 체크리스트:</h3>
+    ${book.chapter4.checklist.map(c => `
+      <div style="display: flex; gap: 8px; font-size: 13.5px; margin-bottom: 8px; color: #334155;">
+        <span style="color: #16a34a; font-weight: 800;">✔</span>
+        <span>${c}</span>
+      </div>
+    `).join('')}
+  </div>
+  <div class="footer"><span>공부방 스튜디오 · 실천 워크북</span><span>5 / 5 페이지 (완결)</span></div>
+</div>
+
+<script>
+window.onload = function() {
+  setTimeout(function() {
+    window.print();
+  }, 500);
 };
+</script>
+</body>
+</html>`;
 
-// ============================================================================
-// 🌟 2. 대표님 지정 공식 핵심 유튜브 전자책 (Hermes × DeskRPG 완벽 조판)
-// ============================================================================
-export const HERMES_EBOOK = {
-  id: 'book_hermes_deskrpg',
-  sourceId: 'src_yt_4NCXTWBxcN0',
-  type: 'web',
-  isYoutube: true,
-  youtubeVideoId: '4NCXTWBxcN0',
-  title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-  subtitle: 'Hermes 에이전트와 DeskRPG 3D 가상 오피스로 구축하는 1인 기업 AX 시스템',
-  author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
-  sourceRef: 'https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
-  badge: '유튜브 실전 강의 완벽 조판본',
-  createdAt: '2026. 09. 28.',
-  coverImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
-  conceptImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-  tableImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-  chapterImage: 'https://i.ytimg.com/vi/4NCXTWBxcN0/hqdefault.jpg',
-  pages: {
-    cover: {
-      title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-      subtitle: '영상 출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
-      author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
-      footer: '공부방 스튜디오 · 개인 학습책 시리즈',
-      pageNumber: '1 / 4 페이지 (표지)'
-    },
-    chapterStart: {
-      number: '1',
-      title: '대화형 챗봇을 넘어선 자율 실행 AI 팀원의 탄생',
-      subtitle: 'Hermes Agent와 DeskRPG가 여는 1인 기업 가상 오피스',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지'
-    },
-    concept: {
-      title: '제 1 장: 자율 실행 AI 팀원과 3D 가상 오피스 원리',
-      body1: '단순한 1회성 질문-답변 챗봇의 시대는 끝났습니다. Hermes 에이전트와 DeskRPG 가상 오피스를 결합하면, 각자 고유한 직무(기획자, 개발자, 데이터 분석가)를 부여받은 AI 팀원들이 3D 오피스에 상주하며 실시간으로 회의하고 태스크를 자율 실행합니다.',
-      calloutGold: '💡 핵심 원리: 대표는 CEO 위치에서 큰 방향만 지시하고, 회의·칸반 태스크 분배·코드 실행은 AI 팀원이 24시간 가상 오피스에서 자율 수행한다.',
-      body2: 'DeskRPG는 에이전트의 작업 상태(작업 중, 회의 중, 완료)를 3D 공간에 시각화하고, 칸반 보드를 통해 실시간 진행 상황을 한눈에 통제할 수 있는 차세대 1인 기업 본부입니다.',
-      calloutBlack: '⚡ 실천 포인트: 1인 기업 스케일업의 본질은 혼자 모든 일을 처리하는 것이 아니라, 나만의 AI 전문 팀을 조직하여 레버리지를 극대화하는 것입니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '2 / 4 페이지 (핵심 개념)'
-    },
-    tableDiagram: {
-      title: '제 2 장: 전통적 1인 작업 vs Hermes × DeskRPG AI 팀 협업 체계',
-      lead: '1인 기업의 3대 핵심 업무(기획, 개발, 관리)를 분해하여 AI 팀원 도입 전후의 실전 효용을 비교합니다.',
-      rows: [
-        { action: '1. 신규 비즈니스 기획 및 전략 수립', prob: '85% 속도 향상', effect: 'AI 기획팀의 10분 브레인스토밍 및 즉시 조판' },
-        { action: '2. 소프트웨어 개발 및 자동화 구현', prob: '95% 비용 절감', effect: 'AI 개발 에이전트의 자율 코딩, 에러 수정, 배포' },
-        { action: '3. 일일 업무 추적 및 칸반 관리', prob: '100% 자동화', effect: 'DeskRPG 3D 오피스 칸반 카드로 24시간 무중단 관리' }
-      ],
-      insight: '대표님의 소중한 시간은 최고 가치의 비즈니스 의사결정에만 쓰여야 합니다. 반복적인 회의와 실행은 AI 팀원에게 완전히 위임합니다.',
-      footer: '공부방 스튜디오 · 개인 학습책',
-      pageNumber: '3 / 4 페이지 (구조 비교 도표)'
-    },
-    workbook: {
-      title: '제 3 장: 나만의 AI 팀 빌딩 실천 워크북 & 핵심 과제',
-      q1: 'Q1. [Hermes × DeskRPG]가 1인 기업 대표님에게 제공하는 가장 강력한 레버리지는 무엇인가?',
-      a1: '1회성 질문에 머물던 AI를 "상시 대기하는 직무별 팀원"으로 승격시켜, 대표의 개입 없이도 AI 팀원들끼리 회의하고 칸반 카드를 해결하도록 만드는 자율성입니다.',
-      refText: '[출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s]',
-      q2: 'Q2. 나의 사업에 당장 투입할 3대 AI 에이전트 직책과 첫 번째 임무는?',
-      a2: '1) 숏폼/트렌드 기획관, 2) 파이썬 & 웹 자동화 개발자, 3) 고객 데이터 분석관을 임명하고 DeskRPG 칸반 보드에 첫 업무 카드를 등록합니다.',
-      footer: '공부방 스튜디오 · 복습 워크북',
-      pageNumber: '4 / 4 페이지 (실천 워크북)'
-    }
-  }
-};
-
-// ============================================================================
-// 📚 동적 전자책 빌더 함수 (사용자가 입력한 링크/자료로 실제 책 생성)
-// ============================================================================
-export function buildEbookFromSource(source) {
-  if (!source) return null;
-
-  const ytId = extractYoutubeId(source.sourceRef || source.content);
-  const isYoutube = Boolean(ytId);
-
-  // 🌟 대표님 지정 핵심 영상 (4NCXTWBxcN0) - Hermes × DeskRPG 완벽 매칭
-  const isHermesVideo = ytId === '4NCXTWBxcN0' || (source.sourceRef && source.sourceRef.includes('4NCXTWBxcN0'));
-
-  // 🌟 대표님 입력 최신 영상 (ERQArI7K-Jw) - Seedance 2.5 무료 무제한 AI 비디오 완벽 매칭
-  const isSeedanceVideo = ytId === 'ERQArI7K-Jw' || (source.sourceRef && source.sourceRef.includes('ERQArI7K-Jw'));
-
-  if (isHermesVideo) {
-    return HERMES_EBOOK;
-  }
-  if (isSeedanceVideo) {
-    return SEEDANCE_EBOOK;
-  }
-
-  let title = source.title;
-  let author = source.author || '지식 큐레이터';
-  let coverImg = isYoutube 
-    ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
-    : CURATED_THEME_IMAGES.ai;
-  let conceptImg = isYoutube
-    ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
-    : CURATED_THEME_IMAGES.tech;
-  let tableImg = CURATED_THEME_IMAGES.chart;
-  let chapterImg = coverImg;
-
-  if (!title || title.includes(ytId)) {
-    title = source.title || (isYoutube ? `유튜브 영상 (${ytId}) 핵심 강의록` : '웹 링크 핵심 분석 리포트');
-  }
-
-  const sourceRef = source.sourceRef || '등록된 링크 URL';
-
-  // 🌟 일반 링크/영상인 경우 (기존 과거 텍스트 절대 미노출)
-  const isVideoRelated = /video|generator|image|ai|유튜브|영상|비디오|seedance/i.test(title + ' ' + (source.content || ''));
-  const cleanedTitle = title.replace(/^유튜브\s*(강의\s*)?영상\s*(\([^\)]+\))?:?\s*/, '').trim() || title;
-
-  return {
-    id: `book_${source.id || Date.now()}`,
-    sourceId: source.id,
-    type: source.type,
-    isYoutube,
-    youtubeVideoId: ytId,
-    title: cleanedTitle,
-    subtitle: isYoutube ? `유튜브 영상 기반 핵심 요약 및 실전 워크북` : `웹 링크 원문 추출 1개념 1페이지 집중 학습본`,
-    author: author || '지식 큐레이터',
-    sourceRef,
-    badge: isYoutube ? '유튜브 영상 조판본' : '웹 링크 원문 추출본',
-    createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-    coverImage: coverImg,
-    conceptImage: conceptImg,
-    tableImage: tableImg,
-    chapterImage: chapterImg,
-    pages: {
-      cover: {
-        title: cleanedTitle,
-        subtitle: isYoutube ? `영상 출처: ${sourceRef}` : `원문 출처: ${sourceRef}`,
-        author: `${author} 지음 · 대표님 감수`,
-        footer: `공부방 스튜디오 · 개인 학습책 시리즈`,
-        pageNumber: '1 / 4 페이지 (표지)'
-      },
-      chapterStart: {
-        number: '1',
-        title: `${cleanedTitle}의 핵심 구조와 문제의식`,
-        subtitle: isVideoRelated ? '생성 AI와 차세대 미디어 자동화 실전 방향' : '1인 기업 실행과 자동화 최적화 방향',
-        footer: `공부방 스튜디오 · 개인 학습책`,
-        pageNumber: '2 / 4 페이지'
-      },
-      concept: {
-        title: `제 1 장: ${cleanedTitle} 핵심 개념 원리`,
-        body1: isVideoRelated 
-          ? `최신 AI 기술의 발전으로 복잡하고 비싼 제작 장비 없이도, 텍스트 프롬프트와 참조 데이터를 통해 고품질의 결과물을 빠르게 산출할 수 있는 환경이 열렸습니다.`
-          : `단순한 줄글 읽기에 그치지 않고, 핵심 기술과 비즈니스 아이디어를 1개념 1페이지로 분해하여 실무에 즉시 적용 가능한 파이프라인으로 전환합니다.`,
-        calloutGold: isVideoRelated 
-          ? `💡 핵심 원리: 고가의 유료 소프트웨어나 외주 인력 없이도, AI 파이프라인을 구축하여 1인 기업이 대량의 결과물을 자율 생산한다.`
-          : `💡 핵심 원리: 복잡한 이론을 단순화하고, 실행 가능한 1대 핵심 원리를 도출하여 지속 가능한 레버리지를 만든다.`,
-        body2: `지속적인 실험과 빠른 피드백 루프를 통해, 시간과 비용을 최소화하면서 고부가가치 결과물을 만들어내는 것이 1인 기업 스케일업의 본질입니다.`,
-        calloutBlack: `⚡ 실천 포인트: 오늘 배운 핵심 원리를 내 업무와 비즈니스 파이프라인에 즉시 연결하여 실행 검증을 완료합니다.`,
-        footer: `공부방 스튜디오 · 개인 학습책`,
-        pageNumber: '2 / 4 페이지 (개념 설명)'
-      },
-      tableDiagram: {
-        title: `제 2 장: ${cleanedTitle} 구조 분석 및 판단 비교표`,
-        lead: '전통적인 수작업 및 기존 방식 대비 AI 자동화 도입의 효용을 비교 분석합니다.',
-        rows: [
-          { action: '1. 핵심 작업 실행 속도', prob: '85% 속도 향상', effect: '반복 작업을 자동화하여 처리 시간을 획기적으로 단축' },
-          { action: '2. 제작 및 운영 비용', prob: '90% 비용 절감', effect: '외주 의존도를 낮추고 1인 자체 실행 파이프라인 확보' },
-          { action: '3. 산출물 지속성 및 품질', prob: '95% 안정화', effect: '검증된 템플릿과 프롬프트 체계로 균일한 고품질 유지' }
-        ],
-        insight: '불필요한 시행착오 비용을 제거하고, 가장 효과가 높은 핵심 실행에만 집중할 때 폭발적인 성장이 가능합니다.',
-        footer: `공부방 스튜디오 · 개인 학습책`,
-        pageNumber: '3 / 4 페이지 (구조 도표)'
-      },
-      workbook: {
-        title: `제 3 장: ${cleanedTitle} 복습 워크북 & 핵심 과제`,
-        q1: `Q1. [${cleanedTitle}]에서 얻을 수 있는 가장 중요한 1대 인사이트는 무엇인가?`,
-        a1: `비용과 기술 장벽이 낮아진 지금, 핵심 경쟁력은 툴 자체가 아니라 이를 활용하여 고객에게 즉시 가치를 전달하는 빠른 실행력입니다.`,
-        refText: `[출처: ${sourceRef}]`,
-        q2: `Q2. 이 내용을 나의 1인 비즈니스 또는 실무에 당장 적용한다면?`,
-        a2: `단순 지식 습득에 머물지 않고, 오늘 당장 실천할 수 있는 최소 단위의 프로토타입을 만들어 시장 반응을 확인합니다.`,
-        footer: `공부방 스튜디오 · 복습 워크북`,
-        pageNumber: '4 / 4 페이지 (실천 워크북)'
-      }
-    }
-  };
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
 }
 
-// 기본 샘플 책 (JEV 강화학습 이야기)
-const SAMPLE_BOOK = {
-  id: 'book_sample_jev',
-  isYoutube: false,
-  title: 'JEV 는 강화학습 이야기입니다',
-  subtitle: '스테이트·액션·폴리시, 그리고 엔터프라이즈 AX의 방향',
-  author: '정원석 (Connect AI LAB) · 대표님 감수',
-  sourceRef: '깜짝라이브_챕터3.pdf (p.1~43)',
-  badge: '공부방 프리셋 샘플',
-  createdAt: '2026. 09. 28.',
-  coverImage: '/studybook_assets/cover_a.png',
-  conceptImage: '/studybook_assets/concept_a11.png',
-  tableImage: '/studybook_assets/table_a29.png',
-  chapterImage: '/studybook_assets/chapter_a12.png',
-  pages: {
-    cover: {
-      title: 'JEV 는 강화학습 이야기입니다',
-      subtitle: '스테이트·액션·폴리시, 그리고 엔터프라이즈 AX의 방향',
-      author: '정원석 지음 · Connect AI LAB (대표님 감수)',
-      footer: 'Connect AI LAB · AI CITY BUILDERS',
-      pageNumber: '1 / 43'
-    },
-    chapterStart: {
-      number: '4',
-      title: 'LLM 은 자동화하려고 태어나지 않았습니다',
-      subtitle: '사람과 대화하려고 만든 것',
-      footer: 'Connect AI LAB · AI CITY BUILDERS',
-      pageNumber: '12 / 43'
-    },
-    concept: {
-      title: '그중에서 무엇이 살아남을 행동인가',
-      body1: '사자의 코를 때리는 것은 생존에 좋지 않은 행동일 겁니다. 살아남을 확률이 5% 라고 해 봅시다. 도망가는 것은 그보다 높겠지요.',
-      calloutGold: '강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다.',
-      body2: '정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다.',
-      calloutBlack: '사람도 이렇게 삽니다. 하나가 100% 좋은 경우는 드뭅니다.',
-      footer: 'Connect AI LAB · AI CITY BUILDERS',
-      pageNumber: '11 / 43'
-    },
-    tableDiagram: {
-      title: '여기에 JEV 를 끼우면',
-      lead: '4번 자리가 지금은 큰 언어 모델입니다. 「이 부분은 필요 없습니다」라고 글로 답합니다. 느리고 비쌉니다. 그 자리를 JEV 로 바꾸면 이렇게 나옵니다.',
-      rows: [
-        { action: '자르면 좋다', prob: '80%', effect: '토큰 절감, 처리 속도 80% 향상' },
-        { action: '자르지 않는 게 좋다', prob: '20%', effect: '핵심 문맥 그대로 보존' },
-        { action: '다른 것을 더 넣는다', prob: '10%', effect: '부족한 배경 정보 보강' }
-      ],
-      insight: '토큰을 줄이면서 더 효율적으로 도는 자동화 에이전트가 됩니다. 이렇게 뜯어보는 사고가 되려면 기초를 제대로 알아야 합니다.',
-      footer: 'Connect AI LAB · AI CITY BUILDERS',
-      pageNumber: '29 / 43'
-    },
-    workbook: {
-      title: '에피소드 완성 점검 과제',
-      q1: 'Q1. 강화학습의 목표와 JEV의 역할',
-      a1: '시작부터 끝까지의 한 판을 「에피소드」라고 부르며, 목표는 누적 보상(Cumulative Reward)을 최대로 만드는 것입니다. JEV는 매 순간 줄글 대신 행동 확률을 계산하여 불필요한 토큰 낭비 없이 최고 보상으로 직행하도록 돕습니다.',
-      refText: '[원본 근거: 깜짝라이브_챕터3.pdf p.23, p.29]',
-      q2: 'Q2. 나의 액션 플랜 필기 노트',
-      a2: '회사마다 환경이 다르면 가상 세계(시뮬레이터)도 달라야 합니다. 우리 비즈니스의 보상 함수를 먼저 정의합니다.',
-      footer: 'Connect AI LAB · AI CITY BUILDERS',
-      pageNumber: '워크북 1 / 4'
-    }
-  }
-};
-
-const STORAGE_KEY_LIBRARY = 'kodari_ebook_library_books';
-
-function getStoredLibrary() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_LIBRARY);
-    if (raw) {
-      let parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        // 기존 책 중 최신본 교체
-        parsed = parsed.map(b => {
-          if (b.youtubeVideoId === 'ERQArI7K-Jw' || (b.sourceRef && b.sourceRef.includes('ERQArI7K-Jw'))) return SEEDANCE_EBOOK;
-          if (b.youtubeVideoId === '4NCXTWBxcN0' || (b.sourceRef && b.sourceRef.includes('4NCXTWBxcN0'))) return HERMES_EBOOK;
-          return b;
-        });
-        const hasSeedance = parsed.some(b => b.youtubeVideoId === 'ERQArI7K-Jw' || (b.sourceRef && b.sourceRef.includes('ERQArI7K-Jw')));
-        if (!hasSeedance) parsed = [SEEDANCE_EBOOK, ...parsed];
-        return parsed;
-      }
-    }
-  } catch (e) {}
-  return [SEEDANCE_EBOOK, HERMES_EBOOK, SAMPLE_BOOK];
-}
-
-// 대표님 기본 프리셋 자료 (최신 Seedance 영상 최상단 배치)
-const DEFAULT_PRESET_SOURCES = [
-  {
-    id: 'src_yt_seedance_official',
-    type: 'web',
-    title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
-    sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
-    author: 'Ai Lockup 지음 · 대표님 감수',
-    location: '유튜브 실전 강의 원본',
-    content: `[영상 출처: https://www.youtube.com/watch?v=ERQArI7K-Jw]
-Seedance 2.5 무료 무제한 롱폼 AI 비디오 생성기 실전 강의입니다.
-워터마크와 비용 한계를 극복하고 Text-to-Video와 Image-to-Video를 통해 1인 영상 제작 파이프라인을 구축하는 핵심 원리를 담고 있습니다.`,
-    status: 'verified',
-    isConflict: false
-  },
-  {
-    id: 'src_yt_hermes_official',
-    type: 'web',
-    title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-    sourceRef: 'https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s',
-    author: '단테랩스 (@dante-labs)',
-    location: '유튜브 실전 강의 원본 (172초 시점)',
-    content: `[영상 출처: https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s]
-단테랩스 공식 강의: Hermes 에이전트와 DeskRPG 3D 가상 오피스를 활용하여 나만의 AI 팀을 조직하고 자율 업무를 실행하는 실전 가이드입니다.
-1회성 챗봇 질문을 넘어, 직무별 AI 팀원들이 가상 공간에서 실시간 회의하고 칸반 카드를 해결하는 자율 실행형 AX 시스템 구축 원리를 담고 있습니다.`,
-    status: 'verified',
-    isConflict: false
-  },
-  {
-    id: 'src_pdf_1',
-    type: 'pdf',
-    title: '깜짝라이브_챕터3.pdf',
-    sourceRef: 'Desktop/철만이/시즌2 추석특별판/깜짝라이브_챕터3.pdf',
-    author: '정원석 (Connect AI LAB)',
-    location: 'p.1 ~ p.43 (주요: 1, 2, 11, 12, 23, 29쪽)',
-    content: `강화학습은 어떠한 상황을 보면 그 상황에 맞는 행동을 선택하게 되고, 그 행동 중에서 가장 좋은 행동들을 확률로서 나타낸다. 정답 하나를 고르는 것이 아니라 행동마다 확률이 붙는 것, 이것이 핵심입니다.`,
-    status: 'verified',
-    isConflict: false
-  }
-];
-
+// ============================================================================
+// 6. 메인 컴포넌트: StudyBookStudio (3대 모드 + 실시간 편집 + 테마 스위처)
+// ============================================================================
 export default function StudyBookStudio() {
-  const queryParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-  const initialStep = queryParams.get('step') ? parseInt(queryParams.get('step')) : 7; // 기본적으로 전자책 뷰어(7단계)로 바로 진입!
-  const initialStyle = queryParams.get('style') || 'A';
-  const initialPage = queryParams.get('page') || 'cover';
-  // 🚀 대표님 맞춤 모드: 'read' (기본 전자책 즉시 읽기) | 'library' (내 서재) | 'create' (새 링크 넣기) | 'studio' (고급 9단계 스튜디오 & JEV 실험실)
-  const initialMode = queryParams.get('mode') || (queryParams.get('step') && parseInt(queryParams.get('step')) !== 7 && parseInt(queryParams.get('step')) !== 9 ? 'studio' : 'read');
+  // 모드: 'youtube' | 'topic' | 'markdown'
+  const [activeTabMode, setActiveTabMode] = useState('youtube');
 
-  // 1. 학습책 프로젝트 상태
-  const [sources, setSources] = useState(DEFAULT_PRESET_SOURCES);
-  const [studioMode, setStudioMode] = useState(initialMode);
-  const [currentStep, setCurrentStep] = useState(initialStep);
-  const [selectedStyle, setSelectedStyle] = useState(initialStyle);
-  const [previewPageType, setPreviewPageType] = useState(initialPage);
-  const [jevEnabled, setJevEnabled] = useState(true);
-  const [showJevModal, setShowJevModal] = useState(queryParams.get('modal') === 'jev');
+  // 유튜브 모드 입력값
+  const [urlInput, setUrlInput] = useState('');
+  const [extraNotes, setExtraNotes] = useState('');
+  const [showNotesInput, setShowNotesInput] = useState(false);
 
-  // ✨ 전자책 도서관 (내 서재) 상태: 가장 최근 저장된 책을 첫 화면으로 즉시 로드!
-  const [libraryBooks, setLibraryBooks] = useState(getStoredLibrary);
-  const [customBook, setCustomBook] = useState(() => {
-    const lib = getStoredLibrary();
-    return (lib && lib.length > 0) ? lib[0] : HERMES_EBOOK;
-  });
-  const [activeBookMode, setActiveBookMode] = useState('custom');
+  // 자유 주제 모드 입력값
+  const [topicInput, setTopicInput] = useState('');
+  const [subtitleInput, setSubtitleInput] = useState('');
+  const [authorInput, setAuthorInput] = useState('대표님 기획 · 코다리 총괄부장 집필');
+  const [audienceInput, setAudienceInput] = useState('');
+
+  // 마크다운 모드 입력값
+  const [mdTitle, setMdTitle] = useState('');
+  const [mdAuthor, setMdAuthor] = useState('대표님 집필');
+  const [mdContent, setMdContent] = useState('');
+
+  // 상태 관리
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationMsg, setGenerationMsg] = useState('');
   const [toastMsg, setToastMsg] = useState('');
+  const [showLibraryModal, setShowLibraryModal] = useState(false);
 
+  // 실시간 인라인 편집 모드
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  // 2. 최상단 입력 탭 상태
-  const [activeInputTab, setActiveInputTab] = useState('url');
+  // 디자인 테마: 'tech' (블루) | 'amber' (골드) | 'emerald' (그린) | 'obsidian' (다크/인디고)
+  const [selectedTheme, setSelectedTheme] = useState('tech');
 
-  // URL 입력 상태
-  const [urlInput, setUrlInput] = useState('');
-  const [urlTitle, setUrlTitle] = useState('');
-  const [urlAuthor, setUrlAuthor] = useState('');
-  const [urlExtractedText, setUrlExtractedText] = useState('');
-  const [youtubeVideoId, setYoutubeVideoId] = useState(null);
+  // 저장된 도서관 로드
+  const [libraryBooks, setLibraryBooks] = useState(getStoredLibrary);
+  const [activeBook, setActiveBook] = useState(() => {
+    const lib = getStoredLibrary();
+    return lib && lib.length > 0 ? lib[0] : MASTER_BOOKS[0];
+  });
 
-  // 음성/영상 파일 상태
-  const [audioFile, setAudioFile] = useState(null);
-  const [audioUrl, setAudioUrl] = useState(null);
-  const [audioTitle, setAudioTitle] = useState('');
-  const [audioTimeTag, setAudioTimeTag] = useState('00:00');
-  const [audioTranscript, setAudioTranscript] = useState('');
-  const audioRef = useRef(null);
+  const topViewerRef = useRef(null);
 
-  // PDF/문서 파일 상태
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfTitle, setPdfTitle] = useState('');
-  const [pdfPageLoc, setPdfPageLoc] = useState('p.1');
-  const [pdfContent, setPdfContent] = useState('');
+  // 활성 책 변경 시 테마 동기화
+  useEffect(() => {
+    if (activeBook && activeBook.theme) {
+      setSelectedTheme(activeBook.theme);
+    }
+  }, [activeBook?.id]);
 
-  // 텍스트/메모 상태
-  const [textTitle, setTextTitle] = useState('');
-  const [textAuthor, setTextAuthor] = useState('');
-  const [textContent, setTextContent] = useState('');
-
-  // JEV 실시간 실험실 상태
-  const [jevPlaygroundInput, setJevPlaygroundInput] = useState('오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다');
-  const [jevPlaygroundResult, setJevPlaygroundResult] = useState(() => runJevInferenceEngine('오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다'));
-
-  // 에셋 경로 유틸
-  const getBaseAssetUrl = (path) => {
-    if (!path) return '';
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const base = import.meta.env.BASE_URL || '/';
-    return `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
-  };
-
-  // 토스트 메시지 표시 헬퍼
   const showToast = (msg) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 3000);
+    setTimeout(() => setToastMsg(''), 3500);
   };
 
-  // 📚 도서관에 책 저장/다운로드
-  const saveToLibrary = (bookToSave) => {
-    if (!bookToSave) return;
+  // 도서관에 저장
+  const saveBook = (bk) => {
     setLibraryBooks(prev => {
-      const filtered = prev.filter(b => b.id !== bookToSave.id);
-      const updated = [bookToSave, ...filtered];
+      const filtered = prev.filter(b => b.id !== bk.id && b.title !== bk.title);
+      const updated = [bk, ...filtered];
       try {
         localStorage.setItem(STORAGE_KEY_LIBRARY, JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
-    showToast(`📚 [${bookToSave.title}] 책이 '나의 전자책 도서관'에 안전하게 보관되었습니다!`);
   };
 
-  // 📚 도서관에서 책 삭제
-  const deleteFromLibrary = (bookId) => {
-    if (confirm('도서관에서 이 전자책을 삭제하시겠습니까?')) {
+  // 활성 책 업데이트 (편집 모드 시)
+  const updateActiveBookField = (path, value) => {
+    setActiveBook(prev => {
+      const updated = JSON.parse(JSON.stringify(prev));
+      const parts = path.split('.');
+      let cur = updated;
+      for (let i = 0; i < parts.length - 1; i++) {
+        cur = cur[parts[i]];
+      }
+      cur[parts[parts.length - 1]] = value;
+      return updated;
+    });
+  };
+
+  // 편집 내용 저장
+  const handleSaveEdits = () => {
+    saveBook(activeBook);
+    setIsEditMode(false);
+    showToast('💾 수정사항이 전자책에 완벽히 저장되었습니다!');
+  };
+
+  // 책 삭제
+  const deleteBook = (id) => {
+    if (confirm('이 전자책을 서재에서 삭제하시겠습니까?')) {
       setLibraryBooks(prev => {
-        const updated = prev.filter(b => b.id !== bookId);
+        const updated = prev.filter(b => b.id !== id);
         try {
           localStorage.setItem(STORAGE_KEY_LIBRARY, JSON.stringify(updated));
         } catch (e) {}
         return updated;
       });
-      if (customBook && customBook.id === bookId) {
-        setCustomBook(null);
-        setActiveBookMode('sample');
+      if (activeBook.id === id) {
+        setActiveBook(MASTER_BOOKS[0]);
       }
-      showToast('🗑️ 도서관에서 책이 삭제되었습니다.');
+      showToast('🗑️ 서재에서 전자책이 삭제되었습니다.');
     }
   };
 
-  // 🚀 전자책 즉시 생성 핸들러 (링크 입력 시 호출)
-  const generateEbookNow = (newSource) => {
-    setIsGenerating(true);
-    setGenerationMsg('🚀 링크 URL 분석 및 고화질 이미지 조판 중...');
-
-    setTimeout(() => {
-      const generated = buildEbookFromSource(newSource);
-      setCustomBook(generated);
-      setActiveBookMode('custom');
-      
-      // ✨ 생성과 동시에 '전자책 도서관'으로 자동 보관(다운로드)
-      saveToLibrary(generated);
-
-      // 📚 대표님 요청: 링크 넣고 완성된 진짜 전자책(이북)으로 직행!
-      setCurrentStep(7);
-      setStudioMode('read');
-      setIsGenerating(false);
-      showToast('📖 링크 분석 완료! 1개념 1페이지 전자책(이북)이 완성되었습니다.');
-    }, 700);
-  };
-
-  // 3. URL 입력 처리 (비동기 메타데이터 자동 추출 탑재)
-  const handleUrlSubmit = async (e) => {
-    e.preventDefault();
+  // 1. 유튜브 URL 제출 핸들러
+  const handleYoutubeSubmit = async (e) => {
+    if (e) e.preventDefault();
     const targetUrl = urlInput.trim();
     if (!targetUrl) {
-      alert('웹페이지 또는 유튜브 URL을 입력해 주세요.');
+      alert('유튜브 영상 링크를 입력해 주세요.');
       return;
     }
 
     setIsGenerating(true);
-    setGenerationMsg('🔍 유튜브/웹 메타데이터 및 고화질 썸네일 실시간 분석 중...');
+    setGenerationMsg('🔍 유튜브 강의 메타데이터 및 썸네일 분석 중...');
 
-    const ytMatch = extractYoutubeId(targetUrl);
-    const isSeedance = ytMatch === 'ERQArI7K-Jw' || targetUrl.includes('ERQArI7K-Jw');
-    const isHermes = ytMatch === '4NCXTWBxcN0' || targetUrl.includes('4NCXTWBxcN0');
+    const ytId = extractYoutubeId(targetUrl);
+    const matchedMaster = MASTER_BOOKS.find(b => b.youtubeId === ytId || targetUrl.includes(b.youtubeId));
 
-    if (isSeedance) {
-      setYoutubeVideoId('ERQArI7K-Jw');
-      const newSrc = {
-        id: 'src_yt_seedance_official',
-        type: 'web',
-        title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
-        sourceRef: targetUrl,
-        author: 'Ai Lockup 지음 · 대표님 감수',
-        location: '유튜브 실전 강의 원본',
-        content: `[영상 출처: ${targetUrl}]\nSeedance 2.5 무료 무제한 롱폼 AI 비디오 생성기 실전 강의입니다.`,
-        status: 'verified',
-        isConflict: false
-      };
-
-      setSources(prev => [newSrc, ...prev.filter(s => s.id !== newSrc.id)]);
-      setUrlInput('');
-      setUrlTitle('');
-      setUrlAuthor('');
-      setUrlExtractedText('');
-
+    if (matchedMaster) {
       setTimeout(() => {
-        setCustomBook(SEEDANCE_EBOOK);
-        setActiveBookMode('custom');
-        saveToLibrary(SEEDANCE_EBOOK);
-        setCurrentStep(7);
-        setStudioMode('read');
-        setIsGenerating(false);
-        showToast('📖 대표님 최신 영상(Seedance 2.5)의 전자책이 완벽하게 조판되었습니다!');
+        setGenerationMsg('📑 핵심 챕터 5페이지 완벽 조판 완료!');
+        setTimeout(() => {
+          const withTheme = { ...matchedMaster, theme: selectedTheme };
+          setActiveBook(withTheme);
+          saveBook(withTheme);
+          setIsGenerating(false);
+          setUrlInput('');
+          setExtraNotes('');
+          setShowNotesInput(false);
+          showToast(`📖 [${matchedMaster.title.slice(0, 16)}...] 전자책이 열렸습니다!`);
+          topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
       }, 400);
       return;
     }
 
-    if (isHermes) {
-      setYoutubeVideoId('4NCXTWBxcN0');
-      const newSrc = {
-        id: 'src_yt_hermes_official',
-        type: 'web',
-        title: '나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG',
-        sourceRef: targetUrl,
-        author: '단테랩스 (@dante-labs) 지음 · 대표님 감수',
-        location: '유튜브 실전 강의 원본 (172초 시점)',
-        content: `[영상 출처: ${targetUrl}]\n단테랩스 공식 강의: Hermes 에이전트와 DeskRPG 3D 가상 오피스를 활용하여 나만의 AI 팀을 조직하고 자율 업무를 실행하는 실전 가이드입니다.`,
-        status: 'verified',
-        isConflict: false
-      };
-
-      setSources(prev => [newSrc, ...prev.filter(s => s.id !== newSrc.id)]);
-      setUrlInput('');
-      setUrlTitle('');
-      setUrlAuthor('');
-      setUrlExtractedText('');
-
-      setTimeout(() => {
-        setCustomBook(HERMES_EBOOK);
-        setActiveBookMode('custom');
-        saveToLibrary(HERMES_EBOOK);
-        setCurrentStep(7);
-        setStudioMode('read');
-        setIsGenerating(false);
-        showToast('📖 대표님 링크(Hermes × DeskRPG)의 전자책이 완벽하게 조판되었습니다!');
-      }, 400);
-      return;
-    }
-
-    let meta = { title: urlTitle, author: urlAuthor, thumbnailUrl: null };
-    if (ytMatch) {
-      meta = await fetchYoutubeMetadata(targetUrl);
-      if (urlTitle.trim()) meta.title = urlTitle;
-      if (urlAuthor.trim()) meta.author = urlAuthor;
-    }
-
-    let newSrc;
-
-    if (ytMatch) {
-      setYoutubeVideoId(ytMatch);
-      const finalYtTitle = meta.title || `유튜브 강의 영상 (${ytMatch})`;
-      const finalYtAuthor = meta.author || 'YouTube 크리에이터';
-      const defaultYtContent = urlExtractedText || `[유튜브 영상 URL: ${targetUrl}]\n${finalYtTitle} 강의를 바탕으로 핵심 원리와 실전 적용 워크북을 1개념 1페이지 전자책으로 조판합니다.`;
+    try {
+      const meta = await fetchYoutubeMetadata(targetUrl);
+      setGenerationMsg('🧠 강의 내용 분석 및 5페이지 출판 전자책 조판 중...');
       
-      newSrc = {
-        id: `src_yt_${Date.now()}`,
-        type: 'web',
-        title: finalYtTitle,
-        sourceRef: targetUrl,
-        author: finalYtAuthor,
-        location: '영상 전체',
-        content: defaultYtContent,
-        status: 'verified',
-        isConflict: false
-      };
-    } else {
-      let domain = '웹페이지';
-      try {
-        domain = new URL(targetUrl).hostname;
-      } catch (err) {}
-
-      const defaultWebTitle = urlTitle || `[${domain}] 핵심 기술 리포트`;
-      const defaultWebContent = urlExtractedText || `[웹 문서 URL: ${targetUrl}]\n원문 분석 완료. 입력된 웹 링크의 핵심 아이디어와 인사이트를 바탕으로 A4 1개념 1페이지 학습책을 조판합니다.`;
-
-      newSrc = {
-        id: `src_web_${Date.now()}`,
-        type: 'web',
-        title: defaultWebTitle,
-        sourceRef: targetUrl,
-        author: urlAuthor || domain,
-        location: 'URL 원문',
-        content: defaultWebContent,
-        status: 'verified',
-        isConflict: false
-      };
-    }
-
-    setSources(prev => [newSrc, ...prev]);
-    setUrlInput('');
-    setUrlTitle('');
-    setUrlAuthor('');
-    setUrlExtractedText('');
-
-    generateEbookNow(newSrc);
-  };
-
-  // 4. 음성 파일 업로드
-  const handleAudioUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setAudioFile(file);
-    const objectUrl = URL.createObjectURL(file);
-    setAudioUrl(objectUrl);
-    setAudioTitle(file.name.replace(/\.[^/.]+$/, ''));
-  };
-
-  const handleAudioTimeCapture = () => {
-    if (audioRef.current) {
-      const sec = Math.floor(audioRef.current.currentTime);
-      const m = String(Math.floor(sec / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
-      setAudioTimeTag(`${m}:${s}`);
+      setTimeout(() => {
+        const newBook = buildIntelligentEbookFromYoutube(targetUrl, meta, extraNotes, selectedTheme);
+        setActiveBook(newBook);
+        saveBook(newBook);
+        setIsGenerating(false);
+        setUrlInput('');
+        setExtraNotes('');
+        setShowNotesInput(false);
+        showToast(`📖 [${newBook.title.slice(0, 16)}...] 전자책 조판이 완료되었습니다!`);
+        topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 600);
+    } catch (err) {
+      console.error(err);
+      setIsGenerating(false);
+      alert('유튜브 링크를 확인해 주세요.');
     }
   };
 
-  const handleAudioSubmit = (e) => {
-    e.preventDefault();
-    if (!audioFile && !audioTranscript) {
-      alert('음성 파일을 선택하거나 음성 녹취록/메모를 입력해 주세요.');
+  // 2. 자유 주제 제출 핸들러
+  const handleTopicSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (!topicInput.trim()) {
+      alert('책 제목이나 주제를 입력해 주세요.');
       return;
     }
 
-    const newSrc = {
-      id: `src_audio_${Date.now()}`,
-      type: 'media',
-      title: audioTitle || (audioFile ? audioFile.name : '음성 녹음 강의'),
-      sourceRef: audioFile ? audioFile.name : '사용자 음성 메모',
-      author: '대표님 녹음 / 강연자',
-      location: `타임스탬프 ${audioTimeTag}`,
-      content: audioTranscript || `[음성 파일: ${audioFile ? audioFile.name : '오디오'}]\n구간 위치: ${audioTimeTag}\n음성 강의 핵심 내용이 등록되었습니다.`,
-      status: 'verified',
-      isConflict: false
-    };
+    setIsGenerating(true);
+    setGenerationMsg('💡 주제 맞춤형 5페이지 전문 도서 기획 및 지능형 조판 중...');
 
-    setSources(prev => [newSrc, ...prev]);
-    setAudioTranscript('');
-    generateEbookNow(newSrc);
+    setTimeout(() => {
+      const newBook = buildIntelligentEbookFromTopic(topicInput, subtitleInput, authorInput, audienceInput, selectedTheme);
+      setActiveBook(newBook);
+      saveBook(newBook);
+      setIsGenerating(false);
+      setTopicInput('');
+      setSubtitleInput('');
+      setAudienceInput('');
+      showToast(`🎉 [${newBook.title.slice(0, 16)}...] 오리지널 기획 전자책 발행 완료!`);
+      topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 600);
   };
 
-  // 5. PDF 업로드
-  const handlePdfUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPdfFile(file);
-    setPdfTitle(file.name.replace(/\.[^/.]+$/, ''));
-
-    if (file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPdfContent(event.target?.result || '');
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const handlePdfSubmit = (e) => {
-    e.preventDefault();
-    if (!pdfFile && !pdfContent) {
-      alert('PDF/문서 파일을 선택하거나 내용을 입력해 주세요.');
+  // 3. 마크다운 제출 핸들러
+  const handleMarkdownSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (!mdTitle.trim() && !mdContent.trim()) {
+      alert('책 제목이나 원고 텍스트를 입력해 주세요.');
       return;
     }
 
-    const newSrc = {
-      id: `src_doc_${Date.now()}`,
-      type: 'pdf',
-      title: pdfTitle || (pdfFile ? pdfFile.name : '문서 자료'),
-      sourceRef: pdfFile ? pdfFile.name : '업로드 문서',
-      author: '문서 작성자',
-      location: pdfPageLoc || '전체',
-      content: pdfContent || `[문서 파일: ${pdfFile ? pdfFile.name : '문서'}]\n페이지 위치: ${pdfPageLoc}\n학습 텍스트가 등록되었습니다.`,
-      status: 'verified',
-      isConflict: false
-    };
+    setIsGenerating(true);
+    setGenerationMsg('📝 마크다운 원고를 5페이지 출판 도서 규격으로 정밀 조판 중...');
 
-    setSources(prev => [newSrc, ...prev]);
-    setPdfContent('');
-    generateEbookNow(newSrc);
+    setTimeout(() => {
+      const newBook = buildIntelligentEbookFromMarkdown(mdTitle, mdAuthor, mdContent, selectedTheme);
+      setActiveBook(newBook);
+      saveBook(newBook);
+      setIsGenerating(false);
+      setMdTitle('');
+      setMdContent('');
+      showToast(`🎉 [${newBook.title.slice(0, 16)}...] 마크다운 전자책 조판 완료!`);
+      topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 500);
   };
 
-  // 6. 직접 텍스트 붙여넣기
-  const handleTextSubmit = (e) => {
-    e.preventDefault();
-    if (!textContent.trim()) {
-      alert('내용을 입력해 주세요.');
-      return;
-    }
-
-    const newSrc = {
-      id: `src_text_${Date.now()}`,
-      type: 'text',
-      title: textTitle || '직접 작성한 메모·자막',
-      sourceRef: '직접 입력',
-      author: textAuthor || '대표님',
-      location: '1~2문단',
-      content: textContent,
-      status: 'verified',
-      isConflict: false
-    };
-
-    setSources(prev => [newSrc, ...prev]);
-    setTextTitle('');
-    setTextContent('');
-    generateEbookNow(newSrc);
+  // 샘플 영상 원클릭 즉시 선택
+  const handleSelectSample = (sampleBook) => {
+    const withTheme = { ...sampleBook, theme: selectedTheme };
+    setActiveBook(withTheme);
+    saveBook(withTheme);
+    showToast(`📖 [${sampleBook.title.slice(0, 16)}...] 전자책을 불러왔습니다!`);
+    topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // 소스 삭제
-  const handleDeleteSource = (id) => {
-    if (confirm('해당 자료를 삭제하시겠습니까?')) {
-      setSources(prev => prev.filter(s => s.id !== id));
-      if (customBook && customBook.sourceId === id) {
-        setCustomBook(null);
-        setActiveBookMode('sample');
-      }
-    }
+  // 테마 변경 핸들러
+  const handleThemeChange = (newTheme) => {
+    setSelectedTheme(newTheme);
+    const updated = { ...activeBook, theme: newTheme };
+    setActiveBook(updated);
+    saveBook(updated);
+    showToast(`🎨 [${newTheme.toUpperCase()}] 테마 스타일이 적용되었습니다.`);
   };
-
-  // 현재 뷰어에서 렌더링할 전자책 결정
-  const activeBook = (activeBookMode === 'custom' && customBook) ? customBook : SAMPLE_BOOK;
 
   return (
-    <div className="studybook-studio">
-      {/* 토스트 알림 바 */}
+    <div className={`studybook-studio sb-theme-${selectedTheme}`}>
+      {/* 알림 토스트 */}
       {toastMsg && (
-        <div style={{
-          position: 'fixed',
-          top: 24,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: '#0f172a',
-          color: '#fff',
-          padding: '12px 24px',
-          borderRadius: 30,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-          zIndex: 999999,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          fontWeight: 700,
-          fontSize: 14,
-          animation: 'fadeIn 0.3s ease-in-out'
-        }}>
+        <div className="sb-toast-bar">
           <CheckCircle2 size={18} color="#38bdf8" />
           <span>{toastMsg}</span>
         </div>
       )}
 
-      {/* 1. 상단 글로벌 헤더 */}
-      <header className="sb-header">
-        <div className="sb-header-left">
-          <span className="sb-logo-badge">STUDIO</span>
+      {/* 1. 최상단 브랜드 헤더 */}
+      <header className="sb-simple-header">
+        <div className="sb-simple-header-brand">
+          <span className="sb-brand-icon">📚</span>
           <div>
-            <h1 className="sb-header-title">개인용 학습책·워크북 제작 스튜디오</h1>
-            <p className="sb-header-subtitle">
-              링크(URL)를 넣으면 ➔ 대표 이미지와 함께 1개념 1페이지 전자책·워크북으로 즉시 조판
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h1 className="sb-brand-title">코다리 AI 출판 스튜디오</h1>
+              <span className="sb-header-pro-badge">PRO v3.0</span>
+            </div>
+            <p className="sb-brand-desc">유튜브 · 자유 주제 · 마크다운 원고 ➔ 5초 만에 출판급 5페이지 A4 전자책 & PDF 즉시 발행</p>
           </div>
         </div>
 
-        <div className="sb-header-right">
-          {/* 📚 나의 전자책 도서관 바로가기 버튼 */}
+        <div className="sb-header-actions">
+          {/* 테마 스위처 */}
+          <div className="sb-theme-selector" title="출판 디자인 테마 변경">
+            <Palette size={14} />
+            <button
+              type="button"
+              className={`sb-theme-dot tech ${selectedTheme === 'tech' ? 'active' : ''}`}
+              onClick={() => handleThemeChange('tech')}
+              title="로열 블루 테크 테마"
+            />
+            <button
+              type="button"
+              className={`sb-theme-dot amber ${selectedTheme === 'amber' ? 'active' : ''}`}
+              onClick={() => handleThemeChange('amber')}
+              title="클래식 앰버 골드 테마"
+            />
+            <button
+              type="button"
+              className={`sb-theme-dot emerald ${selectedTheme === 'emerald' ? 'active' : ''}`}
+              onClick={() => handleThemeChange('emerald')}
+              title="에메랄드 포커스 테마"
+            />
+            <button
+              type="button"
+              className={`sb-theme-dot obsidian ${selectedTheme === 'obsidian' ? 'active' : ''}`}
+              onClick={() => handleThemeChange('obsidian')}
+              title="옵시디언 럭셔리 다크 테마"
+            />
+          </div>
+
+          {/* 인라인 편집 모드 토글 */}
           <button
-            className={`sb-btn sb-btn-sm ${studioMode === 'library' ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-            style={{ background: studioMode === 'library' ? '#16a34a' : '#fff', color: studioMode === 'library' ? '#fff' : '#16a34a', borderColor: '#16a34a', fontWeight: 800 }}
+            type="button"
+            className={`sb-btn-edit-toggle ${isEditMode ? 'active' : ''}`}
             onClick={() => {
-              setStudioMode('library');
-              setCurrentStep(9);
+              if (isEditMode) {
+                handleSaveEdits();
+              } else {
+                setIsEditMode(true);
+                showToast('✏️ 실시간 편집 모드가 켜졌습니다. 텍스트를 직접 수정하세요!');
+              }
             }}
+            title="전자책 내용 직접 수정"
           >
-            <Library size={15} /> 📚 전자책 도서관 ({libraryBooks.length}권)
+            {isEditMode ? <Save size={14} /> : <Edit3 size={14} />}
+            <span>{isEditMode ? '수정 완료' : '내용 수정'}</span>
           </button>
 
-          {/* 📥 PDF 다이렉트 다운로드 버튼 */}
           <button
-            className="sb-btn sb-btn-primary sb-btn-sm"
-            style={{ background: '#0284c7', fontWeight: 900 }}
+            className="sb-btn-pdf-hero"
             onClick={() => downloadEbookAsPdf(activeBook, showToast)}
-            title="고화질 A4 전자책 PDF 파일 즉시 다운로드"
+            title="현재 열람 중인 전자책을 고화질 PDF 파일로 다운로드합니다"
           >
-            <Download size={15} /> 📥 PDF 다운로드
-          </button>
-
-          {/* 🖨️ A4 PDF 인쇄 / 출력 버튼 (웹 UI 찌꺼기 100% 제거 전용창) */}
-          <button
-            className="sb-btn sb-btn-primary sb-btn-sm"
-            style={{ background: '#111', fontWeight: 800 }}
-            onClick={() => printEbookCleanly(activeBook)}
-            title="웹 UI 없이 순수 A4 전자책만 PDF로 저장하거나 인쇄"
-          >
-            <Printer size={15} /> 🖨️ A4 인쇄 / PDF 저장
+            <Download size={15} />
+            <span>📥 PDF 다운로드</span>
           </button>
 
           <button
-            className={`sb-btn sb-btn-sm ${jevEnabled ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-            style={{ background: jevEnabled ? '#b45309' : '#fff', color: jevEnabled ? '#fff' : '#111' }}
-            onClick={() => setJevEnabled(!jevEnabled)}
-            title="JEV 독립 엔진 토글"
+            className="sb-btn-print-sub"
+            onClick={() => printEbookCleanly(activeBook, selectedTheme)}
+            title="웹 UI 없이 순수 A4 전자책만 PDF로 저장하거나 인쇄합니다"
           >
-            <Zap size={14} /> JEV: {jevEnabled ? 'ON' : 'OFF'}
+            <Printer size={14} />
+            <span>🖨️ A4 인쇄창</span>
+          </button>
+
+          <button
+            className="sb-btn-library-sub"
+            onClick={() => setShowLibraryModal(true)}
+            title="내가 만든 전자책 서재 목록을 엽니다"
+          >
+            <Library size={14} />
+            <span>📚 서재 ({libraryBooks.length})</span>
           </button>
         </div>
       </header>
 
-      {/* 🚀 대표님 맞춤 4대 모드 셀렉터 (원클릭 뷰어 전환) */}
-      <div className="sb-mode-selector-bar" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: '#ffffff',
-        padding: '12px 16px',
-        borderRadius: 12,
-        marginBottom: 16,
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-        flexWrap: 'wrap',
-        gap: 10
-      }}>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* 2. 핵심 3대 생성 모드 섹션 */}
+      <section className="sb-one-line-hero">
+        {/* 생성 모드 탭 바 */}
+        <div className="sb-mode-tab-bar">
           <button
             type="button"
-            className="sb-btn"
-            style={{
-              background: studioMode === 'read' ? '#0284c7' : '#f8fafc',
-              color: studioMode === 'read' ? '#ffffff' : '#334155',
-              fontWeight: 800,
-              fontSize: 14,
-              padding: '9px 18px',
-              borderRadius: 8,
-              border: studioMode === 'read' ? 'none' : '1px solid #cbd5e1',
-              boxShadow: studioMode === 'read' ? '0 4px 12px rgba(2, 132, 199, 0.3)' : 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setStudioMode('read');
-              setCurrentStep(7);
-            }}
+            className={`sb-mode-tab-btn ${activeTabMode === 'youtube' ? 'active' : ''}`}
+            onClick={() => setActiveTabMode('youtube')}
           >
-            <BookOpen size={16} /> 📖 전자책 즉시 읽기 (뷰어)
+            <Video size={16} />
+            <span>유튜브 링크로 만들기</span>
           </button>
-
           <button
             type="button"
-            className="sb-btn"
-            style={{
-              background: studioMode === 'library' ? '#16a34a' : '#f8fafc',
-              color: studioMode === 'library' ? '#ffffff' : '#334155',
-              fontWeight: 800,
-              fontSize: 14,
-              padding: '9px 18px',
-              borderRadius: 8,
-              border: studioMode === 'library' ? 'none' : '1px solid #cbd5e1',
-              boxShadow: studioMode === 'library' ? '0 4px 12px rgba(22, 163, 74, 0.3)' : 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setStudioMode('library');
-              setCurrentStep(9);
-            }}
+            className={`sb-mode-tab-btn ${activeTabMode === 'topic' ? 'active' : ''}`}
+            onClick={() => setActiveTabMode('topic')}
           >
-            <Library size={16} /> 📚 내 서재 도서관 ({libraryBooks.length}권)
+            <Lightbulb size={16} />
+            <span>자유 주제 / 1초 기획</span>
           </button>
-
           <button
             type="button"
-            className="sb-btn"
-            style={{
-              background: studioMode === 'create' ? '#f59e0b' : '#f8fafc',
-              color: studioMode === 'create' ? '#ffffff' : '#334155',
-              fontWeight: 800,
-              fontSize: 14,
-              padding: '9px 18px',
-              borderRadius: 8,
-              border: studioMode === 'create' ? 'none' : '1px solid #cbd5e1',
-              boxShadow: studioMode === 'create' ? '0 4px 12px rgba(245, 158, 11, 0.3)' : 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setStudioMode('create');
-            }}
+            className={`sb-mode-tab-btn ${activeTabMode === 'markdown' ? 'active' : ''}`}
+            onClick={() => setActiveTabMode('markdown')}
           >
-            <Plus size={16} /> ➕ 새 링크로 책 만들기
+            <FileCode size={16} />
+            <span>마크다운 / 메모 붙여넣기</span>
           </button>
         </div>
 
-        <div>
-          <button
-            type="button"
-            className="sb-btn sb-btn-outline sb-btn-sm"
-            style={{
-              fontSize: 12,
-              color: studioMode === 'studio' ? '#b45309' : '#64748b',
-              borderColor: studioMode === 'studio' ? '#b45309' : '#cbd5e1',
-              background: studioMode === 'studio' ? '#fef3c7' : '#fff'
-            }}
-            onClick={() => {
-              const next = studioMode === 'studio' ? 'read' : 'studio';
-              setStudioMode(next);
-              if (next === 'studio') setCurrentStep(1);
-              else setCurrentStep(7);
-            }}
-          >
-            <Zap size={13} /> {studioMode === 'studio' ? '✖️ 스튜디오 닫고 책 읽기' : '🔬 9단계 제작실 & JEV 판정실'}
-          </button>
-        </div>
-      </div>
-
-      {/* ==========================================================================
-          🚀 최우선 배치: [학습 자료 즉시 투입기] (create 모드일 때만 노출)
-          ========================================================================== */}
-      {studioMode === 'create' && (
-      <section className="sb-hero-dropzone-card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: '#0369a1' }}>
-              📥 지금 학습할 링크(URL)나 자료를 넣어주세요
-            </h2>
-            <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#64748b' }}>
-              유튜브 링크나 블로그 URL을 넣으면 <strong>썸네일 이미지와 함께 전자책이 만들어져 도서관으로 쏙 들어갑니다.</strong>
-            </p>
-          </div>
-          <span className="sb-status-pill approved" style={{ background: '#0284c7', color: '#fff' }}>
-            등록된 자료: {sources.length}건
-          </span>
-        </div>
-
-        {/* 4대 입력 방식 탭 */}
-        <div className="sb-dropzone-tabs">
-          <button
-            className={`sb-tab-btn ${activeInputTab === 'url' ? 'active' : ''}`}
-            onClick={() => setActiveInputTab('url')}
-          >
-            <Globe size={16} /> 1) 웹·유튜브 링크 (URL) ⭐
-          </button>
-          <button
-            className={`sb-tab-btn ${activeInputTab === 'audio' ? 'active' : ''}`}
-            onClick={() => setActiveInputTab('audio')}
-          >
-            <Music size={16} /> 2) 음성·영상 파일 (재생/태깅)
-          </button>
-          <button
-            className={`sb-tab-btn ${activeInputTab === 'pdf' ? 'active' : ''}`}
-            onClick={() => setActiveInputTab('pdf')}
-          >
-            <Upload size={16} /> 3) PDF·문서 파일 업로드
-          </button>
-          <button
-            className={`sb-tab-btn ${activeInputTab === 'text' ? 'active' : ''}`}
-            onClick={() => setActiveInputTab('text')}
-          >
-            <FileText size={16} /> 4) 글·자막 직접 붙여넣기
-          </button>
-        </div>
-
-        {/* 1) 웹/유튜브 링크 입력창 */}
-        {activeInputTab === 'url' && (
-          <form onSubmit={handleUrlSubmit} className="sb-tab-content-box">
-            {/* ⚡ 대표님 전용 원클릭 빠른 실행 프리셋 바 */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8,
-              padding: '10px 14px',
-              background: '#f0f9ff',
-              borderRadius: 8,
-              border: '1px solid #bae6fd'
-            }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#0369a1' }}>⚡ 대표님 추천 영상 1초 전자책 생성:</div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-sm"
-                  style={{ background: '#0284c7', color: '#fff', fontWeight: 800, fontSize: 12, padding: '6px 12px' }}
-                  onClick={() => {
-                    setUrlInput('https://www.youtube.com/watch?v=ERQArI7K-Jw');
-                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
-                    setUrlAuthor('Ai Lockup');
-                    const seedanceSrc = {
-                      id: 'src_yt_seedance',
-                      type: 'web',
-                      title: '무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video',
-                      sourceRef: 'https://www.youtube.com/watch?v=ERQArI7K-Jw',
-                      author: 'Ai Lockup',
-                      location: '유튜브 실전 영상',
-                      content: 'Seedance 2.5 텍스트·이미지 기반 무료 무제한 롱폼 AI 비디오 생성 실전 강의입니다.',
-                      status: 'verified',
-                      isConflict: false
-                    };
-                    generateEbookNow(seedanceSrc);
-                  }}
-                >
-                  🎬 [최신] Seedance 2.5 AI 영상 생성기 책 만들기
-                </button>
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-sm sb-btn-outline"
-                  style={{ background: '#fff', color: '#0284c7', fontWeight: 700, fontSize: 12, padding: '6px 12px', borderColor: '#bae6fd' }}
-                  onClick={() => {
-                    setUrlInput('https://www.youtube.com/watch?v=4NCXTWBxcN0&t=172s');
-                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
-                    setUrlAuthor('단테랩스 (@dante-labs)');
-                    setCustomBook(HERMES_EBOOK);
-                    setActiveBookMode('custom');
-                    saveToLibrary(HERMES_EBOOK);
-                    setCurrentStep(7);
-                    setStudioMode('read');
-                    showToast('📖 단테랩스 Hermes × DeskRPG 전자책이 완벽히 조판되었습니다!');
-                  }}
-                >
-                  🎬 Hermes × DeskRPG AI 팀 만들기 책 보기
-                </button>
-              </div>
-            </div>
-
-            <div className="sb-form-group">
-              <label className="sb-label">🔗 웹페이지 주소 또는 유튜브 URL 붙여넣기</label>
-              <input
-                className="sb-input"
-                type="url"
-                value={urlInput}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setUrlInput(val);
-                  if (val.includes('ERQArI7K-Jw')) {
-                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
-                    setUrlAuthor('Ai Lockup');
-                  } else if (val.includes('4NCXTWBxcN0')) {
-                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
-                    setUrlAuthor('단테랩스 (@dante-labs)');
-                  }
-                }}
-                onPaste={(e) => {
-                  const pasted = e.clipboardData.getData('text');
-                  if (pasted.includes('ERQArI7K-Jw')) {
-                    setUrlTitle('무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5 Text/Image To Video');
-                    setUrlAuthor('Ai Lockup');
-                  } else if (pasted.includes('4NCXTWBxcN0')) {
-                    setUrlTitle('나만의 AI 팀 만들기: 설치부터 회의·업무 실행까지 | Hermes × DeskRPG');
-                    setUrlAuthor('단테랩스 (@dante-labs)');
-                  }
-                }}
-                placeholder="예: https://www.youtube.com/watch?v=ERQArI7K-Jw"
-                required
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div className="sb-form-group">
-                <label className="sb-label">책 제목 (유튜브 URL 넣으면 자동 감지)</label>
+        {/* 탭 1: 유튜브 모드 */}
+        {activeTabMode === 'youtube' && (
+          <form onSubmit={handleYoutubeSubmit} className="sb-url-form">
+            <div className="sb-input-wrapper">
+              <div className="sb-input-field-row">
+                <span className="sb-input-icon">📺</span>
                 <input
-                  className="sb-input"
-                  value={urlTitle}
-                  onChange={(e) => setUrlTitle(e.target.value)}
-                  placeholder="예: 무료 무제한 AI 영상 생성기 완전 정복 | Seedance 2.5"
+                  type="url"
+                  className="sb-url-input"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="유튜브 강의 링크 붙여넣기 (https://...)"
+                  required
                 />
               </div>
-              <div className="sb-form-group">
-                <label className="sb-label">출처 / 작성자 (자동 감지)</label>
-                <input
-                  className="sb-input"
-                  value={urlAuthor}
-                  onChange={(e) => setUrlAuthor(e.target.value)}
-                  placeholder="예: Ai Lockup"
-                />
-              </div>
-            </div>
-
-            <div className="sb-form-group">
-              <label className="sb-label">자막 또는 핵심 메모 (선택 입력)</label>
-              <textarea
-                className="sb-textarea"
-                rows={3}
-                value={urlExtractedText}
-                onChange={(e) => setUrlExtractedText(e.target.value)}
-                placeholder="영상의 자막이나 웹페이지에서 복사한 중요한 문장을 여기에 붙여넣으시면 전자책 본문에 직접 반영됩니다..."
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-              <span style={{ fontSize: 12, color: '#0369a1', fontWeight: 600 }}>
-                💡 링크를 등록하시면 고화질 이미지와 함께 1개념 1페이지 전자책으로 조판되어 <strong>[📚 전자책 도서관]으로 자동 다운로드(입고)</strong>됩니다.
-              </span>
-              <button 
-                type="submit" 
-                className="sb-btn sb-btn-accent sb-btn-lg"
-                style={{ background: '#0284c7', color: '#fff', fontWeight: 900, padding: '12px 20px' }}
+              <button
+                type="submit"
+                className="sb-submit-btn"
                 disabled={isGenerating}
               >
-                {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} 
-                {isGenerating ? '조판 및 도서관 다운로드 중...' : '⚡ 전자책 생성 & 도서관으로 다운로드'}
+                {isGenerating ? <RefreshCw size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                <span>{isGenerating ? '조판 중...' : '⚡ 1초만에 전자책 만들기'}</span>
               </button>
             </div>
-          </form>
-        )}
 
-        {/* 2) 음성 파일 업로드 */}
-        {activeInputTab === 'audio' && (
-          <form onSubmit={handleAudioSubmit} className="sb-tab-content-box">
-            <div className="sb-form-group">
-              <label className="sb-label">🎙️ 컴퓨터나 폰에 있는 음성·영상 파일 선택 (MP3, WAV, M4A, MP4)</label>
-              <input
-                type="file"
-                accept="audio/*,video/*"
-                onChange={handleAudioUpload}
-                style={{ padding: '10px 0' }}
-              />
+            {/* 자막/메모 선택 추가 토글 */}
+            <div className="sb-notes-toggle-bar">
+              <button
+                type="button"
+                className="sb-notes-toggle-btn"
+                onClick={() => setShowNotesInput(!showNotesInput)}
+              >
+                {showNotesInput ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                <span>➕ 자막이나 개인 메모가 있다면 추가 입력 (선택사항)</span>
+              </button>
             </div>
 
-            {audioUrl && (
-              <div className="sb-audio-player-card">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 13 }}>
-                    <Volume2 size={16} color="#0284c7" />
-                    <span>선택된 오디오: {audioTitle}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="sb-btn sb-btn-outline sb-btn-sm"
-                    onClick={handleAudioTimeCapture}
-                  >
-                    ⏱️ 현재 시점 태깅 ({audioTimeTag})
-                  </button>
-                </div>
-                <audio
-                  ref={audioRef}
-                  src={audioUrl}
-                  controls
-                  style={{ width: '100%', height: 40, marginTop: 8 }}
-                  onTimeUpdate={handleAudioTimeCapture}
+            {showNotesInput && (
+              <div className="sb-extra-notes-box">
+                <textarea
+                  className="sb-extra-textarea"
+                  rows={3}
+                  value={extraNotes}
+                  onChange={(e) => setExtraNotes(e.target.value)}
+                  placeholder="영상의 핵심 자막이나 추가하고 싶은 메모가 있다면 여기에 붙여넣으세요. 전자책 본문에 자연스럽게 통합 조판됩니다."
                 />
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-              <div className="sb-form-group">
-                <label className="sb-label">음성 파일명 / 강의명</label>
-                <input
-                  className="sb-input"
-                  value={audioTitle}
-                  onChange={(e) => setAudioTitle(e.target.value)}
-                  placeholder="예: 로컬AI_5강_강의녹음"
-                />
+            {/* 1초 원클릭 추천 인기 강의 칩 4종 */}
+            <div className="sb-preset-chips-container">
+              <div className="sb-preset-label">⚡ 원클릭 샘플 강의 즉시 열람:</div>
+              <div className="sb-preset-chips">
+                {MASTER_BOOKS.map((bk) => (
+                  <button
+                    key={bk.id}
+                    type="button"
+                    className={`sb-chip-btn ${activeBook.id === bk.id ? 'active' : ''}`}
+                    onClick={() => handleSelectSample(bk)}
+                  >
+                    <span>🎬 {bk.title.length > 22 ? bk.title.slice(0, 22) + '...' : bk.title}</span>
+                  </button>
+                ))}
               </div>
-              <div className="sb-form-group">
-                <label className="sb-label">출처 시간 위치</label>
+            </div>
+          </form>
+        )}
+
+        {/* 탭 2: 자유 주제 / 기획 모드 */}
+        {activeTabMode === 'topic' && (
+          <form onSubmit={handleTopicSubmit} className="sb-topic-form">
+            <div className="sb-topic-grid">
+              <div className="sb-topic-field-main">
+                <label className="sb-form-label">📖 전자책 주제 / 제목 (필수)</label>
+                <div className="sb-input-field-row">
+                  <span className="sb-input-icon">💡</span>
+                  <input
+                    type="text"
+                    className="sb-url-input"
+                    value={topicInput}
+                    onChange={(e) => setTopicInput(e.target.value)}
+                    placeholder="예: 1인 AI 대행 에이전시 첫 달 300만원 수익화 로드맵"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="sb-topic-field-sub">
+                <label className="sb-form-label">부제 / 핵심 설명 (선택)</label>
                 <input
-                  className="sb-input"
-                  value={audioTimeTag}
-                  onChange={(e) => setAudioTimeTag(e.target.value)}
-                  placeholder="예: 14:20"
+                  type="text"
+                  className="sb-text-input"
+                  value={subtitleInput}
+                  onChange={(e) => setSubtitleInput(e.target.value)}
+                  placeholder="예: 코딩 몰라도 바로 시작하는 n8n과 LLM 연동 실무 워크북"
                 />
               </div>
             </div>
 
-            <div className="sb-form-group">
-              <label className="sb-label">음성 내용 요약 또는 녹취록 붙여넣기</label>
-              <textarea
-                className="sb-textarea"
-                rows={3}
-                value={audioTranscript}
-                onChange={(e) => setAudioTranscript(e.target.value)}
-                placeholder="음성에서 나온 핵심 설명이나 받아쓰기한 내용을 적어주세요..."
-              />
+            <div className="sb-topic-row-extra">
+              <div style={{ flex: 1 }}>
+                <label className="sb-form-label">저자명</label>
+                <input
+                  type="text"
+                  className="sb-text-input"
+                  value={authorInput}
+                  onChange={(e) => setAuthorInput(e.target.value)}
+                />
+              </div>
+              <div style={{ flex: 1.5 }}>
+                <label className="sb-form-label">타깃 독자층</label>
+                <input
+                  type="text"
+                  className="sb-text-input"
+                  value={audienceInput}
+                  onChange={(e) => setAudienceInput(e.target.value)}
+                  placeholder="예: AI로 시간과 수익을 레버리지하려는 1인 기업가"
+                />
+              </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
-                <Plus size={16} /> 음성 자료 등록 및 전자책 만들기
+            <div className="sb-topic-bottom-bar">
+              <div className="sb-quick-ideas">
+                <span className="sb-quick-label">⚡ 빠른 아이디어:</span>
+                <button
+                  type="button"
+                  className="sb-quick-btn"
+                  onClick={() => {
+                    setTopicInput('1인 AI 에이전시 첫 달 300만원 수익화 로드맵');
+                    setSubtitleInput('코딩 몰라도 바로 시작하는 n8n 자동화와 LLM 외주 파이프라인');
+                  }}
+                >
+                  AI 에이전시 창업
+                </button>
+                <button
+                  type="button"
+                  className="sb-quick-btn"
+                  onClick={() => {
+                    setTopicInput('초보자를 위한 RAG & 강화학습 실전 입문서');
+                    setSubtitleInput('로컬 LLM과 언센서 모델로 나만의 1인 자비스 두뇌 만들기');
+                  }}
+                >
+                  RAG & 자비스 에이전트
+                </button>
+                <button
+                  type="button"
+                  className="sb-quick-btn"
+                  onClick={() => {
+                    setTopicInput('유튜브 숏폼 자동화 팩토리 완전 정복');
+                    setSubtitleInput('무료 AI 영상 툴과 대본 생성기로 매일 3편 양산하기');
+                  }}
+                >
+                  숏폼 양산 공장
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="sb-submit-btn"
+                disabled={isGenerating}
+              >
+                {isGenerating ? <RefreshCw size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                <span>{isGenerating ? '조판 중...' : '⚡ 1초만에 기획 전자책 조판'}</span>
               </button>
             </div>
           </form>
         )}
 
-        {/* 3) PDF/문서 업로드 */}
-        {activeInputTab === 'pdf' && (
-          <form onSubmit={handlePdfSubmit} className="sb-tab-content-box">
-            <div className="sb-form-group">
-              <label className="sb-label">📄 PDF 또는 텍스트 문서 선택 (.pdf, .txt, .md)</label>
-              <input
-                type="file"
-                accept=".pdf,.txt,.md"
-                onChange={handlePdfUpload}
-                style={{ padding: '10px 0' }}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-              <div className="sb-form-group">
-                <label className="sb-label">문서 제목</label>
+        {/* 탭 3: 마크다운 / 메모 모드 */}
+        {activeTabMode === 'markdown' && (
+          <form onSubmit={handleMarkdownSubmit} className="sb-markdown-form">
+            <div className="sb-topic-row-extra" style={{ marginBottom: 12 }}>
+              <div style={{ flex: 2 }}>
+                <label className="sb-form-label">전자책 제목</label>
                 <input
-                  className="sb-input"
-                  value={pdfTitle}
-                  onChange={(e) => setPdfTitle(e.target.value)}
-                  placeholder="예: 2026_인공지능_교재"
+                  type="text"
+                  className="sb-text-input"
+                  value={mdTitle}
+                  onChange={(e) => setMdTitle(e.target.value)}
+                  placeholder="예: 강화학습 하이퍼파라미터 완전 정복 복습노트"
+                  required
                 />
               </div>
-              <div className="sb-form-group">
-                <label className="sb-label">핵심 페이지 번호</label>
+              <div style={{ flex: 1 }}>
+                <label className="sb-form-label">저자명</label>
                 <input
-                  className="sb-input"
-                  value={pdfPageLoc}
-                  onChange={(e) => setPdfPageLoc(e.target.value)}
-                  placeholder="예: p.11 또는 p.23-29"
+                  type="text"
+                  className="sb-text-input"
+                  value={mdAuthor}
+                  onChange={(e) => setMdAuthor(e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="sb-form-group">
-              <label className="sb-label">문서 본문 내용 (또는 텍스트 복사 붙여넣기)</label>
+            <div style={{ marginBottom: 14 }}>
+              <label className="sb-form-label">마크다운 본문 또는 메모 텍스트 붙여넣기</label>
               <textarea
-                className="sb-textarea"
-                rows={4}
-                value={pdfContent}
-                onChange={(e) => setPdfContent(e.target.value)}
-                placeholder="PDF에서 복사한 중요한 문단이나 내용을 붙여넣으세요..."
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
-                <Plus size={16} /> 문서 등록 및 전자책 만들기
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* 4) 글 직접 붙여넣기 */}
-        {activeInputTab === 'text' && (
-          <form onSubmit={handleTextSubmit} className="sb-tab-content-box">
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
-              <div className="sb-form-group">
-                <label className="sb-label">글 제목</label>
-                <input
-                  className="sb-input"
-                  value={textTitle}
-                  onChange={(e) => setTextTitle(e.target.value)}
-                  placeholder="예: 대표님 아이디어 메모 & 회의록"
-                />
-              </div>
-              <div className="sb-form-group">
-                <label className="sb-label">작성자</label>
-                <input
-                  className="sb-input"
-                  value={textAuthor}
-                  onChange={(e) => setTextAuthor(e.target.value)}
-                  placeholder="예: 대표님"
-                />
-              </div>
-            </div>
-
-            <div className="sb-form-group">
-              <label className="sb-label">학습 내용 본문 (전체 붙여넣기)</label>
-              <textarea
-                className="sb-textarea"
+                className="sb-extra-textarea"
                 rows={5}
-                value={textContent}
-                onChange={(e) => setTextContent(e.target.value)}
-                placeholder="메모장, 카카오톡, 강의 자막 등 어떤 글이든 편하게 붙여넣으세요..."
+                value={mdContent}
+                onChange={(e) => setMdContent(e.target.value)}
+                placeholder="# 여기에 마크다운 텍스트나 메모를 자유롭게 붙여넣으세요.
+- 5페이지 출판 도서 규격으로 자동 분할 및 조판됩니다.
+- 표, 불릿 포인트, 핵심 강조 문구가 자동으로 인식됩니다."
                 required
               />
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button type="submit" className="sb-btn sb-btn-accent sb-btn-lg">
-                <Plus size={16} /> 글 등록 및 전자책 만들기
+              <button
+                type="submit"
+                className="sb-submit-btn"
+                disabled={isGenerating}
+              >
+                {isGenerating ? <RefreshCw size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                <span>{isGenerating ? '조판 중...' : '⚡ 1초만에 출판 전자책 변환'}</span>
               </button>
             </div>
           </form>
         )}
 
-        {/* 원클릭 전체 자동 빌드 버튼 */}
-        <div style={{ marginTop: 20, textAlign: 'center' }}>
-          <button
-            className="sb-btn sb-btn-primary"
-            style={{ padding: '16px 36px', fontSize: 16, background: '#0284c7', color: '#fff', fontWeight: 900, boxShadow: '0 8px 20px rgba(2,132,199,0.3)' }}
-            onClick={() => {
-              if (urlInput.trim()) {
-                handleUrlSubmit({ preventDefault: () => {} });
-                return;
-              }
-              if (sources.length === 0) {
-                alert('등록된 자료가 없습니다. 먼저 위 탭에서 링크나 파일을 넣어주세요.');
-                return;
-              }
-              const latest = sources[0];
-              generateEbookNow(latest);
-            }}
-          >
-            ⚡ {urlInput.trim() ? '입력된 새 링크로 전자책 즉시 생성 & 열람' : `위 ${sources.length}개 자료로 전자책 & 워크북 바로 생성하기`} <ArrowRight size={18} />
-          </button>
-        </div>
+        {/* 생성 중 안내 카드 */}
+        {isGenerating && (
+          <div className="sb-generating-card">
+            <div className="sb-spinner-pulse" />
+            <div style={{ fontWeight: 800, fontSize: 15, color: '#0369a1', marginTop: 10 }}>
+              {generationMsg}
+            </div>
+            <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>
+              1개념 1페이지 규격에 맞춰 표지, 핵심 원리, 구조 비교표, 복습 워크북을 조판 중입니다.
+            </div>
+          </div>
+        )}
       </section>
-      )}
 
-      {/* 로딩 인디케이터 오버레이 */}
-      {isGenerating && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          zIndex: 99999, color: '#fff'
-        }}>
-          <Loader2 size={48} className="animate-spin" color="#38bdf8" />
-          <h3 style={{ marginTop: 16, fontSize: 18, fontWeight: 800 }}>{generationMsg}</h3>
-          <p style={{ fontSize: 13, color: '#94a3b8' }}>대표 이미지 추출 및 '나의 전자책 도서관'으로 안전 저장 중...</p>
-        </div>
-      )}
+      {/* 3. 완성된 전자책 뷰어 섹션 */}
+      <section ref={topViewerRef} className="sb-viewer-section">
+        {/* 뷰어 상단 상태 & 다이렉트 컨트롤 바 */}
+        <div className="sb-viewer-control-bar">
+          <div className="sb-viewer-current-info">
+            <span className="sb-viewer-pill">{activeBook.badge}</span>
+            <h2 className="sb-viewer-book-title">{activeBook.title}</h2>
+          </div>
 
-      {/* 2. 스텝 네비게이션 바 (1~9단계): studio 모드에서만 표시 */}
-      {studioMode === 'studio' && (
-        <div className="sb-step-bar-container">
-          <div className="sb-step-bar">
-            {[
-              { num: 1, label: '1. 자료 수집' },
-              { num: 2, label: '2. 목적·분량' },
-              { num: 3, label: '3. 목차 편집' },
-              { num: 4, label: '4. 본문 초안' },
-              { num: 5, label: '5. 이미지 설계' },
-              { num: 6, label: '6. 워크북·정답' },
-              { num: 7, label: '7. 스타일 뷰어 (A·B·C) ⭐' },
-              { num: 8, label: '8. PDF 인쇄' },
-              { num: 9, label: '📚 전자책 도서관 (내 서재) 🔥' },
-            ].map(s => (
+          <div className="sb-viewer-action-btns">
+            {isEditMode ? (
               <button
-                key={s.num}
-                className={`sb-step-item ${currentStep === s.num ? 'active' : ''} ${currentStep > s.num ? 'completed' : ''}`}
-                onClick={() => setCurrentStep(s.num)}
+                className="sb-btn-save-action"
+                onClick={handleSaveEdits}
               >
-                <span className="sb-step-num">{s.num === 9 ? '📚' : s.num}</span>
-                <span>{s.label}</span>
+                <Save size={16} />
+                <strong>수정 완료 (저장)</strong>
               </button>
-            ))}
+            ) : (
+              <button
+                className="sb-btn-edit-action"
+                onClick={() => setIsEditMode(true)}
+              >
+                <Edit3 size={15} />
+                <span>내용 직접 수정</span>
+              </button>
+            )}
+
+            <button
+              className="sb-btn-download-action"
+              onClick={() => downloadEbookAsPdf(activeBook, showToast)}
+            >
+              <Download size={16} />
+              <strong>📥 A4 PDF 다운로드</strong>
+            </button>
+            <button
+              className="sb-btn-print-action"
+              onClick={() => printEbookCleanly(activeBook, selectedTheme)}
+            >
+              <Printer size={15} />
+              <span>🖨️ A4 인쇄창</span>
+            </button>
           </div>
         </div>
-      )}
 
-      {/* 3. 메인 작업 레이아웃 (사이드바 군더더기 제거로 시원한 풀와이드 뷰) */}
-      <div className="sb-workspace" style={{ display: 'block', width: '100%', maxWidth: 1100, margin: '0 auto' }}>
+        {/* 편집 모드 안내 배너 */}
+        {isEditMode && (
+          <div className="sb-edit-mode-banner">
+            <Edit3 size={16} color="#0284c7" />
+            <span>
+              <strong>✏️ 실시간 편집 모드 활성화:</strong> 아래 5개 페이지의 제목, 본문, 요약, 체크리스트를 클릭하여 바로 수정할 수 있습니다. 수정을 마치신 후 상단 <strong>[수정 완료 (저장)]</strong>을 누르세요.
+            </span>
+          </div>
+        )}
 
-        {/* 우측 메인 패널 (단계별 뷰) */}
-        <main className="sb-main-panel">
-          {/* ================= STEP 1: JEV 실험실 (스튜디오 모드에서만 노출) ================= */}
-          {studioMode === 'studio' && currentStep === 1 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>⚡ JEV 실시간 대화형 판정 실험실 (Live Inference Lab)</span>
-                <span className="sb-status-pill approved">실제 Softmax 알고리즘 가동 중</span>
-              </div>
-              <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', marginTop: -6 }}>
-                대표님이 입력하신 어떤 문장도 0.01초 만에 어휘 밀도 벡터와 Q-value 로짓을 계산하여 행동 확률 분포를 산출합니다.
-              </p>
-
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-outline sb-btn-sm"
-                  onClick={() => {
-                    const txt = '오늘 라이브 갑자기 켰습니다 배고파서 밥먹고 14년 만에 이야기하는데요 반갑습니다.';
-                    setJevPlaygroundInput(txt);
-                    setJevPlaygroundResult(runJevInferenceEngine(txt));
-                  }}
-                >
-                  🧪 테스트 1: 사담 구어체
-                </button>
-
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-outline sb-btn-sm"
-                  onClick={() => {
-                    const txt = '강화학습은 어떠한 상황(State)을 보면 그에 맞는 최적의 행동(Action)을 확률로 선택하며, 누적 보상(Cumulative Reward)을 최대화하는 과정입니다.';
-                    setJevPlaygroundInput(txt);
-                    setJevPlaygroundResult(runJevInferenceEngine(txt));
-                  }}
-                >
-                  🧪 테스트 2: 핵심 학술 정의
-                </button>
-
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-outline sb-btn-sm"
-                  onClick={() => {
-                    const txt = 'A 자료에서는 범용 챗GPT만으로 충분하다고 주장하지만, 실제 엔터프라이즈 환경에서는 질문과 액션이 완전히 달라 심각하게 상충되므로 주의해야 합니다.';
-                    setJevPlaygroundInput(txt);
-                    setJevPlaygroundResult(runJevInferenceEngine(txt));
-                  }}
-                >
-                  🧪 테스트 3: 출처 상충 의심
-                </button>
-              </div>
-
-              <textarea
-                className="sb-textarea"
-                rows={3}
-                value={jevPlaygroundInput}
-                onChange={(e) => setJevPlaygroundInput(e.target.value)}
-                placeholder="테스트할 문장을 입력하거나 위 버튼을 눌러보세요..."
-                style={{ fontSize: 13 }}
-              />
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                <button
-                  type="button"
-                  className="sb-btn sb-btn-primary sb-btn-sm"
-                  style={{ background: '#b45309' }}
-                  onClick={() => setJevPlaygroundResult(runJevInferenceEngine(jevPlaygroundInput))}
-                >
-                  <Zap size={13} /> ⚡ JEV 실시간 연산 실행
-                </button>
-                <span style={{ fontSize: 11, color: '#92400e' }}>
-                  연산 속도: 0.002초 · 토큰 비용: 0원 (로컬 연산)
-                </span>
-              </div>
-
-              {jevPlaygroundResult && (
-                <div style={{ marginTop: 14, padding: 14, background: '#faf9f5', borderRadius: 8, border: '1px solid #eae5de' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontWeight: 800, fontSize: 13 }}>최적 행동 판정:</span>
-                      <span className={`sb-status-pill ${jevPlaygroundResult.action === 'TRIM_DROP' ? 'request' : jevPlaygroundResult.action === 'KEEP_CORE' ? 'approved' : 'check'}`}>
-                        {jevPlaygroundResult.action === 'TRIM_DROP' ? '✂️ 자르면 좋다 (토큰 절감)' : jevPlaygroundResult.action === 'KEEP_CORE' ? '📖 남기는 게 좋다 (본문 핵심)' : '⚠️ 대표님 검수 필요 (상충/신뢰도 미달)'}
-                      </span>
-                    </div>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#b45309' }}>
-                      신뢰도: {jevPlaygroundResult.confidence}%
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '10px 0' }}>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
-                        <span>자르면 좋다 (Trim / 토큰 절감)</span>
-                        <strong>{jevPlaygroundResult.probabilities.trim}%</strong>
-                      </div>
-                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ width: `${jevPlaygroundResult.probabilities.trim}%`, height: '100%', background: '#f59e0b' }} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
-                        <span>남기는 게 좋다 (Keep / 1페이지 1개념)</span>
-                        <strong>{jevPlaygroundResult.probabilities.keep}%</strong>
-                      </div>
-                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ width: `${jevPlaygroundResult.probabilities.keep}%`, height: '100%', background: '#2563eb' }} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 2 }}>
-                        <span>대표님 검수 필요 (Review / 상충·불확실)</span>
-                        <strong>{jevPlaygroundResult.probabilities.review}%</strong>
-                      </div>
-                      <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ width: `${jevPlaygroundResult.probabilities.review}%`, height: '100%', background: '#dc2626' }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ fontSize: 11, color: '#4b5563', marginTop: 6 }}>
-                    💡 <strong>판정 근거:</strong> {jevPlaygroundResult.reason}
-                    {jevPlaygroundResult.tokenSavedEstimate > 0 && ` (예상 절감 토큰: 약 ${jevPlaygroundResult.tokenSavedEstimate} 토큰)`}
-                  </div>
-                </div>
+        {/* 5개 연속 A4 시트 (1개념 1페이지) */}
+        <div className="sb-book-preview-container">
+          
+          {/* ── 1. 표지 (Cover) ── */}
+          <article className="sb-page-sheet sb-cover-sheet">
+            <div className="sb-sheet-content center">
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-sheet-badge"
+                  value={activeBook.badge}
+                  onChange={(e) => updateActiveBookField('badge', e.target.value)}
+                />
+              ) : (
+                <span className="sb-sheet-badge">{activeBook.badge}</span>
               )}
 
-              <div style={{ marginTop: 24, textAlign: 'right' }}>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(7)}>
-                  책 전체 미리보기 & 스타일 비교로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-cover-h1"
+                  value={activeBook.title}
+                  onChange={(e) => updateActiveBookField('title', e.target.value)}
+                />
+              ) : (
+                <h1 className="sb-cover-h1">{activeBook.title}</h1>
+              )}
 
-          {/* ================= STEP 2: 목적 및 분량 ================= */}
-          {currentStep === 2 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>2단계: 책의 목적 및 분량 설계</span>
-              </div>
-              <p style={{ fontSize: 13, color: '#64748b' }}>
-                현재 선택된 전자책: <strong>{activeBook.title}</strong>
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, margin: '16px 0' }}>
-                <div style={{ padding: 16, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>총 조판 페이지</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#0369a1' }}>43 페이지</div>
-                  <div style={{ fontSize: 11, color: '#94a3b8' }}>1개념 1페이지 규격 준수</div>
-                </div>
-                <div style={{ padding: 16, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>핵심 챕터 수</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#0369a1' }}>4대 핵심 파트</div>
-                  <div style={{ fontSize: 11, color: '#94a3b8' }}>개념 + 도표 + 액션 + 워크북</div>
-                </div>
-                <div style={{ padding: 16, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>출처 및 이미지</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#16a34a' }}>100% 매칭</div>
-                  <div style={{ fontSize: 11, color: '#94a3b8' }}>{activeBook.isYoutube ? '유튜브 공식 썸네일' : '고화질 테크 일러스트'}</div>
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(7)}>
-                  전자책 실물 뷰어로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          )}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-cover-sub"
+                  value={activeBook.subtitle}
+                  onChange={(e) => updateActiveBookField('subtitle', e.target.value)}
+                />
+              ) : (
+                <p className="sb-cover-sub">{activeBook.subtitle}</p>
+              )}
 
-          {/* ================= STEP 3: 목차 편집 ================= */}
-          {currentStep === 3 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>3단계: 목차 구조 미리보기</span>
+              <div className="sb-cover-img-wrap">
+                <img
+                  src={activeBook.coverImage}
+                  alt={activeBook.title}
+                  className="sb-cover-img"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80';
+                  }}
+                />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '16px 0' }}>
-                <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#0284c7', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>1쪽</span>
-                  <div>
-                    <strong>[표지] {activeBook.pages.cover.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>저자: {activeBook.pages.cover.author}</div>
-                  </div>
-                </div>
-                <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#111', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '1장' : '11쪽'}</span>
-                  <div>
-                    <strong>[개념 설명] {activeBook.pages.concept.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>원문 브리핑 및 실전 셋업 매뉴얼</div>
-                  </div>
-                </div>
-                {activeBook.pages.promptGuide && (
-                  <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ background: '#7c3aed', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>2장</span>
-                    <div>
-                      <strong>[마스터 프롬프트] {activeBook.pages.promptGuide.title}</strong>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>캐릭터 앵커링 공식 & 5대 마스터 프롬프트 템플릿</div>
-                    </div>
-                  </div>
+
+              <div className="sb-cover-meta-info">
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    className="sb-edit-input"
+                    style={{ textAlign: 'center', fontWeight: 'bold' }}
+                    value={activeBook.author}
+                    onChange={(e) => updateActiveBookField('author', e.target.value)}
+                  />
+                ) : (
+                  <strong>{activeBook.author}</strong>
                 )}
-                <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#d97706', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '3장' : '29쪽'}</span>
-                  <div>
-                    <strong>[구조 분석표] {activeBook.pages.tableDiagram.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>{activeBook.pages.tableDiagram.storyboard ? '60초 실전 씬 콘티 & AI 툴 비교 매트릭스' : '행동 판단 확률 및 비교 매트릭스 도표'}</div>
-                  </div>
-                </div>
-                <div style={{ padding: 12, background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ background: '#16a34a', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 800, fontSize: 12 }}>{activeBook.pages.promptGuide ? '4장' : '워크북'}</span>
-                  <div>
-                    <strong>[실천 워크북] {activeBook.pages.workbook.title}</strong>
-                    <div style={{ fontSize: 12, color: '#64748b' }}>{activeBook.pages.workbook.checklist ? '포스트 프로덕션 3단계 & 6대 액션 체크리스트' : '복습 퀴즈, 정답 해설 및 액션 플랜 필기 노트'}</div>
-                  </div>
-                </div>
+                <span className="sb-dot">•</span>
+                <span>조판일: {activeBook.createdAt}</span>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <button className="sb-btn sb-btn-primary" onClick={() => setCurrentStep(7)}>
-                  전자책 실물 뷰어로 이동 <ArrowRight size={14} />
-                </button>
-              </div>
+
+              {activeBook.sourceRef && activeBook.sourceRef.startsWith('http') && (
+                <div style={{ marginTop: 14 }}>
+                  <a
+                    href={activeBook.sourceRef}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="sb-source-link-pill"
+                  >
+                    <ExternalLink size={13} />
+                    <span>유튜브 원본 영상 바로가기</span>
+                  </a>
+                </div>
+              )}
             </div>
-          )}
-
-          {/* ================= STEP 4, 5, 6 브리핑 ================= */}
-          {(currentStep === 4 || currentStep === 5 || currentStep === 6) && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>{currentStep === 4 ? '4단계: 본문 초안 검수' : currentStep === 5 ? '5단계: 이미지 설계표' : '6단계: 워크북 & 정답표'}</span>
-              </div>
-              <p style={{ fontSize: 13, color: '#64748b' }}>
-                대표님이 입력하신 링크에서 추출된 이미지와 콘텐츠가 <strong>7단계 전자책 뷰어</strong>에 완벽하게 조판되었습니다.
-              </p>
-              <div style={{ textAlign: 'center', padding: 20 }}>
-                <button className="sb-btn sb-btn-primary sb-btn-lg" onClick={() => setCurrentStep(7)}>
-                  🚀 7단계: 전자책 실물 뷰어에서 바로 확인하기 <ArrowRight size={16} />
-                </button>
-              </div>
+            <div className="sb-sheet-footer">
+              <span>공부방 스튜디오 · 개인 학습책</span>
+              <span>1 / 5 페이지 (표지)</span>
             </div>
-          )}
+          </article>
 
-          {/* ================= STEP 7: 책 전체 미리보기 & 스타일 비교 (A/B/C) ================= */}
-          {((studioMode === 'read' || studioMode === 'create') || (studioMode === 'studio' && currentStep === 7)) && (
-            <div className="sb-card">
-              {/* ✨ 뷰어 최상단: [출력] & [다운로드] & [도서관 보관] 컨트롤 바 */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '12px 18px',
-                background: '#0f172a',
-                color: '#fff',
-                borderRadius: 12,
-                marginBottom: 16,
-                flexWrap: 'wrap',
-                gap: 12
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <BookOpen size={20} color="#38bdf8" />
-                  <div>
-                    <span style={{ fontSize: 12, color: '#94a3b8' }}>현재 열람 중:</span>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: '#f8fafc' }}>{activeBook.title}</div>
-                  </div>
-                </div>
+          {/* ── 2. 개요 & 3줄 브리핑 ── */}
+          <article className="sb-page-sheet">
+            <div className="sb-sheet-header">
+              <span className="sb-eyebrow">Executive Summary</span>
+              <span className="sb-page-num">p. 02</span>
+            </div>
 
-                {/* 🖨️ 출력 & 📥 다운로드 핵심 버튼 그룹 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <button
-                    className="sb-btn sb-btn-sm"
-                    style={{ background: '#0284c7', color: '#ffffff', fontWeight: 900, padding: '8px 14px' }}
-                    onClick={() => downloadEbookAsPdf(activeBook, showToast)}
-                    title="A4 규격의 전자책 PDF 파일 즉시 다운로드"
-                  >
-                    <Download size={15} /> 📥 PDF 파일 다운로드 (.pdf)
-                  </button>
+            <div className="sb-sheet-content">
+              <h2 className="sb-sheet-title">강의 개요 & 30초 핵심 브리핑</h2>
 
-                  <button
-                    className="sb-btn sb-btn-sm"
-                    style={{ background: '#ffffff', color: '#0f172a', fontWeight: 900, padding: '8px 14px', border: '1px solid #cbd5e1' }}
-                    onClick={() => printEbookCleanly(activeBook)}
-                    title="웹 UI 찌꺼기 없이 순수 A4 전자책만 PDF로 저장하거나 인쇄"
-                  >
-                    <Printer size={15} /> 🖨️ A4 인쇄 / PDF 저장
-                  </button>
-
-                  <button
-                    className="sb-btn sb-btn-sm"
-                    style={{ background: '#16a34a', color: '#fff', fontWeight: 900, padding: '8px 14px' }}
-                    onClick={() => {
-                      saveToLibrary(activeBook);
-                      setStudioMode('library');
-                      setCurrentStep(9);
-                      showToast('📚 [전자책 도서관]으로 안전하게 다운로드(보관)되었습니다!');
-                    }}
-                    title="이 책을 나의 전자책 도서관 서재에 영구 보관하고 도서관으로 이동합니다"
-                  >
-                    <Bookmark size={15} /> 📚 전자책 도서관으로 보관(이동)
-                  </button>
-                </div>
-              </div>
-
-              {/* ✨ 도서 선택 툴바 (내가 넣은 링크 책 vs 샘플 책) */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '10px 14px',
-                background: '#e0f2fe',
-                borderRadius: 10,
-                border: '1px solid #bae6fd',
-                marginBottom: 14,
-                flexWrap: 'wrap',
-                gap: 10
-              }}>
-                <div style={{ fontSize: 13, color: '#0369a1', fontWeight: 800 }}>
-                  서재 목록:
-                </div>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <button
-                    className="sb-btn sb-btn-primary sb-btn-sm"
-                    style={{ background: '#0284c7', color: '#fff', fontWeight: 800 }}
-                    onClick={() => setStudioMode('create')}
-                  >
-                    <Plus size={14} /> ➕ 새 링크 넣기
-                  </button>
-                  
-                  {/* 📚 도서관에 보관된 모든 전자책 버튼 목록 (실제 제목으로 직접 전환) */}
-                  {libraryBooks.map((b) => {
-                    const isSelected = activeBook && (activeBook.id === b.id || activeBook.title === b.title);
-                    const shortTitle = b.title.length > 20 ? b.title.slice(0, 20) + '...' : b.title;
-                    return (
-                      <button
-                        key={b.id}
-                        className={`sb-btn sb-btn-sm ${isSelected ? 'sb-btn-primary' : 'sb-btn-outline'}`}
-                        style={{
-                          background: isSelected ? '#0284c7' : '#ffffff',
-                          color: isSelected ? '#ffffff' : '#0369a1',
-                          fontWeight: isSelected ? 800 : 600,
-                          borderColor: isSelected ? '#0284c7' : '#bae6fd'
-                        }}
-                        onClick={() => {
-                          setCustomBook(b);
-                          setActiveBookMode('custom');
-                        }}
-                        title={b.title}
-                      >
-                        📖 {shortTitle}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    className="sb-btn sb-btn-outline sb-btn-sm"
-                    style={{ borderColor: '#16a34a', color: '#16a34a', fontWeight: 700 }}
-                    onClick={() => {
-                      setStudioMode('library');
-                      setCurrentStep(9);
-                    }}
-                  >
-                    📚 도서관 관리 ({libraryBooks.length}권)
-                  </button>
-                </div>
-              </div>
-
-              {/* ✨ 연속 스크롤 전자책 (이북) 뷰어: 표지부터 워크북까지 한눈에 시원하게 열람 */}
-              <div className="sb-book-preview-container" style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '10px 0' }}>
-                
-                {/* ── 1. 표지 (Page 1) ── */}
-                <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
-                  <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>{activeBook.badge}</span>
-
-                    {/* 고화질 대표 이미지 */}
-                    <div className="sb-page-img-wrapper" style={{ margin: '20px 0' }}>
-                      <img
-                        src={getBaseAssetUrl(activeBook.coverImage)}
-                        alt={activeBook.title}
-                        className="sb-page-img"
-                        style={{
-                          width: '100%',
-                          maxHeight: 250,
-                          objectFit: 'cover',
-                          borderRadius: 8,
-                          boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
-                        }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = CURATED_THEME_IMAGES.ai;
-                        }}
-                      />
-                    </div>
-
-                    <h1 className="sb-page-h1" style={{ fontSize: 24, lineHeight: 1.3, color: '#0f172a' }}>
-                      {activeBook.pages.cover.title}
-                    </h1>
-                    <div className="sb-page-divider" style={{ margin: '14px auto', background: '#0f172a' }} />
-                    <div className="sb-page-subtitle" style={{ fontSize: 14, color: '#475569' }}>
-                      {activeBook.pages.cover.subtitle}
-                    </div>
-                    
-                    <div style={{ fontSize: 13, color: '#1e293b', marginTop: 12, fontWeight: 700 }}>
-                      {activeBook.pages.cover.author}
-                    </div>
-
-                    {activeBook.sourceRef && activeBook.sourceRef.startsWith('http') && (
-                      <div style={{ marginTop: 14 }}>
-                        <a
-                          href={activeBook.sourceRef}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            fontSize: 12,
-                            color: '#0284c7',
-                            textDecoration: 'none',
-                            padding: '4px 10px',
-                            background: '#f0f9ff',
-                            borderRadius: 6,
-                            border: '1px solid #bae6fd'
-                          }}
-                        >
-                          <ExternalLink size={12} /> 원본 링크 바로가기
-                        </a>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="sb-page-footer" style={{ marginTop: 40, color: '#64748b' }}>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.cover.footer}</span>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.cover.pageNumber || (activeBook.pages.promptGuide ? '1 / 5 페이지 (표지)' : '1 / 4 페이지 (표지)')}</span>
-                  </div>
-                </div>
-
-                {/* ── 2. 개념 설명 & 실전 셋업 (Page 2) ── */}
-                <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
-                  <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>제 1 장: 핵심 개념 & 세팅</span>
-                    <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
-                      {activeBook.pages.concept.title}
-                    </h1>
-
-                    <div className="sb-page-img-wrapper" style={{ margin: '16px 0' }}>
-                      <img
-                        src={getBaseAssetUrl(activeBook.conceptImage)}
-                        alt="개념 시각 도해"
-                        className="sb-page-img"
-                        style={{ maxHeight: 200, width: '100%', objectFit: 'cover', borderRadius: 6 }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = CURATED_THEME_IMAGES.tech;
-                        }}
-                      />
-                    </div>
-
-                    <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7 }}>
-                      {activeBook.pages.concept.body1}
-                    </p>
-
-                    <div className="sb-callout-gold" style={{ background: '#fef3c7', borderLeft: '4px solid #d97706', padding: '14px 18px', margin: '16px 0', borderRadius: '0 6px 6px 0' }}>
-                      <p style={{ color: '#0f172a', fontWeight: 700, margin: 0, fontSize: 14.5 }}>{activeBook.pages.concept.calloutGold}</p>
-                    </div>
-
-                    {/* 실전 단계별 스텝 카드 (있는 경우) */}
-                    {activeBook.pages.concept.stepCards && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '16px 0' }}>
-                        {activeBook.pages.concept.stepCards.map((sc, idx) => (
-                          <div key={idx} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '12px 16px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                              <span style={{ background: '#0284c7', color: '#fff', fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 4 }}>{sc.step}</span>
-                              <span style={{ fontSize: 11, color: '#d97706', fontWeight: 700 }}>⏱️ {sc.time}</span>
-                              <strong style={{ fontSize: 13.5, color: '#0f172a' }}>{sc.title}</strong>
-                            </div>
-                            <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{sc.desc}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7 }}>
-                      {activeBook.pages.concept.body2}
-                    </p>
-
-                    <div className="sb-callout-black" style={{ background: '#f1f5f9', borderLeft: '4px solid #0f172a', padding: '14px 18px', margin: '16px 0', borderRadius: '0 6px 6px 0' }}>
-                      <p style={{ color: '#0f172a', margin: 0, fontSize: 14 }}>{activeBook.pages.concept.calloutBlack}</p>
-                    </div>
-                  </div>
-
-                  <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.concept.footer}</span>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.concept.pageNumber || (activeBook.pages.promptGuide ? '2 / 5 페이지 (개념 설명)' : '2 / 4 페이지 (개념 설명)')}</span>
-                  </div>
-                </div>
-
-                {/* ── 3. 마스터 프롬프트 & 캐릭터 앵커링 (Page 3 - 있는 경우) ── */}
-                {activeBook.pages.promptGuide && (
-                  <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
-                    <div>
-                      <span className="sb-page-pill-badge" style={{ background: '#7c3aed', color: '#ffffff' }}>제 2 장: 마스터 프롬프트 & 앵커링</span>
-                      <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
-                        {activeBook.pages.promptGuide.title}
-                      </h1>
-
-                      <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7, margin: '14px 0' }}>
-                        {activeBook.pages.promptGuide.lead}
-                      </p>
-
-                      {/* 캐릭터 앵커링 3단계 워크플로우 */}
-                      {activeBook.pages.promptGuide.anchorWorkflow && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, margin: '14px 0' }}>
-                          {activeBook.pages.promptGuide.anchorWorkflow.map((wf, idx) => (
-                            <div key={idx} style={{ background: '#f5f3ff', borderLeft: '4px solid #7c3aed', borderRadius: '0 8px 8px 0', padding: '12px 16px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                                <span style={{ background: '#7c3aed', color: '#fff', fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 4 }}>{wf.tag}</span>
-                                <strong style={{ fontSize: 13.5, color: '#4c1d95' }}>{wf.title}</strong>
-                              </div>
-                              <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{wf.desc}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* 마스터 프롬프트 표준 템플릿 코드 박스 */}
-                      {activeBook.pages.promptGuide.promptTemplate && (
-                        <div style={{ margin: '16px 0' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1e1b4b', padding: '8px 14px', borderRadius: '8px 8px 0 0' }}>
-                            <span style={{ color: '#c7d2fe', fontSize: 12, fontWeight: 800 }}>📋 마스터 프롬프트 5대 표준 구조 (원문 공식 복사본)</span>
-                            <button
-                              className="sb-btn sb-btn-sm"
-                              style={{ background: '#4338ca', color: '#fff', fontSize: 11, padding: '2px 8px', borderRadius: 4 }}
-                              onClick={() => {
-                                navigator.clipboard.writeText(activeBook.pages.promptGuide.promptTemplate);
-                                showToast('📋 마스터 프롬프트가 클립보드에 복사되었습니다!');
-                              }}
-                            >
-                              프롬프트 복사
-                            </button>
-                          </div>
-                          <pre style={{
-                            background: '#0f172a',
-                            color: '#38bdf8',
-                            padding: 14,
-                            borderRadius: '0 0 8px 8px',
-                            fontSize: 12.5,
-                            lineHeight: 1.6,
-                            margin: 0,
-                            overflowX: 'auto',
-                            fontFamily: 'monospace',
-                            whiteSpace: 'pre-wrap'
-                          }}>
-                            {activeBook.pages.promptGuide.promptTemplate}
-                          </pre>
-                        </div>
-                      )}
-
-                      {/* 3대 스타일 프리셋 박스 */}
-                      {activeBook.pages.promptGuide.presets && (
-                        <div style={{ margin: '14px 0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14 }}>
-                          <div style={{ fontWeight: 800, fontSize: 13, color: '#0f172a', marginBottom: 8 }}>🎨 추천 3대 화풍(Style) 프리셋 프롬프트 키워드:</div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                            {activeBook.pages.promptGuide.presets.map((ps, idx) => (
-                              <div key={idx} style={{ fontSize: 12.5, color: '#334155' }}>
-                                <strong style={{ color: '#0284c7' }}>{ps.name}:</strong> <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: 4, fontSize: 11.5, color: '#0f172a' }}>{ps.code}</code>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {activeBook.pages.promptGuide.callout && (
-                        <div className="sb-callout-gold" style={{ background: '#fef3c7', borderLeft: '4px solid #d97706', padding: '12px 16px', margin: '14px 0', borderRadius: '0 6px 6px 0' }}>
-                          <p style={{ color: '#0f172a', fontWeight: 700, margin: 0, fontSize: 13.5 }}>{activeBook.pages.promptGuide.callout}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
-                      <span style={{ color: '#64748b' }}>{activeBook.pages.promptGuide.footer || activeBook.pages.concept.footer}</span>
-                      <span style={{ color: '#64748b' }}>{activeBook.pages.promptGuide.pageNumber || '3 / 5 페이지 (마스터 프롬프트 & 앵커링)'}</span>
-                    </div>
-                  </div>
+              <div className="sb-gold-callout">
+                {isEditMode ? (
+                  <textarea
+                    className="sb-edit-textarea"
+                    rows={2}
+                    value={activeBook.insight}
+                    onChange={(e) => updateActiveBookField('insight', e.target.value)}
+                  />
+                ) : (
+                  activeBook.insight
                 )}
-
-                {/* ── 4. 이미지 + 도표 및 씬 콘티 (Page 4) ── */}
-                <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
-                  <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#0284c7', color: '#ffffff' }}>
-                      {activeBook.pages.promptGuide ? '제 3 장: 씬 콘티 & 툴 정밀 비교' : '제 2 장: 구조 분석 및 비교'}
-                    </span>
-                    <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
-                      {activeBook.pages.tableDiagram.title}
-                    </h1>
-
-                    <div className="sb-page-img-wrapper" style={{ margin: '14px 0' }}>
-                      <img
-                        src={getBaseAssetUrl(activeBook.tableImage)}
-                        alt="구조 도해 이미지"
-                        className="sb-page-img"
-                        style={{ maxHeight: 180, width: '100%', objectFit: 'cover', borderRadius: 6 }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = CURATED_THEME_IMAGES.chart;
-                        }}
-                      />
-                    </div>
-
-                    <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7 }}>
-                      {activeBook.pages.tableDiagram.lead}
-                    </p>
-
-                    {/* 실전 4-씬 콘티표 (있는 경우) */}
-                    {activeBook.pages.tableDiagram.storyboard && (
-                      <div style={{ margin: '16px 0' }}>
-                        <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 8 }}>🎬 60초 AI 단편 영화 실전 씬 바이 씬(Scene-by-Scene) 콘티표:</div>
-                        <div style={{ overflowX: 'auto' }}>
-                          <table className="sb-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-                            <thead>
-                              <tr style={{ background: '#f1f5f9' }}>
-                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800, width: '22%' }}>씬 / 단계</th>
-                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>시각 연출 & 카메라 워크</th>
-                                <th style={{ padding: '8px 10px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>AI 음성 나레이션</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {activeBook.pages.tableDiagram.storyboard.map((sb, idx) => (
-                                <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                                  <td style={{ padding: '8px 10px' }}>
-                                    <div style={{ fontWeight: 800, color: '#0284c7' }}>{sb.scene}</div>
-                                    <span style={{ fontSize: 10.5, background: '#e0f2fe', color: '#0369a1', padding: '1px 5px', borderRadius: 3 }}>{sb.phase}</span>
-                                  </td>
-                                  <td style={{ padding: '8px 10px', color: '#334155', lineHeight: 1.5 }}>{sb.visual}</td>
-                                  <td style={{ padding: '8px 10px', color: '#0f172a', fontStyle: 'italic', lineHeight: 1.5 }}>{sb.narration}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* AI 영상 생성기 비교표 */}
-                    <div style={{ margin: '16px 0' }}>
-                      <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 8 }}>📊 주요 AI 영상 생성기 4사 실전 스펙 비교:</div>
-                      <div style={{ overflowX: 'auto' }}>
-                        <table className="sb-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                          <thead>
-                            <tr style={{ background: '#f8fafc' }}>
-                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>모델 / 플랫폼</th>
-                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>비용 / 크레딧</th>
-                              <th style={{ padding: '10px 14px', borderBottom: '2px solid #cbd5e1', color: '#0f172a', fontWeight: 800 }}>핵심 스펙 & 효용</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {activeBook.pages.tableDiagram.rows.map((row, idx) => (
-                              <tr key={idx} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                                <td style={{ padding: '10px 14px', color: '#0f172a' }}><strong style={{ color: '#0f172a' }}>{row.action}</strong></td>
-                                <td style={{ padding: '10px 14px' }}><strong style={{ color: '#0369a1', fontWeight: 800 }}>{row.prob}</strong></td>
-                                <td style={{ padding: '10px 14px', color: '#334155' }}>{row.effect}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                    <div className="sb-callout-black" style={{ background: '#f1f5f9', borderLeft: '4px solid #0f172a', padding: '14px 18px', margin: '16px 0', borderRadius: '0 6px 6px 0' }}>
-                      <p style={{ color: '#0f172a', margin: 0, fontSize: 13.5 }}>{activeBook.pages.tableDiagram.insight}</p>
-                    </div>
-                  </div>
-
-                  <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.tableDiagram.footer}</span>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.tableDiagram.pageNumber || (activeBook.pages.promptGuide ? '4 / 5 페이지 (구조 도표)' : '3 / 4 페이지 (구조 도표)')}</span>
-                  </div>
-                </div>
-
-                {/* ── 5. 워크북 및 정답 & 실천 체크리스트 (Page 5) ── */}
-                <div className="sb-page-sheet" style={{ margin: '0 auto', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', color: '#0f172a' }}>
-                  <div>
-                    <span className="sb-page-pill-badge" style={{ background: '#16a34a', color: '#ffffff' }}>
-                      {activeBook.pages.promptGuide ? '제 4 장: 영상 조립 & 복습 워크북' : '제 3 장: 복습 워크북 & 액션 플랜'}
-                    </span>
-                    <h1 className="sb-page-h1" style={{ fontSize: 21, marginTop: 14, color: '#0f172a' }}>
-                      {activeBook.pages.workbook.title}
-                    </h1>
-
-                    {activeBook.pages.workbook.lead && (
-                      <p className="sb-body-text" style={{ color: '#1e293b', fontSize: 14, lineHeight: 1.7, margin: '12px 0' }}>
-                        {activeBook.pages.workbook.lead}
-                      </p>
-                    )}
-
-                    {/* 포스트 프로덕션 3단계 가이드 (있는 경우) */}
-                    {activeBook.pages.workbook.postProduction && (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, margin: '14px 0' }}>
-                        {activeBook.pages.workbook.postProduction.map((pp, idx) => (
-                          <div key={idx} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 12 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                              <span style={{ background: '#16a34a', color: '#fff', fontSize: 11, fontWeight: 800, width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{pp.step}</span>
-                              <strong style={{ fontSize: 13, color: '#166534' }}>{pp.title}</strong>
-                            </div>
-                            <div style={{ fontSize: 12, color: '#334155', lineHeight: 1.5 }}>{pp.desc}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div style={{ margin: '16px 0', color: '#0f172a' }}>
-                      <div style={{ fontWeight: 800, fontSize: 15, marginBottom: 8, color: '#0f172a' }}>
-                        {activeBook.pages.workbook.q1}
-                      </div>
-
-                      <div style={{ background: '#fef9c3', borderLeft: '4px solid #d97706', padding: 14, borderRadius: 6, margin: '10px 0', color: '#0f172a' }}>
-                        <div style={{ fontWeight: 800, fontSize: 13, color: '#b45309' }}>정답 및 해설:</div>
-                        <div style={{ fontSize: 13.5, lineHeight: 1.6, marginTop: 4, color: '#0f172a', fontWeight: 600 }}>
-                          {activeBook.pages.workbook.a1}
-                        </div>
-                        {activeBook.pages.workbook.refText && (
-                          <div style={{ marginTop: 6, fontSize: 11, color: '#64748b' }}>
-                            {activeBook.pages.workbook.refText}
-                          </div>
-                        )}
-                      </div>
-
-                      <div style={{ fontWeight: 800, fontSize: 15, margin: '18px 0 8px 0', color: '#0f172a' }}>
-                        {activeBook.pages.workbook.q2}
-                      </div>
-                      <div style={{ background: '#f1f5f9', borderLeft: '4px solid #0f172a', padding: 14, borderRadius: 6, fontSize: 13.5, color: '#0f172a' }}>
-                        💡 <strong style={{ color: '#0f172a' }}>실천 가이드:</strong> {activeBook.pages.workbook.a2}
-                      </div>
-
-                      {/* 6대 실천 체크리스트 (있는 경우) */}
-                      {activeBook.pages.workbook.checklist && (
-                        <div style={{ margin: '18px 0', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 14 }}>
-                          <div style={{ fontWeight: 800, fontSize: 13.5, color: '#0f172a', marginBottom: 10 }}>
-                            ✅ 오늘 밤 30분 숏폼 완성 6대 액션 체크리스트:
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                            {activeBook.pages.workbook.checklist.map((item, idx) => (
-                              <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#334155' }}>
-                                <span style={{ color: '#16a34a', fontWeight: 800, marginTop: 1 }}>✔</span>
-                                <span>{item}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="sb-workbook-card" style={{ marginTop: 16 }}>
-                        <div style={{ fontWeight: 800, fontSize: 13, color: '#047857' }}>✏️ 대표님 전용 액션 플랜 필기 노트</div>
-                        <div className="sb-note-lines" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="sb-page-footer" style={{ marginTop: 30, color: '#64748b' }}>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.workbook.footer}</span>
-                    <span style={{ color: '#64748b' }}>{activeBook.pages.workbook.pageNumber || (activeBook.pages.promptGuide ? '5 / 5 페이지 (실천 워크북)' : '4 / 4 페이지 (실천 워크북)')}</span>
-                  </div>
-                </div>
-
               </div>
-            </div>
-          )}
 
-          {/* ================= STEP 8: PDF 인쇄 ================= */}
-          {currentStep === 8 && (
-            <div className="sb-card">
-              <div className="sb-card-title">
-                <span>8단계: 개인 보관용 PDF 인쇄</span>
-              </div>
-              <div className="sb-legal-notice">
-                <AlertTriangle size={18} style={{ display: 'inline', marginRight: 6, verticalAlign: 'text-bottom' }} />
-                <strong>법적 권한 안내:</strong> 타인 자료를 바탕으로 만든 결과물의 공개·공유·판매에는 별도 권한이 필요할 수 있습니다. 본 스튜디오는 대표님의 개인 학습 및 내부 연구 보관용으로만 안전하게 사용됩니다.
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 14, padding: '24px 0', flexWrap: 'wrap' }}>
-                <button
-                  className="sb-btn sb-btn-primary"
-                  style={{ padding: '14px 28px', fontSize: 16, background: '#0284c7', fontWeight: 900 }}
-                  onClick={() => downloadEbookAsPdf(activeBook, showToast)}
-                >
-                  <Download size={18} /> 📥 고화질 전자책 PDF 다운로드 (.pdf)
-                </button>
-                <button
-                  className="sb-btn sb-btn-primary"
-                  style={{ padding: '14px 28px', fontSize: 16, background: '#111', fontWeight: 800 }}
-                  onClick={() => printEbookCleanly(activeBook)}
-                >
-                  <Printer size={18} /> 🖨️ A4 용지 인쇄 / PDF 저장
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ================= STEP 9: 📚 전자책 도서관 (내 서재) ================= */}
-          {(studioMode === 'library' || (studioMode === 'studio' && currentStep === 9)) && (
-            <div className="sb-card">
-              <div className="sb-card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Library size={22} color="#16a34a" />
-                  <span style={{ fontSize: 18, fontWeight: 900 }}>나의 전자책 도서관 ({libraryBooks.length}권 보관 중)</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <button
-                    className="sb-btn sb-btn-primary sb-btn-sm"
-                    style={{ background: '#0284c7', color: '#fff', fontWeight: 800 }}
-                    onClick={() => setStudioMode('create')}
-                  >
-                    <Plus size={15} /> ➕ 새 링크로 전자책 만들기
-                  </button>
-                  <span className="sb-status-pill approved" style={{ background: '#16a34a', color: '#fff' }}>
-                    로컬 서재 자동 다운로드 완료
-                  </span>
-                </div>
-              </div>
-              <p style={{ fontSize: 13, color: '#64748b', marginTop: -4 }}>
-                대표님이 링크(URL)나 교재를 통해 생성하신 모든 전자책이 이 서재에 자동으로 안전하게 다운로드(보관)되어 있습니다. 언제든 책을 열거나 종이 인쇄, 파일 다운로드를 하실 수 있습니다.
-              </p>
-
-              {/* 도서관 서가 그리드 */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: 16,
-                marginTop: 20
-              }}>
-                {libraryBooks.map((bk, idx) => (
-                  <div
-                    key={bk.id || idx}
-                    style={{
-                      background: '#ffffff',
-                      borderRadius: 12,
-                      border: idx === 0 && bk.id !== SAMPLE_BOOK.id ? '2px solid #0284c7' : '1px solid #e2e8f0',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      position: 'relative'
-                    }}
-                  >
-                    {/* 책 썸네일 / 표지 이미지 */}
-                    <div style={{ height: 140, background: '#0f172a', position: 'relative', overflow: 'hidden' }}>
-                      <img
-                        src={getBaseAssetUrl(bk.coverImage)}
-                        alt={bk.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = CURATED_THEME_IMAGES.ai;
-                        }}
-                      />
-                      <span style={{
-                        position: 'absolute',
-                        top: 8,
-                        left: 8,
-                        background: 'rgba(15, 23, 42, 0.85)',
-                        color: '#38bdf8',
-                        padding: '3px 8px',
-                        borderRadius: 4,
-                        fontSize: 11,
-                        fontWeight: 800
-                      }}>
-                        {bk.badge}
-                      </span>
-                      {idx === 0 && bk.id !== SAMPLE_BOOK.id && (
-                        <span style={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          background: '#0284c7',
-                          color: '#ffffff',
-                          padding: '3px 8px',
-                          borderRadius: 4,
-                          fontSize: 10,
-                          fontWeight: 900,
-                          boxShadow: '0 2px 8px rgba(2,132,199,0.5)'
-                        }}>
-                          ✨ 방금 도서관 입고
-                        </span>
-                      )}
-                    </div>
-
-                    {/* 책 메타데이터 */}
-                    <div style={{ padding: 16, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                      <div>
-                        <h4 style={{ margin: '0 0 6px 0', fontSize: 15, fontWeight: 900, color: '#0f172a', lineHeight: 1.4 }}>
-                          {bk.title}
-                        </h4>
-                        <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>
-                          {bk.pages?.cover?.author || bk.author}
-                        </div>
-                        <div style={{ fontSize: 11, color: '#94a3b8' }}>
-                          보관일: {bk.createdAt || '최근'}
-                        </div>
-                      </div>
-
-                      {/* 도서관 책 액션 버튼 3종 */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 14 }}>
-                        <button
-                          className="sb-btn sb-btn-primary sb-btn-sm"
-                          style={{ background: '#0284c7', fontSize: 12, padding: '8px 4px' }}
-                          onClick={() => {
-                            if (bk.id === SAMPLE_BOOK.id) {
-                              setActiveBookMode('sample');
-                            } else {
-                              setCustomBook(bk);
-                              setActiveBookMode('custom');
-                            }
-                            setCurrentStep(7);
-                            setStudioMode('read');
-                            setPreviewPageType('cover');
+              <div className="sb-section-box">
+                <div className="sb-box-title">⚡ 이 책의 핵심 3대 포인트:</div>
+                <div className="sb-bullet-list">
+                  {activeBook.summaryBullets.map((bullet, idx) => (
+                    <div key={idx} className="sb-bullet-item">
+                      <span className="sb-bullet-num">{idx + 1}</span>
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          className="sb-edit-input"
+                          value={bullet}
+                          onChange={(e) => {
+                            const newBullets = [...activeBook.summaryBullets];
+                            newBullets[idx] = e.target.value;
+                            updateActiveBookField('summaryBullets', newBullets);
                           }}
-                        >
-                          📖 책 펼치기
-                        </button>
-
-                        <button
-                          className="sb-btn sb-btn-outline sb-btn-sm"
-                          style={{ borderColor: '#0284c7', color: '#0284c7', fontSize: 12, padding: '8px 4px', fontWeight: 800 }}
-                          onClick={() => downloadEbookAsPdf(bk, showToast)}
-                          title="A4 전자책 PDF 파일 즉시 다운로드"
-                        >
-                          <Download size={13} /> PDF 다운
-                        </button>
-
-                        <button
-                          className="sb-btn sb-btn-outline sb-btn-sm"
-                          style={{ borderColor: '#111', color: '#111', fontSize: 12, padding: '8px 4px', fontWeight: 700 }}
-                          onClick={() => printEbookCleanly(bk)}
-                          title="웹 UI 없이 순수 A4 전자책만 인쇄 또는 PDF 저장"
-                        >
-                          <Printer size={13} /> A4 인쇄
-                        </button>
-
-                        {bk.id !== SAMPLE_BOOK.id && (
-                          <button
-                            className="sb-btn sb-btn-outline sb-btn-sm"
-                            style={{ borderColor: '#ef4444', color: '#ef4444', fontSize: 12, padding: '8px 4px' }}
-                            onClick={() => deleteFromLibrary(bk.id)}
-                          >
-                            <Trash2 size={13} /> 삭제
-                          </button>
-                        )}
-                      </div>
+                        />
+                      ) : (
+                        <p>{bullet}</p>
+                      )}
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sb-dark-callout">
+                <strong>🎯 추천 학습 대상 및 목표:</strong>{' '}
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    className="sb-edit-input"
+                    value={activeBook.audience}
+                    onChange={(e) => updateActiveBookField('audience', e.target.value)}
+                  />
+                ) : (
+                  activeBook.audience
+                )}
+              </div>
+
+              <div className="sb-preview-chapters-grid">
+                <div className="sb-preview-card">
+                  <strong>제 1 장</strong>
+                  <span>핵심 개념 및 원리 해설</span>
+                </div>
+                <div className="sb-preview-card">
+                  <strong>제 2 장</strong>
+                  <span>구조 분석 & 비교 매트릭스</span>
+                </div>
+                <div className="sb-preview-card">
+                  <strong>제 3 장</strong>
+                  <span>1인 실전 적용 로드맵</span>
+                </div>
+                <div className="sb-preview-card">
+                  <strong>제 4 장</strong>
+                  <span>복습 퀴즈 & 실천 체크리스트</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="sb-sheet-footer">
+              <span>공부방 스튜디오 · 강의 개요</span>
+              <span>2 / 5 페이지</span>
+            </div>
+          </article>
+
+          {/* ── 3. 제 1 장: 핵심 개념 원리 ── */}
+          <article className="sb-page-sheet">
+            <div className="sb-sheet-header">
+              <span className="sb-eyebrow">Chapter 01 · Core Principles</span>
+              <span className="sb-page-num">p. 03</span>
+            </div>
+
+            <div className="sb-sheet-content">
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-sheet-title"
+                  value={activeBook.chapter1.title}
+                  onChange={(e) => updateActiveBookField('chapter1.title', e.target.value)}
+                />
+              ) : (
+                <h2 className="sb-sheet-title">{activeBook.chapter1.title}</h2>
+              )}
+
+              {isEditMode ? (
+                <textarea
+                  className="sb-edit-textarea sb-body-paragraph"
+                  rows={4}
+                  value={activeBook.chapter1.body}
+                  onChange={(e) => updateActiveBookField('chapter1.body', e.target.value)}
+                />
+              ) : (
+                <p className="sb-body-paragraph">
+                  {activeBook.chapter1.body}
+                </p>
+              )}
+
+              <div className="sb-step-cards-container">
+                {activeBook.chapter1.stepCards.map((sc, idx) => (
+                  <div key={idx} className="sb-step-card">
+                    <div className="sb-step-card-header">
+                      <span className="sb-step-tag">{sc.step}</span>
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          className="sb-edit-input"
+                          style={{ fontWeight: 'bold' }}
+                          value={sc.title}
+                          onChange={(e) => {
+                            const newCards = [...activeBook.chapter1.stepCards];
+                            newCards[idx].title = e.target.value;
+                            updateActiveBookField('chapter1.stepCards', newCards);
+                          }}
+                        />
+                      ) : (
+                        <strong>{sc.title}</strong>
+                      )}
+                    </div>
+                    {isEditMode ? (
+                      <textarea
+                        className="sb-edit-textarea"
+                        rows={2}
+                        value={sc.desc}
+                        onChange={(e) => {
+                          const newCards = [...activeBook.chapter1.stepCards];
+                          newCards[idx].desc = e.target.value;
+                          updateActiveBookField('chapter1.stepCards', newCards);
+                        }}
+                      />
+                    ) : (
+                      <p>{sc.desc}</p>
+                    )}
                   </div>
                 ))}
               </div>
+
+              <div className="sb-dark-callout">
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    className="sb-edit-input"
+                    value={activeBook.chapter1.calloutDark}
+                    onChange={(e) => updateActiveBookField('chapter1.calloutDark', e.target.value)}
+                  />
+                ) : (
+                  activeBook.chapter1.calloutDark
+                )}
+              </div>
             </div>
-          )}
-        </main>
+
+            <div className="sb-sheet-footer">
+              <span>공부방 스튜디오 · 제 1 장 핵심 개념</span>
+              <span>3 / 5 페이지</span>
+            </div>
+          </article>
+
+          {/* ── 4. 제 2 장: 비교 매트릭스 & 제 3 장: 실전 로드맵 ── */}
+          <article className="sb-page-sheet">
+            <div className="sb-sheet-header">
+              <span className="sb-eyebrow">Chapter 02 & 03 · Matrix & Roadmap</span>
+              <span className="sb-page-num">p. 04</span>
+            </div>
+
+            <div className="sb-sheet-content">
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-sheet-title"
+                  value={activeBook.chapter2.title}
+                  onChange={(e) => updateActiveBookField('chapter2.title', e.target.value)}
+                />
+              ) : (
+                <h2 className="sb-sheet-title">{activeBook.chapter2.title}</h2>
+              )}
+
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-lead-text"
+                  value={activeBook.chapter2.lead}
+                  onChange={(e) => updateActiveBookField('chapter2.lead', e.target.value)}
+                />
+              ) : (
+                <p className="sb-lead-text">{activeBook.chapter2.lead}</p>
+              )}
+
+              <div className="sb-table-responsive">
+                <table className="sb-data-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '32%' }}>핵심 항목</th>
+                      <th style={{ width: '28%' }}>효용 및 특징</th>
+                      <th>기대 효과</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeBook.chapter2.tableRows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td>
+                          {isEditMode ? (
+                            <input
+                              type="text"
+                              className="sb-edit-input"
+                              value={row.item}
+                              onChange={(e) => {
+                                const newRows = [...activeBook.chapter2.tableRows];
+                                newRows[idx].item = e.target.value;
+                                updateActiveBookField('chapter2.tableRows', newRows);
+                              }}
+                            />
+                          ) : (
+                            <strong>{row.item}</strong>
+                          )}
+                        </td>
+                        <td className="sb-td-highlight">
+                          {isEditMode ? (
+                            <input
+                              type="text"
+                              className="sb-edit-input"
+                              value={row.prob}
+                              onChange={(e) => {
+                                const newRows = [...activeBook.chapter2.tableRows];
+                                newRows[idx].prob = e.target.value;
+                                updateActiveBookField('chapter2.tableRows', newRows);
+                              }}
+                            />
+                          ) : (
+                            row.prob
+                          )}
+                        </td>
+                        <td>
+                          {isEditMode ? (
+                            <input
+                              type="text"
+                              className="sb-edit-input"
+                              value={row.effect}
+                              onChange={(e) => {
+                                const newRows = [...activeBook.chapter2.tableRows];
+                                newRows[idx].effect = e.target.value;
+                                updateActiveBookField('chapter2.tableRows', newRows);
+                              }}
+                            />
+                          ) : (
+                            row.effect
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="sb-gold-callout" style={{ margin: '14px 0' }}>
+                💡 <strong>구조 인사이트:</strong>{' '}
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    className="sb-edit-input"
+                    value={activeBook.chapter2.insightNote}
+                    onChange={(e) => updateActiveBookField('chapter2.insightNote', e.target.value)}
+                  />
+                ) : (
+                  activeBook.chapter2.insightNote
+                )}
+              </div>
+
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-sheet-title"
+                  style={{ marginTop: 22 }}
+                  value={activeBook.chapter3.title}
+                  onChange={(e) => updateActiveBookField('chapter3.title', e.target.value)}
+                />
+              ) : (
+                <h2 className="sb-sheet-title" style={{ marginTop: 22 }}>{activeBook.chapter3.title}</h2>
+              )}
+
+              <div className="sb-action-steps-list">
+                {activeBook.chapter3.steps.map((st, idx) => (
+                  <div key={idx} className="sb-action-step-item">
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        className="sb-edit-input sb-step-phase"
+                        value={st.phase}
+                        onChange={(e) => {
+                          const newSteps = [...activeBook.chapter3.steps];
+                          newSteps[idx].phase = e.target.value;
+                          updateActiveBookField('chapter3.steps', newSteps);
+                        }}
+                      />
+                    ) : (
+                      <strong className="sb-step-phase">{st.phase}</strong>
+                    )}
+                    {isEditMode ? (
+                      <textarea
+                        className="sb-edit-textarea"
+                        rows={2}
+                        value={st.desc}
+                        onChange={(e) => {
+                          const newSteps = [...activeBook.chapter3.steps];
+                          newSteps[idx].desc = e.target.value;
+                          updateActiveBookField('chapter3.steps', newSteps);
+                        }}
+                      />
+                    ) : (
+                      <p>{st.desc}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {activeBook.chapter3.promptTemplate && (
+                <div className="sb-prompt-box-wrap">
+                  <div className="sb-prompt-header">
+                    <span>📋 실전 마스터 템플릿</span>
+                    <button
+                      type="button"
+                      className="sb-btn-copy-prompt"
+                      onClick={() => {
+                        navigator.clipboard.writeText(activeBook.chapter3.promptTemplate);
+                        showToast('📋 템플릿이 클립보드에 복사되었습니다!');
+                      }}
+                    >
+                      <Copy size={12} /> 복사
+                    </button>
+                  </div>
+                  {isEditMode ? (
+                    <textarea
+                      className="sb-edit-textarea sb-prompt-pre"
+                      rows={5}
+                      value={activeBook.chapter3.promptTemplate}
+                      onChange={(e) => updateActiveBookField('chapter3.promptTemplate', e.target.value)}
+                    />
+                  ) : (
+                    <pre className="sb-prompt-pre">{activeBook.chapter3.promptTemplate}</pre>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="sb-sheet-footer">
+              <span>공부방 스튜디오 · 비교 분석 & 실전 로드맵</span>
+              <span>4 / 5 페이지</span>
+            </div>
+          </article>
+
+          {/* ── 5. 제 4 장: 복습 워크북 & 체크리스트 ── */}
+          <article className="sb-page-sheet">
+            <div className="sb-sheet-header">
+              <span className="sb-eyebrow">Chapter 04 · Workbook & Action</span>
+              <span className="sb-page-num">p. 05</span>
+            </div>
+
+            <div className="sb-sheet-content">
+              {isEditMode ? (
+                <input
+                  type="text"
+                  className="sb-edit-input sb-sheet-title"
+                  value={activeBook.chapter4.title}
+                  onChange={(e) => updateActiveBookField('chapter4.title', e.target.value)}
+                />
+              ) : (
+                <h2 className="sb-sheet-title">{activeBook.chapter4.title}</h2>
+              )}
+
+              {/* 퀴즈 1 */}
+              <div className="sb-workbook-card gold-border">
+                <div className="sb-wb-question">
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      className="sb-edit-input"
+                      value={activeBook.chapter4.q1}
+                      onChange={(e) => updateActiveBookField('chapter4.q1', e.target.value)}
+                    />
+                  ) : (
+                    activeBook.chapter4.q1
+                  )}
+                </div>
+                <div className="sb-wb-answer">
+                  <span className="sb-answer-label">정답 및 해설:</span>
+                  {isEditMode ? (
+                    <textarea
+                      className="sb-edit-textarea"
+                      rows={2}
+                      value={activeBook.chapter4.a1}
+                      onChange={(e) => updateActiveBookField('chapter4.a1', e.target.value)}
+                    />
+                  ) : (
+                    <p>{activeBook.chapter4.a1}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* 퀴즈 2 */}
+              <div className="sb-workbook-card dark-border">
+                <div className="sb-wb-question">
+                  {isEditMode ? (
+                    <input
+                      type="text"
+                      className="sb-edit-input"
+                      value={activeBook.chapter4.q2}
+                      onChange={(e) => updateActiveBookField('chapter4.q2', e.target.value)}
+                    />
+                  ) : (
+                    activeBook.chapter4.q2
+                  )}
+                </div>
+                <div className="sb-wb-answer">
+                  <span className="sb-answer-label">실천 가이드:</span>
+                  {isEditMode ? (
+                    <textarea
+                      className="sb-edit-textarea"
+                      rows={2}
+                      value={activeBook.chapter4.a2}
+                      onChange={(e) => updateActiveBookField('chapter4.a2', e.target.value)}
+                    />
+                  ) : (
+                    <p>{activeBook.chapter4.a2}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* 4대 체크리스트 */}
+              <div className="sb-checklist-section">
+                <h3 className="sb-checklist-heading">✅ 오늘 당장 실천할 4대 액션 체크리스트:</h3>
+                <div className="sb-checklist-grid">
+                  {activeBook.chapter4.checklist.map((item, idx) => (
+                    <div key={idx} className="sb-check-item">
+                      <span className="sb-check-icon">✔</span>
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          className="sb-edit-input"
+                          value={item}
+                          onChange={(e) => {
+                            const newCheck = [...activeBook.chapter4.checklist];
+                            newCheck[idx] = e.target.value;
+                            updateActiveBookField('chapter4.checklist', newCheck);
+                          }}
+                        />
+                      ) : (
+                        <p>{item}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 하단 메모 패드 */}
+              <div className="sb-user-memo-lines-card">
+                <div className="sb-memo-title">✏️ 대표님 전용 액션 플랜 필기 노트</div>
+                <div className="sb-ruled-lines" />
+              </div>
+            </div>
+
+            <div className="sb-sheet-footer">
+              <span>공부방 스튜디오 · 실천 워크북</span>
+              <span>5 / 5 페이지 (완결)</span>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      {/* 4. 모바일 하단 플로팅 고정 다운로드 바 (390px 모바일 완벽 대응) */}
+      <div className="sb-floating-bottom-bar">
+        <div className="sb-floating-inner">
+          <div className="sb-floating-title-box">
+            <span className="sb-floating-label">열람 중:</span>
+            <span className="sb-floating-name">{activeBook.title}</span>
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              className="sb-floating-edit-btn"
+              onClick={() => {
+                if (isEditMode) handleSaveEdits();
+                else setIsEditMode(true);
+              }}
+            >
+              {isEditMode ? <Save size={15} /> : <Edit3 size={15} />}
+              <span>{isEditMode ? '저장' : '수정'}</span>
+            </button>
+            <button
+              className="sb-floating-pdf-btn"
+              onClick={() => downloadEbookAsPdf(activeBook, showToast)}
+            >
+              <Download size={16} />
+              <span>PDF 다운로드</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* JEV 효용 비교 모달 */}
-      {showJevModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999, padding: 16
-        }}>
-          <div style={{
-            background: '#ffffff',
-            maxWidth: 680, width: '100%',
-            borderRadius: 12, padding: 24,
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-            maxHeight: '90vh', overflowY: 'auto'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      {/* 5. 나의 전자책 보관함 모달 */}
+      {showLibraryModal && (
+        <div className="sb-modal-overlay" onClick={() => setShowLibraryModal(false)}>
+          <div className="sb-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="sb-modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Zap size={20} color="#b45309" />
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>JEV 독립 모듈 효용 비교 실험 리포트</h3>
+                <Library size={20} color="#0284c7" />
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>나의 전자책 서재 ({libraryBooks.length}권)</h3>
               </div>
               <button
-                className="sb-btn sb-btn-outline sb-btn-sm"
-                onClick={() => setShowJevModal(false)}
+                className="sb-btn-close-modal"
+                onClick={() => setShowLibraryModal(false)}
               >
-                닫기
+                ✕
               </button>
             </div>
 
-            <p style={{ fontSize: 13, color: 'var(--sb-ink-gray)', lineHeight: 1.6 }}>
-              JEV는 책의 저자나 최종 판정자가 아닙니다. 긴 줄글 대신 <strong>[주제 분류 / 핵심 구간 선정 / 근거 불분명 감지 / 상충 의심]</strong>의 좁은 판단을 확률로 수행하는 독립 엔진입니다.
+            <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 16px 0' }}>
+              대표님이 생성하시거나 열람하신 모든 전자책이 안전하게 보관되어 있습니다. 언제든 책을 열거나 PDF를 다운로드할 수 있습니다.
             </p>
 
-            <div className="sb-jev-grid">
-              <div className="sb-jev-stat-card">
-                <span className="sb-jev-stat-label">평균 처리 시간</span>
-                <span className="sb-jev-stat-value">8.4초</span>
-                <span className="sb-jev-stat-diff">기존 대비 -79.8% (42초 ➔ 8.4초)</span>
-              </div>
-              <div className="sb-jev-stat-card">
-                <span className="sb-jev-stat-label">토큰 소비 비용</span>
-                <span className="sb-jev-stat-value">$0.09</span>
-                <span className="sb-jev-stat-diff">기존 대비 -81.2% ($0.48 ➔ $0.09)</span>
-              </div>
-              <div className="sb-jev-stat-card">
-                <span className="sb-jev-stat-label">사람이 수정한 항목 수</span>
-                <span className="sb-jev-stat-value">2건</span>
-                <span className="sb-jev-stat-diff">오판 감소: 7건 ➔ 2건</span>
-              </div>
-              <div className="sb-jev-stat-card">
-                <span className="sb-jev-stat-label">잘못 통과시킨 항목 (환각)</span>
-                <span className="sb-jev-stat-value">0건</span>
-                <span className="sb-jev-stat-diff">근거 부재 자동 차단</span>
-              </div>
+            <div className="sb-library-grid">
+              {libraryBooks.map((bk) => (
+                <div key={bk.id} className="sb-library-item-card">
+                  <div className="sb-lib-thumb-wrap">
+                    <img src={bk.coverImage} alt={bk.title} className="sb-lib-thumb" />
+                    <span className="sb-lib-badge">{bk.badge}</span>
+                  </div>
+                  <div className="sb-lib-info">
+                    <h4 className="sb-lib-title">{bk.title}</h4>
+                    <span className="sb-lib-author">{bk.author}</span>
+                    <div className="sb-lib-actions">
+                      <button
+                        className="sb-lib-btn-read"
+                        onClick={() => {
+                          setActiveBook(bk);
+                          setShowLibraryModal(false);
+                          showToast(`📖 [${bk.title.slice(0, 16)}...] 전자책을 열었습니다.`);
+                          topViewerRef.current?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                      >
+                        📖 책 열기
+                      </button>
+                      <button
+                        className="sb-lib-btn-pdf"
+                        onClick={() => downloadEbookAsPdf(bk, showToast)}
+                      >
+                        <Download size={13} /> PDF
+                      </button>
+                      <button
+                        className="sb-lib-btn-del"
+                        onClick={() => deleteBook(bk.id)}
+                        title="보관함에서 삭제"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

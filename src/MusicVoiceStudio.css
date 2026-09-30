@@ -1,0 +1,901 @@
+/* ==========================================================================
+   AI 노래 & 목소리 무제한 스튜디오 (MusicVoiceStudio.css)
+   - 윈도우 ssokMusic 16대 프리셋 + Supertonic 3 완전 웹 개조
+   - 390px 모바일 완벽 대응 (스와이프 칩, 슬라이더, 원클릭 오디오)
+   ========================================================================== */
+
+.music-voice-studio {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-bottom: 90px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+}
+
+/* ==========================================================================
+   1. 헤더 & 모드 스위치
+   ========================================================================== */
+.mv-studio-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #ffffff;
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  margin-bottom: 18px;
+}
+
+@media (min-width: 768px) {
+  .mv-studio-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.mv-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mv-brand-icon {
+  font-size: 30px;
+}
+
+.mv-brand-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #0f172a;
+}
+
+.mv-pro-tag {
+  background: #0f172a;
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.mv-brand-desc {
+  margin: 3px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* 모드 스위처 - 대형 직관적 세그먼트 */
+.mv-mode-switch-prominent {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .mv-mode-switch-prominent {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mv-big-mode-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  position: relative;
+}
+
+.mv-big-mode-tab:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.mv-big-mode-tab.active-music {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #0284c7;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
+}
+
+.mv-big-mode-tab.active-voice {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-color: #9333ea;
+  box-shadow: 0 4px 14px rgba(147, 51, 234, 0.2);
+}
+
+.mv-tab-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mv-tab-icon-wrap.music {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.mv-big-mode-tab.active-music .mv-tab-icon-wrap.music {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.mv-tab-icon-wrap.voice {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.mv-big-mode-tab.active-voice .mv-tab-icon-wrap.voice {
+  background: #9333ea;
+  color: #ffffff;
+}
+
+.mv-tab-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.mv-tab-title {
+  font-size: 14.5px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mv-tab-sub {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.mv-active-indicator {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.active-music .mv-active-indicator {
+  background: #0284c7;
+}
+
+.active-voice .mv-active-indicator {
+  background: #9333ea;
+}
+
+/* 안내 배너 */
+.mv-info-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.mv-info-banner.purple {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+  color: #7e22ce;
+}
+
+/* ==========================================================================
+   2. [노래 만들기 파트] (ssokMusic 16대 프리셋)
+   ========================================================================== */
+.mv-music-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mv-preset-chips-box {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.mv-box-label {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.mv-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mv-chips-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mv-chips-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.mv-genre-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.mv-genre-chip:hover {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  transform: translateY(-1px);
+}
+
+.mv-genre-chip.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+}
+
+.mv-chip-icon {
+  font-size: 15px;
+}
+
+/* 노래 입력 폼 */
+.mv-song-input-form {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.mv-input-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 640px) {
+  .mv-input-row-main {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.mv-form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 5px;
+}
+
+.mv-text-input,
+.mv-select-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  background: #f8fafc;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.mv-text-input:focus,
+.mv-select-input:focus {
+  border-color: #0284c7;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.mv-action-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mv-btn-primary-generate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .mv-btn-primary-generate {
+    width: auto;
+  }
+}
+
+.mv-btn-primary-generate:hover:not(:disabled) {
+  background: #0369a1;
+  transform: translateY(-1px);
+}
+
+/* 프롬프트 & 가사 2분할 그리드 */
+.mv-output-split-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .mv-output-split-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mv-output-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.mv-output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.mv-btn-copy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mv-btn-copy-chip:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.mv-output-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.mv-output-textarea.code-font {
+  font-family: monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #0369a1;
+  background: #f0f9ff;
+}
+
+.mv-output-textarea.lyrics-font {
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.mv-prompt-breakdown {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.mv-tag {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* 가이드 푸터 */
+.mv-guide-footer-card {
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.mv-guide-footer-card h4 {
+  margin: 0 0 14px 0;
+  font-size: 15px;
+  color: #38bdf8;
+}
+
+.mv-guide-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .mv-guide-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.mv-guide-step-item {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+}
+
+.mv-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #0284c7;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mv-guide-step-item strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.mv-guide-step-item p {
+  margin: 0;
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   3. [목소리 파트] (Supertonic 3 야담라디오)
+   ========================================================================= */
+.mv-voice-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mv-voices-selection-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.mv-voices-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .mv-voices-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .mv-voices-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.mv-voice-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.mv-voice-card:hover {
+  background: #fdf4ff;
+  border-color: #d946ef;
+  transform: translateY(-2px);
+}
+
+.mv-voice-card.active {
+  background: #faf5ff;
+  border: 2px solid #9333ea;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.2);
+}
+
+/* 대표님 & 철만이 VIP 카드 강조 */
+.mv-voice-card.vip-voice-card {
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1.5px solid #f59e0b;
+  position: relative;
+}
+
+.mv-voice-card.vip-voice-card:hover {
+  background: linear-gradient(145deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #d97706;
+}
+
+.mv-voice-card.vip-voice-card.active {
+  border: 2.5px solid #d97706;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+}
+
+.mv-vip-badge {
+  background: #f59e0b;
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.mv-ref-audio-play-row {
+  margin: 6px 0 10px 0;
+}
+
+.mv-ref-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ffffff;
+  border: 1px solid #f59e0b;
+  color: #b45309;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.mv-ref-play-btn:hover {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.mv-ref-play-btn.playing {
+  background: #d97706;
+  color: #ffffff;
+  border-color: #b45309;
+  animation: pulse 1.5s infinite;
+}
+
+.mv-voice-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.mv-gender-badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.mv-gender-badge.male {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.mv-gender-badge.female {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.mv-voice-name {
+  font-size: 12.5px;
+  color: #0f172a;
+}
+
+.mv-voice-desc {
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.mv-voice-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.mv-vtag {
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* 대본 컨트롤 카드 */
+.mv-script-control-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.mv-control-sliders-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  background: #f8fafc;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 640px) {
+  .mv-control-sliders-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.mv-slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mv-slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #475569;
+}
+
+.mv-slider-header strong {
+  color: #0f172a;
+}
+
+.mv-range-slider {
+  width: 100%;
+  accent-color: #9333ea;
+  cursor: pointer;
+}
+
+.mv-script-textarea-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.mv-script-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.mv-char-count {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.mv-script-textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #0f172a;
+  outline: none;
+  background: #f8fafc;
+  box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.mv-script-textarea:focus {
+  border-color: #9333ea;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15);
+}
+
+.mv-voice-actions-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .mv-voice-actions-bar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.mv-btn-voice-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #9333ea;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.25);
+  transition: all 0.2s ease;
+}
+
+.mv-btn-voice-play:hover {
+  background: #7e22ce;
+  transform: translateY(-1px);
+}
+
+.mv-btn-voice-play.playing {
+  background: #dc2626;
+  animation: pulse 1s infinite alternate;
+}
+
+.mv-btn-voice-cli {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mv-btn-voice-cli:hover {
+  background: #1e293b;
+}
+
+/* 토스트 */
+.mv-toast-bar {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ==========================================================================
+   4. 390px 모바일 전용 반응형 미디어 쿼리 (모바일 퍼스트 감리)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .music-voice-studio {
+    padding: 8px;
+    padding-bottom: 110px;
+  }
+  .mv-studio-header {
+    padding: 12px 14px;
+  }
+  .mv-brand-title {
+    font-size: 16px;
+  }
+  .mv-brand-desc {
+    font-size: 11.5px;
+  }
+  .mv-mode-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .mv-genre-chip {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .mv-voices-grid {
+    grid-template-columns: 1fr;
+  }
+  .mv-btn-primary-generate,
+  .mv-btn-voice-play,
+  .mv-btn-voice-cli {
+    width: 100%;
+    font-size: 13px;
+  }
+}

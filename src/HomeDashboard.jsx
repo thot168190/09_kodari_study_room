@@ -15,6 +15,15 @@ export default function HomeDashboard({ onSelectTab, onOpenNiche, onOpenHub, not
       desc: '조회수·수익 터지는 유튜브 꿀통 음악 채널 발굴 및 틈새 시장 진단',
       tools: [
         {
+          id: 'musicvoice',
+          title: '🎧 AI 노래 & 목소리 무제한 스튜디오',
+          desc: '윈도우 ssokMusic 16종 장르 + 대표님·철만이 12대 목소리 웹 완전 개조 탑재',
+          icon: <Music size={20} color="#a855f7" />,
+          highlight: '신규 개조 🚀',
+          bg: 'linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(2, 132, 199, 0.12))',
+          border: '#a855f7'
+        },
+        {
           id: 'musicfinder',
           title: '꿀통 음악 채널 발굴기 (철이 v2)',
           desc: '1인 기업 맞춤형 유튜브 BGM·Lo-Fi 채널 떡상 영상 실시간 수집·분석',
