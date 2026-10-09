@@ -34,7 +34,8 @@ import MusicVoiceStudio from './MusicVoiceStudio';
 import SmallMusicFinder from './SmallMusicFinder';
 import HomeDashboard from './HomeDashboard';
 import AIOfficeStudio from './AIOfficeStudio';
-import { Home, Compass, Menu, X, Flame, Bot, Building2 } from 'lucide-react';
+import RemotionStudio from './RemotionStudio';
+import { Home, Compass, Menu, X, Flame, Bot, Building2, Video as VideoIcon } from 'lucide-react';
 
 const parseInlineBold = (str) => {
   if (!str) return str;
@@ -970,6 +971,14 @@ ${selectedNote.content}`
               🎧 AI 노래·목소리
             </button>
 
+            {/* 3-2. Remotion 영상공장 (0원 렌더링) */}
+            <button
+              className={`cat-pill highlight-flame ${activeTab === 'remotion' ? 'active' : ''}`}
+              onClick={() => { setActiveCategory('biz'); setActiveTab('remotion'); }}
+            >
+              🎬 Remotion 영상공장
+            </button>
+
             {/* 4. AI 팀 자비스 */}
             <button
               className={`cat-pill highlight-cyan ${activeTab === 'jarvis' ? 'active' : ''}`}
@@ -1051,6 +1060,7 @@ ${selectedNote.content}`
                   <div className="drawer-grid">
                     <button onClick={() => { setActiveTab('musicfinder'); setMobileMenuOpen(false); }}>🔥 꿀통 음악 채널 발굴기</button>
                     <button onClick={() => { setActiveTab('musicvoice'); setMobileMenuOpen(false); }}>🎧 AI 노래·목소리 스튜디오</button>
+                    <button onClick={() => { setActiveTab('remotion'); setMobileMenuOpen(false); }}>🎬 Remotion 영상공장 (0원 렌더)</button>
                     <button onClick={() => { setShowNicheSaaS(true); setMobileMenuOpen(false); }}>🎯 틈새진단기</button>
                     <button onClick={() => { setActiveTab('travellog'); setMobileMenuOpen(false); }}>✈️ 1초 여행로그</button>
                     <button onClick={() => { setShowHubPortal(true); setMobileMenuOpen(false); }}>🌐 채널포털</button>
@@ -1493,6 +1503,10 @@ ${selectedNote.content}`
         ) : activeTab === 'aioffice' ? (
           <div className="aioffice-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
             <AIOfficeStudio onExit={() => setActiveTab('home')} />
+          </div>
+        ) : activeTab === 'remotion' ? (
+          <div className="remotion-fullscreen-mount" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <RemotionStudio />
           </div>
         ) : selectedNote ? (
           <>

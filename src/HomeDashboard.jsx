@@ -15,6 +15,15 @@ export default function HomeDashboard({ onSelectTab, onOpenNiche, onOpenHub, not
       desc: '조회수·수익 터지는 유튜브 꿀통 음악 채널 발굴 및 틈새 시장 진단',
       tools: [
         {
+          id: 'remotion',
+          title: '🎬 Remotion 영상공장 (0원 렌더링)',
+          desc: '스마트스토어 릴스 광고 · 퀴즈 10초 타이머 · 코드로 렌더링하는 무인 숏폼 스튜디오',
+          icon: <Video size={20} color="#38bdf8" />,
+          highlight: 'NEW 신설 🚀',
+          bg: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.15))',
+          border: '#38bdf8'
+        },
+        {
           id: 'musicvoice',
           title: '🎧 AI 노래 & 목소리 무제한 스튜디오',
           desc: '윈도우 ssokMusic 16종 장르 + 대표님·철만이 12대 목소리 웹 완전 개조 탑재',
