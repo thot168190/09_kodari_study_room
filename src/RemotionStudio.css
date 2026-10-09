@@ -1,5 +1,5 @@
 /* ========================================================
-   RemotionStudio.css - 리모션 영상 바이브코딩 스튜디오
+   RemotionStudio.css - 진짜 MP4 영상 & 정품 44개 코드 스튜디오
    모바일 퍼스트 (390px) & 데스크톱 듀얼 최적화
 ======================================================== */
 
@@ -123,10 +123,60 @@
   margin-top: 2px;
 }
 
-/* ── 2. 카테고리 탭 바 (가로 스크롤) ── */
+.rs-setup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid #3b82f6;
+  color: #60a5fa;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.rs-setup-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* ── 2. 필터 및 검색 바 ── */
+.rs-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rs-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d1322;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+
+.rs-search-input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.rs-search-input::placeholder {
+  color: #64748b;
+}
+
 .rs-category-bar {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   padding-bottom: 6px;
   scrollbar-width: none;
@@ -140,13 +190,13 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: #131b2e;
+  gap: 5px;
+  padding: 8px 14px;
+  background: #111a2e;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 30px;
+  border-radius: 20px;
   color: #94a3b8;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -155,25 +205,24 @@
 .rs-cat-btn:hover {
   background: #1e293b;
   color: #fff;
-  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .rs-cat-btn.active {
   background: linear-gradient(135deg, #2563eb, #3b82f6);
   color: #fff;
   border-color: #60a5fa;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
 }
 
-.rs-cat-count {
+.rs-cat-btn span {
   font-size: 11px;
-  padding: 2px 6px;
+  padding: 1px 6px;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.3);
   color: #cbd5e1;
 }
 
-/* ── 3. 메인 작업 레이아웃 (프리뷰 + 커스텀/코드) ── */
+/* ── 3. 메인 그리드 (실제 비디오 + 코드) ── */
 .rs-main-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -182,19 +231,19 @@
 
 @media (min-width: 900px) {
   .rs-main-grid {
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
   }
 }
 
-/* ── 좌측: 프리뷰 시뮬레이터 카드 ── */
+/* 좌측: 실제 비디오 카드 */
 .rs-preview-card {
   background: #0d1322;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .rs-preview-header {
@@ -222,182 +271,100 @@
 }
 
 .rs-preview-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
   color: #f8fafc;
   margin: 0;
 }
 
-.rs-ratio-toggles {
-  display: flex;
-  background: #1a233a;
-  border-radius: 8px;
-  padding: 3px;
-  gap: 4px;
-}
-
-.rs-ratio-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  padding: 4px 10px;
-  font-size: 11px;
+.rs-meta-pill {
+  font-size: 11.5px;
   font-weight: 700;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
+  color: #94a3b8;
+  background: #131c2e;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: monospace;
 }
 
-.rs-ratio-btn.active {
-  background: #2563eb;
-  color: #fff;
-}
-
-/* ── 캔버스/플레이어 래퍼 ── */
-.rs-player-wrap {
+/* 비디오 플레이어 래퍼 */
+.rs-video-wrapper {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #020617;
+  background: #000;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.rs-player-wrap.vertical {
+.rs-video-wrapper.vertical {
   aspect-ratio: 9 / 16;
   max-height: 480px;
   margin: 0 auto;
 }
 
-/* 플레이어 컨트롤 바 */
-.rs-controls-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #131c2e;
+.rs-actual-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 설명 및 팁 요약 */
+.rs-summary-box {
+  background: #111a2e;
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.rs-control-buttons {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.rs-summary-main {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  word-break: keep-all;
 }
 
-.rs-play-btn {
+.rs-tips-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
-  background: #2563eb;
-  border: none;
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 8px;
 }
 
-.rs-play-btn:hover {
-  background: #1d4ed8;
-}
-
-.rs-frame-label {
+.rs-tip-row {
+  display: flex;
+  gap: 6px;
   font-size: 12px;
   color: #94a3b8;
-  font-family: monospace;
+  line-height: 1.45;
+  word-break: keep-all;
 }
 
-.rs-scrubber {
-  width: 100%;
-  accent-color: #3b82f6;
-  cursor: pointer;
+.rs-tip-dot {
+  color: #38bdf8;
+  flex-shrink: 0;
 }
 
-/* ── 우측: 실시간 파라미터 커스텀 & 코드 패널 ── */
+/* 우측: 정품 소스 코드 박스 */
 .rs-config-card {
-  background: #0d1322;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.rs-panel-tab-bar {
-  display: flex;
-  gap: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 10px;
-}
-
-.rs-panel-tab {
-  background: transparent;
-  border: none;
-  color: #64748b;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.rs-panel-tab.active {
-  background: #1e293b;
-  color: #60a5fa;
-}
-
-/* 폼 인풋 스타일 */
-.rs-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.rs-form-group label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #cbd5e1;
-}
-
-.rs-form-input {
-  background: #131c2e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 9px 12px;
-  color: #fff;
-  font-size: 13px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.rs-form-input:focus {
-  border-color: #3b82f6;
-}
-
-.rs-row-2col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-/* 코드 블록 */
 .rs-code-box {
   background: #020617;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .rs-code-bar {
@@ -405,206 +372,299 @@
   justify-content: space-between;
   align-items: center;
   background: #0b1120;
-  padding: 8px 12px;
+  padding: 9px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .rs-code-filename {
   font-size: 12px;
-  color: #94a3b8;
+  color: #cbd5e1;
   font-family: monospace;
+  font-weight: 700;
 }
 
 .rs-copy-btn {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
-  padding: 4px 10px;
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  padding: 5px 12px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .rs-copy-btn:hover {
-  background: #334155;
-  color: #fff;
+  background: #1d4ed8;
 }
 
 .rs-copy-btn.copied {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  border-color: rgba(16, 185, 129, 0.4);
+  background: #10b981;
 }
 
 .rs-code-content {
   margin: 0;
-  padding: 12px;
+  padding: 14px;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   font-size: 11.5px;
   line-height: 1.5;
-  color: #cbd5e1;
-  max-height: 280px;
+  color: #e2e8f0;
+  max-height: 380px;
   overflow-y: auto;
   white-space: pre;
 }
 
-/* ── 4. 하단 템플릿 카드 그리드 ── */
+/* 퀵 가이드 */
+.rs-quick-guide {
+  background: #0d1322;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rs-guide-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rs-cli-cmd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #020617;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rs-cli-cmd-row code {
+  font-size: 11.5px;
+  color: #38bdf8;
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rs-mini-copy {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.rs-mini-copy:hover {
+  background: #334155;
+  color: #fff;
+}
+
+/* ── 4. 템플릿 카드 갤러리 ── */
+.rs-gallery-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rs-section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
 .rs-template-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 14px;
 }
 
 .rs-template-card {
   background: #0d1322;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 16px;
+  border-radius: 12px;
+  overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .rs-template-card:hover {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: #3b82f6;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .rs-template-card.active {
   border-color: #3b82f6;
-  background: linear-gradient(145deg, #101930, #132142);
-  box-shadow: 0 0 0 1px #3b82f6, 0 8px 24px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 0 0 2px #3b82f6, 0 8px 24px rgba(37, 99, 235, 0.3);
 }
 
-.rs-card-top {
+.rs-card-poster-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.rs-card-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rs-card-meta-tag {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.rs-card-body {
+  padding: 12px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .rs-card-cat {
   font-size: 11px;
   font-weight: 700;
-  color: #60a5fa;
-  background: rgba(59, 130, 246, 0.12);
-  padding: 2px 7px;
-  border-radius: 6px;
-}
-
-.rs-card-duration {
-  font-size: 11px;
-  color: #64748b;
-  font-family: monospace;
+  color: #38bdf8;
 }
 
 .rs-card-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
-  color: #f1f5f9;
+  color: #fff;
   margin: 0;
 }
 
 .rs-card-desc {
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11.5px;
+  line-height: 1.4;
   color: #94a3b8;
   margin: 0;
-  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.rs-card-footer {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.rs-card-api {
-  font-size: 11px;
-  color: #a78bfa;
-  font-family: monospace;
-}
-
-.rs-card-action {
-  font-size: 12px;
-  font-weight: 700;
-  color: #38bdf8;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ── 5. 원클릭 실행 레시피 박스 ── */
-.rs-recipe-box {
-  background: #090e1a;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 14px;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.rs-recipe-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.rs-steps-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.rs-step-item {
-  background: #111a2e;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 12px 14px;
-  display: flex;
-  gap: 10px;
-}
-
-.rs-step-num {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #2563eb;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 800;
+/* ── 5. 모달 (font.ts & Root.tsx) ── */
+.rs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  padding: 16px;
 }
 
-.rs-step-content b {
-  font-size: 13px;
-  color: #e2e8f0;
-  display: block;
-  margin-bottom: 3px;
+.rs-modal-sheet {
+  background: #0b1120;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-.rs-step-content p {
-  font-size: 11.5px;
-  color: #94a3b8;
+.rs-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.rs-modal-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
   margin: 0;
-  line-height: 1.4;
+}
+
+.rs-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.rs-setup-box {
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.rs-setup-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rs-setup-head b {
+  font-family: monospace;
+  color: #38bdf8;
+  font-size: 13px;
+}
+
+.rs-setup-note {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0 0 8px 0;
+}
+
+.rs-setup-code {
+  background: #0b1120;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 11px;
+  font-family: monospace;
+  color: #e2e8f0;
+  margin: 0;
+  overflow-x: auto;
 }
 
 /* ── 모바일 감리 (390px) ── */
@@ -624,14 +684,10 @@
 
   .rs-preview-card,
   .rs-config-card {
-    padding: 14px;
+    padding: 12px;
   }
 
-  .rs-steps-row {
-    grid-template-columns: 1fr;
-  }
-
-  .rs-row-2col {
+  .rs-template-grid {
     grid-template-columns: 1fr;
   }
 }
