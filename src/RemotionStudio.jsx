@@ -5,7 +5,7 @@ import categoriesData from './assets/remotion-categories.json';
 import setupData from './assets/remotion-setup.json';
 import { 
   Play, Copy, Check, Sparkles, Terminal, Layers, 
-  ExternalLink, Search, FileCode, CheckCircle2, ChevronRight, Video, Info
+  ExternalLink, Search, FileCode, CheckCircle2, ChevronRight, ChevronLeft, Video, Info
 } from 'lucide-react';
 
 const BASE_URL = 'https://www.aicitybuilders.com';
@@ -28,6 +28,30 @@ export default function RemotionStudio() {
       return matchCat && matchSearch;
     });
   }, [selectedCat, searchQuery]);
+
+  // 카테고리 클릭 시 해당 카테고리의 첫 번째 템플릿으로 즉시 전환!
+  const handleSelectCat = (catId) => {
+    setSelectedCat(catId);
+    const matched = catId === 'all' 
+      ? templatesData[0] 
+      : templatesData.find((t) => t.cat === catId);
+    if (matched) {
+      setSelectedTemplate(matched);
+    }
+  };
+
+  // 이전/다음 템플릿 이동
+  const currentIndex = filteredTemplates.findIndex((t) => t.id === selectedTemplate.id);
+  const handlePrevTemplate = () => {
+    if (filteredTemplates.length === 0) return;
+    const prevIdx = (currentIndex - 1 + filteredTemplates.length) % filteredTemplates.length;
+    setSelectedTemplate(filteredTemplates[prevIdx]);
+  };
+  const handleNextTemplate = () => {
+    if (filteredTemplates.length === 0) return;
+    const nextIdx = (currentIndex + 1) % filteredTemplates.length;
+    setSelectedTemplate(filteredTemplates[nextIdx]);
+  };
 
   // 클립보드 복사
   const handleCopy = (key, text) => {
@@ -101,7 +125,7 @@ export default function RemotionStudio() {
         <div className="rs-category-bar">
           <button 
             className={`rs-cat-btn ${selectedCat === 'all' ? 'active' : ''}`}
-            onClick={() => setSelectedCat('all')}
+            onClick={() => handleSelectCat('all')}
           >
             전체 <span>{templatesData.length}</span>
           </button>
@@ -111,12 +135,25 @@ export default function RemotionStudio() {
               <button 
                 key={cat.id}
                 className={`rs-cat-btn ${selectedCat === cat.id ? 'active' : ''}`}
-                onClick={() => setSelectedCat(cat.id)}
+                onClick={() => handleSelectCat(cat.id)}
               >
                 {cat.name} <span>{count}</span>
               </button>
             );
           })}
+        </div>
+
+        {/* ── 카테고리 내 템플릿 퀵 셀렉터 알약 버튼 ── */}
+        <div className="rs-sub-template-bar">
+          {filteredTemplates.map((t) => (
+            <button
+              key={t.id}
+              className={`rs-sub-tpl-btn ${selectedTemplate.id === t.id ? 'active' : ''}`}
+              onClick={() => setSelectedTemplate(t)}
+            >
+              {t.title}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -129,7 +166,26 @@ export default function RemotionStudio() {
               <span className="rs-tag">{selectedTemplate.pkg}</span>
               <h3 className="rs-preview-title">{selectedTemplate.title}</h3>
             </div>
-            <span className="rs-meta-pill">{selectedTemplate.meta}</span>
+            <div className="rs-header-nav-wrap">
+              <span className="rs-meta-pill">{selectedTemplate.meta}</span>
+              <div className="rs-arrow-nav">
+                <button 
+                  className="rs-arrow-btn" 
+                  onClick={handlePrevTemplate} 
+                  title="이전 템플릿 (키보드 ◀)"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="rs-nav-page-num">{currentIndex + 1} / {filteredTemplates.length}</span>
+                <button 
+                  className="rs-arrow-btn" 
+                  onClick={handleNextTemplate} 
+                  title="다음 템플릿 (키보드 ▶)"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* 실제 렌더링된 MP4 비디오 플레이어 또는 스크립트 출력창 */}
