@@ -36,13 +36,13 @@ export default function RemotionStudio() {
     setTimeout(() => setCopiedKey(null), 1800);
   };
 
-  const videoSrc = selectedTemplate.video.startsWith('http') 
-    ? selectedTemplate.video 
-    : `${BASE_URL}${selectedTemplate.video}`;
+  const getMediaUrl = (url) => {
+    if (!url) return null;
+    return url.startsWith('http') ? url : `${BASE_URL}${url}`;
+  };
 
-  const posterSrc = selectedTemplate.poster.startsWith('http')
-    ? selectedTemplate.poster
-    : `${BASE_URL}${selectedTemplate.poster}`;
+  const videoSrc = selectedTemplate ? getMediaUrl(selectedTemplate.video) : null;
+  const posterSrc = selectedTemplate ? getMediaUrl(selectedTemplate.poster) : null;
 
   return (
     <div className="remotion-studio-container">
@@ -132,19 +132,28 @@ export default function RemotionStudio() {
             <span className="rs-meta-pill">{selectedTemplate.meta}</span>
           </div>
 
-          {/* 실제 렌더링된 MP4 비디오 플레이어 */}
+          {/* 실제 렌더링된 MP4 비디오 플레이어 또는 스크립트 출력창 */}
           <div className={`rs-video-wrapper ${selectedTemplate.vertical ? 'vertical' : ''}`}>
-            <video 
-              key={videoSrc}
-              src={videoSrc}
-              poster={posterSrc}
-              controls
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="rs-actual-video"
-            />
+            {videoSrc ? (
+              <video 
+                key={videoSrc}
+                src={videoSrc}
+                poster={posterSrc || undefined}
+                controls
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="rs-actual-video"
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', padding: 20, background: '#020617', color: '#38bdf8', fontFamily: 'monospace', fontSize: 13, overflowY: 'auto', whiteSpace: 'pre-wrap', boxSizing: 'border-box' }}>
+                <div style={{ color: '#94a3b8', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Terminal size={14} /> Node 실행 콘솔 출력 결과:
+                </div>
+                {selectedTemplate.output || '스크립트 실행 결과가 여기에 표시됩니다.'}
+              </div>
+            )}
           </div>
 
           {/* 설명 및 팁 */}
@@ -218,7 +227,7 @@ export default function RemotionStudio() {
         <div className="rs-template-grid">
           {filteredTemplates.map((tpl) => {
             const isSelected = selectedTemplate.id === tpl.id;
-            const thumbUrl = tpl.poster.startsWith('http') ? tpl.poster : `${BASE_URL}${tpl.poster}`;
+            const thumbUrl = getMediaUrl(tpl.poster);
             return (
               <div 
                 key={tpl.id}
@@ -230,7 +239,13 @@ export default function RemotionStudio() {
               >
                 {/* 썸네일 포스터 */}
                 <div className="rs-card-poster-wrap">
-                  <img src={thumbUrl} alt={tpl.title} className="rs-card-poster" loading="lazy" />
+                  {thumbUrl ? (
+                    <img src={thumbUrl} alt={tpl.title} className="rs-card-poster" loading="lazy" />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#38bdf8' }}>
+                      <Terminal size={32} />
+                    </div>
+                  )}
                   <span className="rs-card-meta-tag">{tpl.meta}</span>
                 </div>
                 <div className="rs-card-body">
