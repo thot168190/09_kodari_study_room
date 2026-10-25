@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>코다리 직업상담사 2급 - 스마트 듀얼 학습실 (영상 + 족집게 노트)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #d97706;
+      --accent-green: #059669;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #f1f5f9;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 상단 헤더 바 */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #2563eb;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .select-video {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-pill {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-pill:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    /* 메인 2분할 듀얼 컨테이너 */
+    .dual-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 61px);
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* 좌측: 영상 플레이어 영역 */
+    .video-panel {
+      flex: 1.1;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--card-border);
+      position: relative;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 비율 */
+      background: #000;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-playlist-bar {
+      flex: 1;
+      background: #f8fafc;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .playlist-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .playlist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      margin-bottom: 8px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s;
+    }
+
+    .playlist-item:hover {
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .playlist-item.active {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .playlist-item.active .item-num {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .item-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+
+    .item-time {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    /* 우측: 족집게 서브노트 패널 */
+    .note-panel {
+      flex: 1.2;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .note-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .note-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .note-tag {
+      background: #fef3c7;
+      color: #b45309;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #fde68a;
+    }
+
+    .note-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .note-content {
+      flex: 1;
+      padding: 28px 32px;
+      overflow-y: auto;
+      line-height: 1.75;
+      font-size: 15px;
+      color: #334155;
+      background: #ffffff;
+    }
+
+    /* 노트 내부 마크다운 스타일링 (밝고 깨끗함) */
+    .note-content h2 {
+      font-size: 19px;
+      color: #1e40af;
+      margin: 32px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #dbeafe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .note-content h2:first-child {
+      margin-top: 0;
+    }
+
+    .note-content h3 {
+      font-size: 16px;
+      color: #0f172a;
+      margin: 22px 0 10px 0;
+      font-weight: 700;
+    }
+
+    .note-content ul, .note-content ol {
+      margin-left: 20px;
+      margin-bottom: 14px;
+    }
+
+    .note-content li {
+      margin-bottom: 6px;
+    }
+
+    .card-tip {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 16px 0;
+      color: #92400e;
+      font-size: 14px;
+      border: 1px solid #fef3c7;
+      border-left-width: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-tip strong {
+      color: #b45309;
+    }
+
+    .card-danger {
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 16px 0;
+      color: #991b1b;
+      font-size: 14px;
+      border: 1px solid #fee2e2;
+      border-left-width: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 18px 0;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      text-align: left;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--card-border);
+      font-weight: 700;
+    }
+
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--card-border);
+      color: #1e293b;
+      background: #ffffff;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .keyword {
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 700;
+    }
+
+    /* 모바일 반응형 감리 (390px 대비) */
+    @media (max-width: 900px) {
+      .dual-container {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+      }
+      body {
+        overflow-y: auto;
+      }
+      .video-panel {
+        flex: none;
+        width: 100%;
+      }
+      .note-panel {
+        flex: none;
+        width: 100%;
+        height: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 바 -->
+  <header>
+    <div class="brand">
+      <span class="badge">코다리 스튜디오</span>
+      <span class="title">직업상담사 2급 스마트 듀얼 학습실</span>
+    </div>
+    <div class="top-controls">
+      <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">과목: 1과목 직업심리학</span>
+      <a href="https://www.comcbt.com" target="_blank" class="btn-pill">무료 CBT 문제풀기 ↗</a>
+    </div>
+  </header>
+
+  <!-- 메인 2분할 레이아웃 -->
+  <div class="dual-container">
+
+    <!-- 좌측: 영상 플레이어 + 챕터 목록 -->
+    <div class="video-panel">
+      <div class="video-wrapper">
+        <iframe id="main-player" 
+                src="https://www.youtube-nocookie.com/embed/videoseries?list=PL2_0z-m17_Wlq6_f0lWdI9sB1Uf4U2_8I" 
+                title="직업상담사 2급 강의" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen></iframe>
+      </div>
+
+      <div class="video-playlist-bar">
+        <div class="playlist-title">📌 제1장 진로발달이론 강의 목록 (라디캠)</div>
+        
+        <div class="playlist-item active" onclick="changeVideo('8lq_gqgq_1', this, '1. 특성-요인 이론 (파슨스, 윌리엄슨)')">
+          <div class="item-num">1</div>
+          <div class="item-info">
+            <div class="item-name">1장 진로발달이론 (1) - 특성-요인 이론</div>
+            <div class="item-time">파슨스 3요인설 / 윌리엄슨 [무·불·흥·현]</div>
+          </div>
+        </div>
+
+        <div class="playlist-item" onclick="changeVideo('8lq_gqgq_2', this, '2. 성격 및 욕구 이론 (로, 홀랜드 RIASEC)')">
+          <div class="item-num">2</div>
+          <div class="item-info">
+            <div class="item-name">1장 진로발달이론 (2) - 로의 욕구이론 & 홀랜드</div>
+            <div class="item-time">부모 양육방식 8×6 / 홀랜드 RIASEC [실·탐·예·사·진·관]</div>
+          </div>
+        </div>
+
+        <div class="playlist-item" onclick="changeVideo('8lq_gqgq_3', this, '3. 발달이론 (긴즈버그, 수퍼, 고트프레드슨)')">
+          <div class="item-num">3</div>
+          <div class="item-info">
+            <div class="item-name">1장 진로발달이론 (3) - 수퍼 평생발달 & 긴즈버그</div>
+            <div class="item-time">수퍼 [성·탐·확·유·쇠] / 고트프레드슨 [서·성·사·내]</div>
+          </div>
+        </div>
+
+        <div class="playlist-item" onclick="changeVideo('8lq_gqgq_4', this, '4. 사회학습 & SCCT (크룸볼츠)')">
+          <div class="item-num">4</div>
+          <div class="item-info">
+            <div class="item-name">1장 진로발달이론 (4) - 크룸볼츠 계획된 우연</div>
+            <div class="item-time">우연을 기회로 5대 기술 [호·인·융·낙·위] / SCCT</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 15px; padding: 12px; background: rgba(59, 130, 246, 0.08); border-radius: 8px; border: 1px dashed rgba(59, 130, 246, 0.3);">
+          <div style="font-size: 11px; color: #93c5fd; font-weight: 600; line-height: 1.5;">
+            💡 <strong>코다리 부장의 시청 꿀팁</strong><br/>
+            영상 우측 하단 톱니바퀴 ⚙️를 눌러 <strong>재생속도를 1.25배속</strong>으로 설정하시고, 오른쪽 족집게 서브노트와 대조하며 보시면 훨씬 빠르게 완주됩니다!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 우측: 족집게 서브노트 -->
+    <div class="note-panel">
+      <div class="note-header">
+        <div class="note-title-wrap">
+          <span class="note-tag">100% 기출동기화</span>
+          <span class="note-title" id="current-note-title">제1장 진로발달이론 완벽 족집게 서브노트</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          책값 7만 원 절약 💰
+        </div>
+      </div>
+
+      <div class="note-content">
+
+        <h2>1. 특성-요인 이론 (Trait and Factor Theory)</h2>
+        
+        <h3>👤 파슨스 (Parsons) - "직업지도의 아버지"</h3>
+        <ul>
+          <li><strong>핵심 개념 (3요인설)</strong>:
+            <ol>
+              <li><span class="keyword">자신에 대한 이해</span>: 적성, 흥미, 능력, 한계 분석</li>
+              <li><span class="keyword">직업 세계에 대한 이해</span>: 자격 요건, 성공 조건, 보상, 기회 파악</li>
+              <li><span class="keyword">합리적 연결 (매칭, Matching)</span>: 개인 특성과 직업 조건을 과학적으로 일치</li>
+            </ol>
+          </li>
+          <li>🎯 <strong>기출 정답 키워드</strong>: "개인 특성과 직업 요구조건 간의 합리적 매칭"</li>
+        </ul>
+
+        <h3>👤 윌리엄슨 (Williamson) - "상담자 중심 (지시적 상담)"</h3>
+        <p>내담자가 혼자 진로를 못 정하니, 상담자가 심리검사로 객관적 진단을 내리고 처방(지시)하는 방식.</p>
+        
+        <div class="card-tip">
+          <strong>⭐ 윌리엄슨의 직업선택 4가지 문제유형 (변별진단) - 실기 서술 100% 빈출!</strong>
+          <ul style="margin: 8px 0 0 16px;">
+            <li><strong>1. 직업 무선택</strong>: 어떤 직업도 선택한 적이 없거나 결정을 전혀 못 내림</li>
+            <li><strong>2. 불확실한 선택</strong>: 선택은 했으나 자기 능력에 대한 확신과 자신감이 없음</li>
+            <li><strong>3. 흥미와 적성의 불일치</strong>: 흥미 있는 곳엔 적성이 없고, 적성 있는 곳엔 흥미가 없음</li>
+            <li><strong>4. 현명하지 못한 선택</strong>: 능력보다 너무 높은 직업을 고르거나 적성과 무관한 선택</li>
+          </ul>
+          <p style="margin-top: 6px; font-weight: 700; color: #f59e0b;">👉 3초 암기 공식: [무 · 불 · 흥 · 현]</p>
+        </div>
+
+        <h2>2. 성격 및 욕구 이론</h2>
+
+        <h3>👤 로 (Roe)의 욕구이론 - "어릴 적 부모가 직업을 만든다"</h3>
+        <ul>
+          <li>매슬로우의 욕구위계론 기반. <strong>유아기 부모의 양육방식</strong>이 직업 선택에 결정적 영향.</li>
+          <li><strong>양육방식과 직업 지향성</strong>:
+            <ul>
+              <li><strong>따뜻한 수용형</strong> ➔ 인간 지향적 직업 (상담, 사회복지, 교육, 서비스직)</li>
+              <li><strong>차가운 거부형 / 무관심형</strong> ➔ 사물·기술 지향적 직업 (기계, 연구직, 엔지니어)</li>
+            </ul>
+          </li>
+          <li><strong>로의 직업분류체계</strong>: 8개 직업군(필드) × 6개 숙련수준(레벨) = <strong>총 48개 직업군</strong></li>
+        </ul>
+
+        <h3>👤 홀랜드 (Holland)의 인성이론 (RIASEC) ⭐⭐⭐</h3>
+        <p>인간의 성격도 6가지, 직업 환경도 6가지로 나누어 서로 들어맞는 것끼리 연결!</p>
+
+        <!-- 100% 한국어 직관 인포그래픽 컴포넌트 -->
+        <div style="margin: 18px 0; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+          <div style="text-align: center; margin-bottom: 16px;">
+            <span style="background: #2563eb; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px;">한국어 완벽 대비</span>
+            <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin-top: 6px;">홀랜드 성격유형 6가지 (RIASEC 육각형 모형)</h4>
+            <p style="font-size: 12.5px; color: #64748b; margin-top: 2px;">시계방향 순서: <strong>실재형 ➔ 탐구형 ➔ 예술형 ➔ 사회형 ➔ 진취형 ➔ 관습형</strong> (실·탐·예·사·진·관)</p>
+          </div>
+
+          <!-- 6개 성격 카드 그리드 (한국어 100%) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+            
+            <!-- R 실재형 -->
+            <div style="background: #fff; border: 2px solid #ef4444; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #ef4444;">① R · 실재형</span>
+                <span style="font-size: 20px;">🔧</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">현장형 / 기술형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">기계, 도구, 동물 다룸.<br>대인관계보다 손재주!</div>
+              <div style="font-size: 11px; color: #dc2626; font-weight: 700; margin-top: 6px; background: #fef2f2; padding: 3px 6px; border-radius: 4px;">엔지니어, 농부, 운전기사</div>
+            </div>
+
+            <!-- I 탐구형 -->
+            <div style="background: #fff; border: 2px solid #0284c7; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #0284c7;">② I · 탐구형</span>
+                <span style="font-size: 20px;">🔬</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">연구형 / 학자형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">관찰, 논리 분석, 지적 호기심.<br>지도력 발휘는 비선호!</div>
+              <div style="font-size: 11px; color: #0369a1; font-weight: 700; margin-top: 6px; background: #f0f9ff; padding: 3px 6px; border-radius: 4px;">과학자, 연구원, 의사</div>
+            </div>
+
+            <!-- A 예술형 -->
+            <div style="background: #fff; border: 2px solid #8b5cf6; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(139, 92, 246, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #8b5cf6;">③ A · 예술형</span>
+                <span style="font-size: 20px;">🎨</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">창의형 / 개성형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">자유분방, 독창적 감수성.<br>틀에 박힌 규칙 질색!</div>
+              <div style="font-size: 11px; color: #7c3aed; font-weight: 700; margin-top: 6px; background: #f5f3ff; padding: 3px 6px; border-radius: 4px;">디자이너, 작가, 음악가</div>
+            </div>
+
+            <!-- S 사회형 -->
+            <div style="background: #fff; border: 2px solid #eab308; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #ca8a04;">④ S · 사회형</span>
+                <span style="font-size: 20px;">🤝</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">교육형 / 봉사형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">사람 돕고, 가르치고, 치료.<br>기계 다루기 비선호!</div>
+              <div style="font-size: 11px; color: #a16207; font-weight: 700; margin-top: 6px; background: #fefce8; padding: 3px 6px; border-radius: 4px;">상담사, 교사, 사회복지사</div>
+            </div>
+
+            <!-- E 진취형 -->
+            <div style="background: #fff; border: 2px solid #f97316; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(249, 115, 22, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #ea580c;">⑤ E · 진취형</span>
+                <span style="font-size: 20px;">📢</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">관리형 / 설득형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">목표 달성, 통솔력, 야심.<br>경제적 이익과 설득!</div>
+              <div style="font-size: 11px; color: #c2410c; font-weight: 700; margin-top: 6px; background: #fff7ed; padding: 3px 6px; border-radius: 4px;">영업 관리자, 정치가, CEO</div>
+            </div>
+
+            <!-- C 관습형 -->
+            <div style="background: #fff; border: 2px solid #10b981; border-radius: 10px; padding: 14px; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 13px; font-weight: 800; color: #059669;">⑥ C · 관습형</span>
+                <span style="font-size: 20px;">📑</span>
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 4px 0;">사무형 / 꼼꼼형</div>
+              <div style="font-size: 12px; color: #475569; line-height: 1.4;">정해진 규칙, 체계적 계산.<br>모호한 상황 비선호!</div>
+              <div style="font-size: 11px; color: #047857; font-weight: 700; margin-top: 6px; background: #ecfdf5; padding: 3px 6px; border-radius: 4px;">공무원, 회계사, 은행원</div>
+            </div>
+
+          </div>
+
+          <!-- 기출 핵심 법칙 한줄 정리 -->
+          <div style="margin-top: 14px; padding: 10px 14px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; font-size: 12.5px; color: #1e40af;">
+            💡 <strong>출제위원이 매번 묻는 관계</strong>: 바로 옆에 붙어 있으면 <strong>일관성(Consistency)</strong> 높음! 마주보는 대각선(예: 실재형 R ↔ 사회형 S)은 정반대 성향!
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>유형 (코드)</th>
+                <th>명칭</th>
+                <th>주요 특성</th>
+                <th>대표 직업</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>R (실재형)</strong></td>
+                <td>현장형/기계형</td>
+                <td>기계, 도구, 동물 다룸. 대인관계 다소 서툼</td>
+                <td>기술자, 엔지니어, 운전기사</td>
+              </tr>
+              <tr>
+                <td><strong>I (탐구형)</strong></td>
+                <td>연구형/학자형</td>
+                <td>관찰, 논리적 분석, 지적 호기심</td>
+                <td>과학자, 연구원, 생물학자</td>
+              </tr>
+              <tr>
+                <td><strong>A (예술형)</strong></td>
+                <td>창의형/자유형</td>
+                <td>자유분방, 독창적, 틀에 박힌 규칙 싫어함</td>
+                <td>디자이너, 화가, 작가, 음악가</td>
+              </tr>
+              <tr>
+                <td><strong>S (사회형)</strong></td>
+                <td>교육형/봉사형</td>
+                <td>사람 가르치고 돕는 것 선호. 기계 다루기 싫어함</td>
+                <td>교사, 상담사, 간호사, 복지사</td>
+              </tr>
+              <tr>
+                <td><strong>E (진취형)</strong></td>
+                <td>관리형/설득형</td>
+                <td>목표 달성, 통솔력, 야심, 설득력, 경제적 이익</td>
+                <td>영업 관리자, 정치가, CEO</td>
+              </tr>
+              <tr>
+                <td><strong>C (관습형)</strong></td>
+                <td>사무형/꼼꼼형</td>
+                <td>명확한 규칙, 자료 정리, 계산, 체계적</td>
+                <td>행정 공무원, 회계사, 사서</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="color: #60a5fa; font-weight: 700; margin-bottom: 12px;">👉 순서 암기: [실 · 탐 · 예 · 사 · 진 · 관] (시계방향)</p>
+
+        <div class="card-tip">
+          <strong>⭐ 홀랜드 5대 주요 지표 (실기 서술 단골)</strong>
+          <ol style="margin: 8px 0 0 16px;">
+            <li><strong>일치성</strong>: 개인의 성격과 직업 환경이 잘 어울리는 정도 (예: S형이 교사할 때)</li>
+            <li><strong>일관성</strong>: 육각형에서 서로 인접한(붙어 있는) 유형끼리 공통점이 많음 (R-I는 높고, R-S는 낮음)</li>
+            <li><strong>차별성(변별성)</strong>: 특정 유형 점수가 뾰족하게 높으면 차별성 높음 (모두 비슷하면 미분화)</li>
+            <li><strong>정체성</strong>: 자기 목표와 흥미에 대한 확신과 안정성</li>
+            <li><strong>계측성</strong>: 유형 간 거리가 가까울수록 심리적 유사성이 높음</li>
+          </ol>
+        </div>
+
+        <h2>3. 발달이론 (평생에 걸친 진로)</h2>
+
+        <h3>👤 긴즈버그 (Ginzberg) - 최초의 발달이론</h3>
+        <ul>
+          <li>직업 선택은 한 번에 끝나는 게 아니라 장기간에 걸친 발달적 과정!</li>
+          <li><strong>발달 3단계</strong>: <span class="keyword">환상기</span> (어린이) ➔ <span class="keyword">잠정기</span> (청소년) ➔ <span class="keyword">현실기</span> (성인)</li>
+          <li>👉 <strong>암기법: [환 · 잠 · 현]</strong> ("환장의 잠수 현실")</li>
+        </ul>
+
+        <h3>👤 수퍼 (Super) - 평생발달이론의 거장 ⭐⭐⭐</h3>
+        <ul>
+          <li>진로는 <strong>"자아개념(Self-concept)을 일생 동안 실현해 가는 과정"</strong>!</li>
+        </ul>
+
+        <!-- 100% 한국어 수퍼 생애 5단계 타임라인 인포그래픽 -->
+        <div style="margin: 18px 0; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+          <div style="text-align: center; margin-bottom: 16px;">
+            <span style="background: #10b981; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px;">출제율 100% 암기</span>
+            <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin-top: 6px;">수퍼의 생애진로발달 5단계 무지개</h4>
+            <p style="font-size: 13px; color: #2563eb; font-weight: 800; margin-top: 2px;">👉 3초 암기 공식: [성 · 탐 · 확 · 유 · 쇠] ("성공을 탐내다 확 유명해져 쇠퇴")</p>
+          </div>
+
+          <!-- 5단계 가로 타임라인 카드 -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+            
+            <div style="background: #fff; border-top: 4px solid #10b981; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+              <div style="font-size: 22px;">🌱</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-top: 4px;">1. 성장기</div>
+              <div style="font-size: 11px; color: #64748b;">(0 ~ 14세)</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 6px; font-weight: 600;">자아개념 형성<br><span style="font-size: 11px; color: #059669;">환상 ➔ 흥미 ➔ 능력</span></div>
+            </div>
+
+            <div style="background: #fff; border-top: 4px solid #3b82f6; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+              <div style="font-size: 22px;">🧭</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-top: 4px;">2. 탐색기</div>
+              <div style="font-size: 11px; color: #64748b;">(15 ~ 24세)</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 6px; font-weight: 600;">학교/알바 직업탐색<br><span style="font-size: 11px; color: #2563eb;">잠정 ➔ 전환 ➔ 시행</span></div>
+            </div>
+
+            <div style="background: #fff; border-top: 4px solid #f59e0b; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+              <div style="font-size: 22px;">🏡</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-top: 4px;">3. 확립기</div>
+              <div style="font-size: 11px; color: #64748b;">(25 ~ 44세)</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 6px; font-weight: 600;">적합분야 터전 마련<br><span style="font-size: 11px; color: #d97706;">수정 ➔ 안정</span></div>
+            </div>
+
+            <div style="background: #fff; border-top: 4px solid #8b5cf6; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+              <div style="font-size: 22px;">⚖️</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-top: 4px;">4. 유지기</div>
+              <div style="font-size: 11px; color: #64748b;">(45 ~ 64세)</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 6px; font-weight: 600;">현재 위치 고수<br><span style="font-size: 11px; color: #7c3aed;">지위 유지 및 갱신</span></div>
+            </div>
+
+            <div style="background: #fff; border-top: 4px solid #ef4444; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+              <div style="font-size: 22px;">🌅</div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-top: 4px;">5. 쇠퇴기</div>
+              <div style="font-size: 11px; color: #64748b;">(65세 이상)</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 6px; font-weight: 600;">은퇴 및 역할 축소<br><span style="font-size: 11px; color: #dc2626;">새로운 여가/취미</span></div>
+            </div>
+
+          </div>
+        </div>
+
+        <ul>
+          <li><strong>생애 5단계 (대순환)</strong>:
+            <ol>
+              <li><strong>성장기 (0~14세)</strong>: 자아개념 형성</li>
+              <li><strong>탐색기 (15~24세)</strong>: 학교/알바로 진로 탐색</li>
+              <li><strong>확립기 (25~44세)</strong>: 적합 분야 찾아 터전 마련</li>
+              <li><strong>유지기 (45~64세)</strong>: 직업 지위 유지</li>
+              <li><strong>쇠퇴기 (65세 이상)</strong>: 은퇴 및 역할 축소</li>
+            </ol>
+          </li>
+          <li>👉 <strong>5단계 암기법: [성 · 탐 · 확 · 유 · 쇠]</strong> ("성공을 탐내다 확 유명해져 쇠퇴")</li>
+        </ul>
+
+        <h3>👤 고트프레드슨 (Gottfredson) - 제한과 타협 이론</h3>
+        <p>직업 선택은 좋아하는 걸 찾는 게 아니라 <strong>"안 맞는 걸 하나씩 배제(제한)하는 과정"</strong>.</p>
+        <div class="card-tip">
+          <strong>⭐ 직업포부 발달 4단계</strong>:
+          <p>1단계(서열/크기) ➔ 2단계(성역할) ➔ 3단계(사회적 가치) ➔ 4단계(내적 고유자아)</p>
+          <p style="margin-top: 4px; font-weight: 700; color: #f59e0b;">👉 암기법: [서 · 성 · 사 · 내] ("서성거리다 사내한테 걸렸다!")</p>
+        </div>
+
+        <h2>4. 사회학습 및 인지이론</h2>
+
+        <h3>👤 크룸볼츠 (Krumboltz) - 계획된 우연 이론</h3>
+        <ul>
+          <li>인생은 계획대로 안 된다! <strong>예상치 못한 "우연한 사건"을 기회로 만드는 사람이 성공한다!</strong></li>
+          <li><strong>우연을 기회로 바꾸는 5대 기술</strong>:
+            <ol>
+              <li><strong>호기심</strong>: 새로운 배움 탐색</li>
+              <li><strong>인내심</strong>: 실패해도 끝까지 지속</li>
+              <li><strong>융통성</strong>: 유연한 태도 전환</li>
+              <li><strong>낙관성</strong>: 기회가 올 것이라는 긍정적 믿음</li>
+              <li><strong>위험감수(모험심)</strong>: 불확실해도 과감하게 시도</li>
+            </ol>
+          </li>
+          <li>👉 <strong>암기법: [호 · 인 · 융 · 낙 · 위]</strong> ("호랑이 만나면 인내·융통·낙관으로 위험 돌파")</li>
+        </ul>
+
+        <div class="card-danger">
+          <strong>🚨 시험 직전 출제위원 함정 트랩!</strong>
+          <ul style="margin: 6px 0 0 16px;">
+            <li>❌ "파슨스는 내담자의 무의식적 갈등을 중시했다" ➔ <strong>오답! (무의식은 정신분석!)</strong></li>
+            <li>❌ "홀랜드 육각형에서 인접한 유형은 일치성이 높다" ➔ <strong>오답! (인접한 유형은 '일관성'이 높음!)</strong></li>
+            <li>❌ "수퍼의 발달단계는 비가역적(되돌릴 수 없다)" ➔ <strong>오답! (수퍼는 언제든 소순환으로 재순환 가능!)</strong></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 강의 영상 변경 함수
+    function changeVideo(videoId, element, title) {
+      document.querySelectorAll('.playlist-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('current-note-title').innerText = title + ' - 족집게 서브노트';
+    }
+  </script>
+</body>
+</html>

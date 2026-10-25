@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📦 MuJoCo 1호 인터랙티브 시뮬레이터 놀이터 | 코다리 공부방</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root {
+  --bg: #07090e;
+  --panel: #0d121c;
+  --card: #141b29;
+  --line: #1e293b;
+  --accent: #b8ff5c;
+  --ice: #8fd3ff;
+  --gold: #ffd447;
+  --pink: #ff5db1;
+  --fg: #f8fafc;
+  --dim: #94a3b8;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Pretendard, -apple-system, sans-serif; }
+body { background: var(--bg); color: var(--fg); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+
+/* 헤더 */
+header {
+  padding: 16px 20px;
+  background: rgba(13, 18, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.badge { background: var(--accent); color: #000; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; }
+.title { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
+.sub { font-size: 12px; color: var(--dim); }
+
+/* 메인 그리드 레이아웃 */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  flex: 1;
+  min-height: calc(100vh - 65px);
+}
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: 1fr; }
+}
+
+/* 3D 뷰포트 */
+.viewport-container {
+  position: relative;
+  background: radial-gradient(circle at 50% 30%, #151e2e 0%, #06080d 100%);
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+}
+#canvas-wrap {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: block;
+}
+.viewport-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(13, 18, 28, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  pointer-events: none;
+}
+.viewport-overlay span { color: var(--accent); font-weight: 700; }
+.hud-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #b8ff5c, #95e630);
+  color: #000;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(184, 255, 92, 0.4);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hud-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 12px 32px rgba(184, 255, 92, 0.6); }
+.hud-btn:active { transform: translateX(-50%) scale(0.97); }
+
+/* 컨트롤 패널 */
+.controls-panel {
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 65px);
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ice);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ctrl-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+/* 프리셋 버튼 그룹 */
+.btn-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.chip-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 8px 4px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.15s;
+}
+.chip-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.chip-btn.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 800;
+  border-color: var(--accent);
+}
+
+/* 슬라이더 */
+.slider-wrap { margin-top: 10px; }
+.slider-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--dim); }
+.slider-header b { color: var(--fg); font-family: var(--mono); }
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* 색상 선택기 */
+.color-group { display: flex; gap: 8px; margin-top: 6px; }
+.color-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.color-dot:hover { transform: scale(1.1); }
+.color-dot.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 12px currentColor; }
+
+/* XML 코드 미리보기 */
+.xml-box {
+  background: #05070a;
+  border: 1px solid #1a2234;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: #cbd5e1;
+  overflow-x: auto;
+  white-space: pre;
+}
+.xml-hl { color: var(--accent); font-weight: 700; background: rgba(184, 255, 92, 0.15); padding: 1px 4px; border-radius: 4px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="badge">MuJoCo 01</span>
+    <div>
+      <div class="title">대표님 전용 3D 물리 시뮬레이터 놀이터</div>
+      <div class="sub">01 · 상자 떨어뜨리기 (Box Drop Simulation)</div>
+    </div>
+  </div>
+  <div style="font-size: 12px; color: var(--dim);">에이전트 총괄부장 코다리 감리</div>
+</header>
+
+<div class="workspace">
+  <!-- 3D 뷰포트 -->
+  <div class="viewport-container">
+    <div class="viewport-overlay">
+      현재 환경: <span id="env-status">지구 중력 (-9.81 m/s²)</span> · 물체: <span id="obj-status">노란 큐브</span>
+    </div>
+    <div id="canvas-wrap"></div>
+    <button class="hud-btn" id="btn-drop">
+      <span>🚀 상자 떨어뜨리기! (Drop)</span>
+    </button>
+  </div>
+
+  <!-- 컨트롤 패널 -->
+  <div class="controls-panel">
+    <!-- 1. 중력 설정 -->
+    <div class="ctrl-card">
+      <div class="section-label">🌍 1. 중력 규칙 (Gravity)</div>
+      <div class="btn-group">
+        <div class="chip-btn active" data-gravity="9.81">지구</div>
+        <div class="chip-btn" data-gravity="1.62">달나라</div>
+        <div class="chip-btn" data-gravity="24.79">목성</div>
+        <div class="chip-btn" data-gravity="0.2">무중력</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-header">중력 가속도: <b id="val-gravity">9.81 m/s²</b></div>
+        <input type="range" id="rng-gravity" min="0" max="30" step="0.5" value="9.81">
+      </div>
+    </div>
+
+    <!-- 2. 물체 모양 설정 -->
+    <div class="ctrl-card">
+      <div class="section-label">📦 2. 물체 모양 (Geom Shape)</div>
+      <div class="btn-group">
+        <div class="chip-btn active" data-shape="box">큐브 상자</div>
+        <div class="chip-btn" data-shape="pillar">직사각 기둥</div>
+        <div class="chip-btn" data-shape="plate">납작 판자</div>
+        <div class="chip-btn" data-shape="sphere">둥근 공</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-header">떨어지는 높이: <b id="val-height">2.5 m</b></div>
+        <input type="range" id="rng-height" min="1.0" max="5.0" step="0.2" value="2.5">
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-header">기울기 각도: <b id="val-angle">35°</b></div>
+        <input type="range" id="rng-angle" min="0" max="80" step="5" value="35">
+      </div>
+    </div>
+
+    <!-- 3. 색상 설정 -->
+    <div class="ctrl-card">
+      <div class="section-label">🎨 3. 상자 색상 (RGBA)</div>
+      <div class="color-group">
+        <div class="color-dot active" style="background: #ffd447;" data-color="#ffd447" data-rgba="1 .83 .28 1"></div>
+        <div class="color-dot" style="background: #ff5db1;" data-color="#ff5db1" data-rgba="1 0.2 0.8 1"></div>
+        <div class="color-dot" style="background: #b8ff5c;" data-color="#b8ff5c" data-rgba="0 0.9 0.4 1"></div>
+        <div class="color-dot" style="background: #8fd3ff;" data-color="#8fd3ff" data-rgba="0.2 0.6 1 1"></div>
+      </div>
+    </div>
+
+    <!-- 4. 실시간 MuJoCo XML 코드 -->
+    <div class="ctrl-card">
+      <div class="section-label">💻 실시간 MuJoCo XML 연동</div>
+      <div class="xml-box" id="xml-display">
+&lt;mujoco&gt;
+  &lt;option <span class="xml-hl" id="xml-opt">gravity="0 0 -9.81"</span>/&gt;
+  &lt;worldbody&gt;
+    &lt;geom type="plane" size="3 3 .1"/&gt;
+    &lt;body <span class="xml-hl" id="xml-pos">pos="0 0 2.5" euler="35 35 0"</span>&gt;
+      &lt;freejoint/&gt;
+      &lt;geom <span class="xml-hl" id="xml-geom">type="box" size=".25 .25 .25"</span>
+            <span class="xml-hl" id="xml-col">rgba="1 .83 .28 1"</span>/&gt;
+    &lt;/body&gt;
+  &lt;/worldbody&gt;
+&lt;/mujoco&gt;
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let gravity = 9.81;
+let initialHeight = 2.5;
+let initialAngle = 35;
+let currentShape = 'box';
+let currentColor = '#ffd447';
+let currentRGBA = '1 .83 .28 1';
+
+let isSimulating = false;
+let velY = 0;
+let velRot = { x: 0, y: 0, z: 0 };
+let currentY = initialHeight;
+
+const container = document.getElementById('canvas-wrap');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x07090e, 0.05);
+
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+camera.position.set(0, 3.5, 6.5);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+container.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxPolarAngle = Math.PI / 2 - 0.05;
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+dirLight.position.set(4, 8, 4);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
+// 바닥 그리드
+const floorGeo = new THREE.PlaneGeometry(10, 10);
+const canvas = document.createElement('canvas');
+canvas.width = 256; canvas.height = 256;
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = '#101726'; ctx.fillRect(0,0,256,256);
+ctx.fillStyle = '#172238'; 
+for(let i=0; i<8; i++) {
+  for(let j=0; j<8; j++) {
+    if((i+j)%2===0) ctx.fillRect(i*32, j*32, 32, 32);
+  }
+}
+const floorTex = new THREE.CanvasTexture(canvas);
+floorTex.wrapS = THREE.RepeatWrapping; floorTex.wrapT = THREE.RepeatWrapping;
+floorTex.repeat.set(4, 4);
+const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.7, metalness: 0.1 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+let targetMesh = null;
+let wireframeMesh = null;
+
+function createTargetMesh() {
+  if (targetMesh) scene.remove(targetMesh);
+
+  let geo;
+  if (currentShape === 'box') {
+    geo = new THREE.BoxGeometry(0.65, 0.65, 0.65);
+  } else if (currentShape === 'pillar') {
+    geo = new THREE.BoxGeometry(0.35, 1.3, 0.35);
+  } else if (currentShape === 'plate') {
+    geo = new THREE.BoxGeometry(1.3, 0.18, 0.8);
+  } else if (currentShape === 'sphere') {
+    geo = new THREE.SphereGeometry(0.38, 32, 32);
+  }
+
+  const mat = new THREE.MeshStandardMaterial({
+    color: currentColor,
+    roughness: 0.25,
+    metalness: 0.2,
+    flatShading: true
+  });
+
+  targetMesh = new THREE.Mesh(geo, mat);
+  targetMesh.castShadow = true;
+  targetMesh.receiveShadow = true;
+
+  // 모서리를 또렷하게 보여주는 화이트 와이어프레임 (기울어진 각도가 1초 만에 눈에 띔!)
+  const wireGeo = new THREE.EdgesGeometry(geo);
+  const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+  wireframeMesh = new THREE.LineSegments(wireGeo, wireMat);
+  targetMesh.add(wireframeMesh);
+
+  scene.add(targetMesh);
+  resetDropPosition();
+}
+
+function resetDropPosition() {
+  isSimulating = false;
+  currentY = initialHeight;
+  velY = 0;
+  if (!targetMesh) return;
+  targetMesh.position.set(0, initialHeight, 0);
+
+  // Z축과 X축으로 각도를 시원하고 과감하게 기울임!
+  const radZ = (initialAngle * Math.PI) / 180;
+  const radX = (initialAngle * 0.4 * Math.PI) / 180;
+  targetMesh.rotation.set(radX, 0, radZ);
+  velRot = { x: 0, y: 0, z: 0 };
+}
+
+createTargetMesh();
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = Math.min(clock.getDelta(), 0.1);
+
+  if (isSimulating) {
+    velY -= gravity * delta;
+    currentY += velY * delta;
+
+    targetMesh.rotation.x += velRot.x * delta;
+    targetMesh.rotation.y += velRot.y * delta;
+    targetMesh.rotation.z += velRot.z * delta;
+
+    // 바닥 충돌 판정 (기울기에 따라 모서리가 먼저 닿음!)
+    const radZ = Math.abs(targetMesh.rotation.z);
+    const cornerExtra = currentShape === 'box' ? Math.sin(radZ) * 0.25 : (currentShape === 'pillar' ? Math.sin(radZ) * 0.4 : 0);
+    const floorLimit = (currentShape === 'sphere' ? 0.38 : 0.32) + cornerExtra;
+
+    if (currentY <= floorLimit) {
+      currentY = floorLimit;
+      if (Math.abs(velY) > 0.4) {
+        velY = -velY * 0.45; // 바운스
+        // 모서리로 부딪혔을 때 강력한 회전 토크 발생! (비스듬할수록 미친 듯이 굴러감)
+        velRot.z += (initialAngle / 30) * (velRot.z >= 0 ? 3.5 : -3.5);
+        velRot.x += (Math.random() - 0.5) * 2;
+      } else {
+        velY = 0;
+        velRot = { x: 0, y: 0, z: 0 };
+        isSimulating = false;
+      }
+    }
+    targetMesh.position.y = currentY;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+document.getElementById('btn-drop').onclick = () => {
+  resetDropPosition();
+  // 각도가 클수록 떨어질 때 회전 관성이 강력하게 붙음!
+  const angleFactor = initialAngle / 45;
+  velRot = { 
+    x: (Math.random() - 0.5) * 1.5, 
+    y: (Math.random() - 0.5) * 1.5, 
+    z: angleFactor * 3.2 
+  };
+  setTimeout(() => { isSimulating = true; }, 50);
+};
+
+const rngGrav = document.getElementById('rng-gravity');
+const valGrav = document.getElementById('val-gravity');
+rngGrav.oninput = (e) => { setGravity(parseFloat(e.target.value)); };
+document.querySelectorAll('[data-gravity]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('[data-gravity]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setGravity(parseFloat(btn.dataset.gravity));
+    rngGrav.value = btn.dataset.gravity;
+  };
+});
+function setGravity(g) {
+  gravity = g;
+  valGrav.innerText = g + ' m/s²';
+  document.getElementById('env-status').innerText = g === 9.81 ? '지구 중력 (-9.81 m/s²)' : (g === 1.62 ? '달나라 중력 (-1.62 m/s²)' : `중력 (-${g} m/s²)`);
+  updateXML();
+}
+
+document.querySelectorAll('[data-shape]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('[data-shape]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentShape = btn.dataset.shape;
+    document.getElementById('obj-status').innerText = btn.innerText;
+    createTargetMesh();
+    updateXML();
+  };
+});
+
+const rngHeight = document.getElementById('rng-height');
+const valHeight = document.getElementById('val-height');
+rngHeight.oninput = (e) => {
+  initialHeight = parseFloat(e.target.value);
+  valHeight.innerText = initialHeight + ' m';
+  resetDropPosition();
+  updateXML();
+};
+
+const rngAngle = document.getElementById('rng-angle');
+const valAngle = document.getElementById('val-angle');
+rngAngle.oninput = (e) => {
+  initialAngle = parseFloat(e.target.value);
+  valAngle.innerText = initialAngle + '°';
+  resetDropPosition();
+  updateXML();
+};
+
+document.querySelectorAll('.color-dot').forEach(dot => {
+  dot.onclick = () => {
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+    currentColor = dot.dataset.color;
+    currentRGBA = dot.dataset.rgba;
+    if (targetMesh) targetMesh.material.color.set(currentColor);
+    updateXML();
+  };
+});
+
+function updateXML() {
+  document.getElementById('xml-opt').innerText = `gravity="0 0 -${gravity}"`;
+  document.getElementById('xml-pos').innerText = `pos="0 0 ${initialHeight}" euler="${initialAngle} ${initialAngle} 0"`;
+  let geomStr = `type="${currentShape==='sphere'?'sphere':'box'}" size="${currentShape==='pillar'?'.15 .45 .15':(currentShape==='plate'?'.45 .08 .3':'.25 .25 .25')}"`;
+  document.getElementById('xml-geom').innerText = geomStr;
+  document.getElementById('xml-col').innerText = `rgba="${currentRGBA}"`;
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+});
+</script>
+</body>
+</html>
